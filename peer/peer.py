@@ -2,6 +2,7 @@ import asyncio
 import aiohttp
 import os
 import socket
+import file_server as file_server
 
 TRACKER_URL = "http://127.0.0.1:8080"  # Replace with actual tracker IP
 
@@ -38,13 +39,15 @@ async def main():
         ip = socket.gethostbyname(socket.gethostname())  # Automatically fetch the VM's IP
         port = 6881
         await register_peer(peer_id, ip, port)
+
+        peers = await get_peers()
+        print(f"[INFO] Active Peers: {peers}")
+
+        # Start the file server
+        asyncio.create_task(file_server.start_file_server())
         while True:
-            print(f"[INFO] Peer {peer_id} running... Checking active peers.")
-            peers = await get_peers()
-            print(f"[INFO] Active Peers: {peers}")
-            # Sleep for a while before the next update (heartbeat)
-            await asyncio.sleep(10)  # Keep updating every 10 seconds
-    
+            await asyncio.sleep(3600)
+
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
 

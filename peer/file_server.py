@@ -15,14 +15,21 @@ async def serve_file(request):
     print(f"[INFO] Serving file: {FILE_PATH}")
     return web.FileResponse(FILE_PATH)
 
-app = web.Application()
-app.router.add_get("/file", serve_file)
-
-if __name__ == "__main__":
+async def start_file_server():
+    """
+    Starts the file server.
+    """
     try:
         ip = socket.gethostbyname(socket.gethostname())  # Automatically fetch the VM's IP
         port = 6881
-        web.run_app(app, host=ip, port=port)
+        app = web.Application()
+        app.router.add_get("/file", serve_file)
         print(f"[INFO] File Server Started on {ip}:{port}")
+
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, host=ip, port=port)
+        await site.start()
+        
     except Exception as e:
         print(f"[ERROR] File server failed to start: {e}")
