@@ -34,7 +34,6 @@ async def get_peers():
 
 async def main():
     peer_id = f"peer_{os.getpid()}"
-    
     try:
         ip = socket.gethostbyname(socket.gethostname())  # Automatically fetch the VM's IP
         port = 6881
