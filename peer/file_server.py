@@ -2,14 +2,23 @@ from aiohttp import web
 import os
 import socket
 
-FILE_PATH = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/tests/data/test_data_send.txt"
+FILES_DIRECTORY = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/tests/peer1/"
 
 async def serve_file(request):
     """
     Serves a file to requesting peers.
     """
+
+    FILE_NAME = request.query.get("file_name")
+
+    if not FILE_NAME:
+        return web.json_response({"error": "No file name provided"}, status=400)
+    
+    FILE_PATH = os.path.join(FILES_DIRECTORY, FILE_NAME)
+    print(f"[INFO] Requested file: {FILE_PATH}")
+
     if not os.path.exists(FILE_PATH):
-        print(f"[ERROR] File not found: {FILE_PATH}")
+        print(f"[ERROR] File not found: {FILE_NAME}")
         return web.json_response({"error": "File not found"}, status=404)
     
     print(f"[INFO] Serving file: {FILE_PATH}")
