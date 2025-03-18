@@ -24,6 +24,22 @@ async def get_file_peers(file_name):
             print(f"[ERROR] Failed to fetch file peers from tracker: {e}")
             return []
 
+async def register_downloaded_file(peer_id, ip, port, file_name):
+    """
+    Registers a newly downloaded file with the tracker so that other peers can request it.
+    """
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post(f"{TRACKER_URL}/register", json={
+                "peer_id": peer_id,
+                "ip": ip,
+                "port": port,
+                "files": [file_name]  # Add the newly downloaded file
+            }) as response:
+                result = await response.json()
+                print(f"[INFO] Tracker updated with new file availability: {result}")
+        except Exception as e:
+            print(f"[ERROR] Failed to register downloaded file: {e}")
 
 
 async def download_file(peer_ip, file_name):
