@@ -6,13 +6,16 @@ import file_server as file_server
 
 TRACKER_URL = "http://127.0.0.1:8080"  # Replace with actual tracker IP
 
+FILE_PATH = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/tests/data" 
+HOSTED_FILE = ["test_data_send.txt"]
+
 async def register_peer(peer_id, ip, port):
     """
     Registers the peer to the tracker.
     """
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.post(f"{TRACKER_URL}/register", json={"peer_id": peer_id, "ip": ip, "port": port}) as response:
+            async with session.post(f"{TRACKER_URL}/register", json={"peer_id": peer_id, "ip": ip, "port": port, "files" : HOSTED_FILE}) as response:
                 result = await response.json()
                 print(f"[INFO] Registration Response: {result}")  # Debugging Output
 
