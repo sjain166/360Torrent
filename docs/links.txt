@@ -1,0 +1,6 @@
+# YouTube Analysis
+**YouTube-new:** [Kaggle Code](https://www.kaggle.com/code/ammar111/youtube-trending-videos-analysis)  
+**Dataset:** [YouTube Dataset](https://www.kaggle.com/datasets/datasnaek/youtube-new)
+
+# OTTs
+**Netflix Dataset:** [Kaggle Dataset](https://www.kaggle.com/datasets/shivamb/netflix-shows)
