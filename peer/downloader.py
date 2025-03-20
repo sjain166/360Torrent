@@ -4,7 +4,7 @@ import os
 import socket
 
 
-TRACKER_URL = "http://127.0.0.1:8080"
+TRACKER_URL = "http://10.0.0.130:8080"
 
 async def get_file_peers(file_name):
     """
@@ -80,7 +80,7 @@ def get_private_ip():
         return "127.0.0.1"  # Fallback to loopback if no IP is found
 
 async def main():
-    file_name = "test_data_send.txt"
+    file_name = "chunk01.webm"
 
     # Get the list of peers hosting the file
     peers = await get_file_peers(file_name)
