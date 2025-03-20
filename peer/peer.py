@@ -8,6 +8,8 @@ import file_server as file_server
 TRACKER_URL = "http://127.0.0.1:8080"  # Replace with actual tracker IP
 
 FILE_PATH = "tests/data" 
+
+# Rather a Fixed Hosted Files, Scrap the Data Folder to update teh Hosted Files before TRacker Registration
 HOSTED_FILE = ["test_data_send.txt"]
 
 def get_private_ip():

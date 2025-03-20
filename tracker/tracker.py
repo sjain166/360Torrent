@@ -1,5 +1,6 @@
 import asyncio
 from aiohttp import web
+import socket
 
 # Dictionary to store registered peers {peer_id: (ip, port)}
 peers = {}
@@ -71,9 +72,28 @@ app.router.add_post("/register", register_peer)
 app.router.add_get("/peers", get_peers)
 app.router.add_get("/file_peers", get_file_peers)
 
+
+def get_private_ip():
+    """
+    Returns the actual private IP address of the machine.
+    This avoids using 127.0.0.1 and ensures that the peer registers
+    with its LAN IP.
+    """
+    try:
+        # Create a dummy socket connection to determine the correct network interface
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # Connect to Google's DNS to determine the correct interface
+        ip = s.getsockname()[0]  # Extract the private IP from the connection
+        s.close()
+        return ip
+    except Exception as e:
+        print(f"[ERROR] Failed to determine private IP: {e}")
+        return "127.0.0.1"  # Fallback to loopback if no IP is found
+    
 if __name__ == "__main__":
     try:
-        print("[INFO] Tracker Server Started on 0.0.0.0:8080")
-        web.run_app(app, host="0.0.0.0", port=8080)
+        my_ip = get_private_ip()
+        print("[INFO] Tracker Server Started on {}:8080".format(my_ip))
+        web.run_app(app, host=my_ip, port=8080)
     except Exception as e:
         print(f"[ERROR] Tracker failed to start: {e}")
