@@ -4,10 +4,28 @@ import os
 import socket
 import file_server as file_server
 
+
 TRACKER_URL = "http://127.0.0.1:8080"  # Replace with actual tracker IP
 
 FILE_PATH = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/tests/data" 
 HOSTED_FILE = ["test_data_send.txt"]
+
+def get_private_ip():
+    """
+    Returns the actual private IP address of the machine.
+    This avoids using 127.0.0.1 and ensures that the peer registers
+    with its LAN IP.
+    """
+    try:
+        # Create a dummy socket connection to determine the correct network interface
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # Connect to Google's DNS to determine the correct interface
+        ip = s.getsockname()[0]  # Extract the private IP from the connection
+        s.close()
+        return ip
+    except Exception as e:
+        print(f"[ERROR] Failed to determine private IP: {e}")
+        return "127.0.0.1"  # Fallback to loopback if no IP is found
 
 async def register_peer(peer_id, ip, port):
     """
@@ -39,7 +57,7 @@ async def get_peers():
 async def main():
     peer_id = f"peer_{os.getpid()}"
     try:
-        ip = socket.gethostbyname(socket.gethostname())  # Automatically fetch the VM's IP
+        ip = get_private_ip() # Automatically fetch the VM's IP
         port = 6881
         await register_peer(peer_id, ip, port)
 
