@@ -47,7 +47,7 @@ async def download_file(peer_ip, file_name):
     Downloads a file from the peer.
     """
     URL = f"http://{peer_ip}:6881/file?file_name={file_name}"
-    DOWNLOAD_DIRECTORY = f"/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/tests/peer2/"
+    DOWNLOAD_DIRECTORY = f"tests/data"
     FILE_PATH = os.path.join(DOWNLOAD_DIRECTORY, file_name)
 
     try:

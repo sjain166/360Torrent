@@ -7,7 +7,7 @@ import file_server as file_server
 
 TRACKER_URL = "http://127.0.0.1:8080"  # Replace with actual tracker IP
 
-FILE_PATH = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/tests/data" 
+FILE_PATH = "tests/data" 
 HOSTED_FILE = ["test_data_send.txt"]
 
 def get_private_ip():

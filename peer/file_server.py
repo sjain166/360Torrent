@@ -2,7 +2,7 @@ from aiohttp import web
 import os
 import socket
 
-FILES_DIRECTORY = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/tests/peer1/"
+FILES_DIRECTORY = "tests/data"
 
 
 def get_private_ip():
