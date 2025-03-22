@@ -61,7 +61,7 @@ async def register_peer(request):
                     chunk_name = chunk_data.get("chunk_name")
                     chunk_size = chunk_data.get("chunk_size")
                     chunk_obj = Chunk(chunk_name=chunk_name, chunk_size=chunk_size)
-                    chunk_obj.peers.append(Peer(ip, port))
+                    chunk_obj.add_peer(Peer(ip, port))
                     new_file.chunks.append(chunk_obj)
                 TRACKER_FILE_REGISTRY.append(new_file)
             else:
@@ -71,12 +71,12 @@ async def register_peer(request):
                     existing_chunk = next((c for c in existing_file.chunks if c.chunk_name == chunk_name), None)
                     if existing_chunk:
                         # If chunk exists, add new peer to it
-                        existing_chunk.peers.append(Peer(ip, port))
+                        existing_chunk.add_peer(Peer(ip, port))
                     else:
                         # If chunk does not exist, create and add it
                         chunk_size = chunk_data.get("chunk_size")
                         new_chunk = Chunk(chunk_name=chunk_name, chunk_size=chunk_size)
-                        new_chunk.peers.append(Peer(ip, port))
+                        new_chunk.add_peer(Peer(ip, port))
                         existing_file.chunks.append(new_chunk)
 
         print(f"[INFO] Registered peer {peer_id} at {ip}:{port}")  # Debugging output

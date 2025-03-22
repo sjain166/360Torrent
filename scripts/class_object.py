@@ -21,7 +21,7 @@ class Chunk:
         self.peers = []  # List of PeerObjects hosting this chunk
     
     def add_peer(self, peer: Peer):
-        if peer not in self.peers:
+        if all(existing_peer.ip != peer.ip for existing_peer in self.peers):
             self.peers.append(peer)
     
     def __repr__(self):
