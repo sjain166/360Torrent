@@ -3,7 +3,7 @@ import aiohttp
 import os
 import socket
 import peer.file_server as file_server
-from scripts.class_object import Peer, Chunk, File
+from scripts.class_object import Peer, Chunk, File, FileMetadata
 from scripts.utils import get_private_ip
 from tabulate import tabulate
 
@@ -143,6 +143,39 @@ def print_registry_summary(summary):
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
 
+async def get_file_metadata(file_name):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{TRACKER_URL}/file_metadata", params={"file_name": file_name}) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return FileMetadata(file_name=data["file_name"], file_size=data["file_size"], chunks=data["chunks"])
+                else:
+                    print(f"[ERROR] File metadata fetch failed: {response.status}")
+                    return None
+    except Exception as e:
+        print(f"[ERROR] Exception during file metadata fetch: {e}")
+        return None
+
+def print_file_metadata(metadata: FileMetadata):
+    if not metadata:
+        print("[WARN] No metadata found.")
+        return
+    table_data = []
+    file_displayed = False
+    for chunk in metadata.chunks:
+        table_data.append([
+            metadata.file_name if not file_displayed else "",
+            metadata.file_size if not file_displayed else "",
+            chunk.chunk_name,
+            chunk.chunk_size,
+            "Downloaded" if chunk.download_status else "Pending"
+        ])
+        file_displayed = True
+    headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Download Status"]
+    print(tabulate(table_data, headers=headers, tablefmt="grid"))
+
+    
 async def prompt_user_action():
     while True:
         print("\n[OPTIONS] Select an action:")
@@ -159,7 +192,8 @@ async def prompt_user_action():
             ).strip()
             if file_name:
                 print(f"[INFO] You selected to download: {file_name}")
-                # Placeholder for actual download logic
+                metadata = await get_file_metadata(file_name)
+                print_file_metadata(metadata)
             else:
                 print("[WARN] No file name entered.")
         elif choice == "3":

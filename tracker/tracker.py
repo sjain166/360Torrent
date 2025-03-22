@@ -1,7 +1,8 @@
 import asyncio
 from aiohttp import web
 import socket
-from scripts.class_object import Peer, Chunk, File
+from scripts.class_object import Peer, Chunk, File, FileMetadata
+from scripts.utils import get_private_ip
 from tabulate import tabulate
 
 PEERS = {}  # Dictionary to store registered peers {peer_id: (ip, port)}
@@ -134,44 +135,34 @@ async def get_tracker_registry_summary(request):
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
 
-async def get_file_peers(request):
-    """
-    Returns the list of peers hosting a requested file.
-    """
+async def get_file_metadata(request):
     try:
         file_name = request.query.get("file_name")
-        if not file_name or file_name not in file_registry:
+        if not file_name:
+            return web.json_response({"error": "Missing file_name parameter"}, status=400)
+
+        file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+        if not file_obj:
             return web.json_response({"error": "File not found"}, status=404)
-        return web.json_response({"peers": file_registry[file_name]})
+
+        chunk_dicts = [
+            {
+                "chunk_name": chunk.chunk_name,
+                "chunk_size": chunk.chunk_size
+            }
+            for chunk in file_obj.chunks
+        ]
+        metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
+        return web.json_response(metadata.to_dict())
     except Exception as e:
-        print(f"[ERROR] Fetching file peers failed: {e}")
+        print(f"[ERROR] Fetching file metadata failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
 
 app = web.Application()
 app.router.add_post("/register", register_peer)
 app.router.add_get("/file_registry", get_tracker_registry_summary)
-app.router.add_get("/file_peers", get_file_peers)
-
-
-def get_private_ip():
-    """
-    Returns the actual private IP address of the machine.
-    This avoids using 127.0.0.1 and ensures that the peer registers
-    with its LAN IP.
-    """
-    try:
-        # Create a dummy socket connection to determine the correct network interface
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(
-            ("8.8.8.8", 80)
-        )  # Connect to Google's DNS to determine the correct interface
-        ip = s.getsockname()[0]  # Extract the private IP from the connection
-        s.close()
-        return ip
-    except Exception as e:
-        print(f"[ERROR] Failed to determine private IP: {e}")
-        return "127.0.0.1"  # Fallback to loopback if no IP is found
+app.router.add_get("/file_metadata", get_file_metadata)
 
 
 if __name__ == "__main__":

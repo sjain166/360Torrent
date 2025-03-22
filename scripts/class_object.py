@@ -17,10 +17,11 @@ class Chunk:
     Represents a chunk of a file.
     """
 
-    def __init__(self, chunk_name: str, chunk_size: int):
+    def __init__(self, chunk_name: str, chunk_size: int, download_status: bool = False):
         self.chunk_name = chunk_name
         self.chunk_size = chunk_size
         self.peers = []  # List of PeerObjects hosting this chunk
+        self.download_status = download_status
 
     def add_peer(self, peer: Peer):
         if all(existing_peer.ip != peer.ip for existing_peer in self.peers):
@@ -46,3 +47,32 @@ class File:
 
     def __repr__(self):
         return f"FileObject(file_name={self.file_name}, file_size={self.file_size}, chunks={self.chunks})"
+    
+
+class FileMetadata:
+    """
+    Represents the metadata of a file.
+    """
+    def __init__(self, file_name, file_size, chunks):
+        self.file_name = file_name
+        self.file_size = file_size
+        self.chunks = [Chunk(chunk_name=c["chunk_name"], chunk_size=c["chunk_size"], download_status=False) for c in chunks]
+
+    def to_dict(self):
+        return {
+            "file_name": self.file_name,
+            "file_size": self.file_size,
+            "chunks": [
+                {
+                    "chunk_name": chunk.chunk_name,
+                    "chunk_size": chunk.chunk_size,
+                    "download_status": chunk.download_status
+                }
+                for chunk in self.chunks
+            ]
+        }
+
+    def __repr__(self):
+        return f"FileMetadata(file_name={self.file_name}, file_size={self.file_size}, chunks={self.chunks})"
+
+    
