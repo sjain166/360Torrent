@@ -1,5 +1,6 @@
 import socket
 
+
 def get_private_ip():
     """
     Returns the actual private IP address of the machine.
@@ -9,7 +10,9 @@ def get_private_ip():
     try:
         # Create a dummy socket connection to determine the correct network interface
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))  # Connect to Google's DNS to determine the correct interface
+        s.connect(
+            ("8.8.8.8", 80)
+        )  # Connect to Google's DNS to determine the correct interface
         ip = s.getsockname()[0]  # Extract the private IP from the connection
         s.close()
         return ip

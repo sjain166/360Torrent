@@ -6,13 +6,16 @@ import socket
 
 TRACKER_URL = "http://10.0.0.130:8080"
 
+
 async def get_file_peers(file_name):
     """
     Queries the tracker for a list of peers hosting the requested file.
     """
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.get(f"{TRACKER_URL}/file_peers", params={"file_name": file_name}) as response:
+            async with session.get(
+                f"{TRACKER_URL}/file_peers", params={"file_name": file_name}
+            ) as response:
                 if response.status == 200:
                     data = await response.json()
                     print(f"[INFO] Peers hosting {file_name}: {data.get('peers', [])}")
@@ -24,18 +27,22 @@ async def get_file_peers(file_name):
             print(f"[ERROR] Failed to fetch file peers from tracker: {e}")
             return []
 
+
 async def register_downloaded_file(peer_id, ip, port, file_name):
     """
     Registers a newly downloaded file with the tracker so that other peers can request it.
     """
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(f"{TRACKER_URL}/register", json={
-                "peer_id": peer_id,
-                "ip": ip,
-                "port": port,
-                "files": [file_name]  # Add the newly downloaded file
-            }) as response:
+            async with session.post(
+                f"{TRACKER_URL}/register",
+                json={
+                    "peer_id": peer_id,
+                    "ip": ip,
+                    "port": port,
+                    "files": [file_name],  # Add the newly downloaded file
+                },
+            ) as response:
                 result = await response.json()
                 print(f"[INFO] Tracker updated with new file availability: {result}")
         except Exception as e:
@@ -62,6 +69,7 @@ async def download_file(peer_ip, file_name):
     except Exception as e:
         print(f"[ERROR] File download failed: {e}")
 
+
 def get_private_ip():
     """
     Returns the actual private IP address of the machine.
@@ -71,13 +79,16 @@ def get_private_ip():
     try:
         # Create a dummy socket connection to determine the correct network interface
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))  # Connect to Google's DNS to determine the correct interface
+        s.connect(
+            ("8.8.8.8", 80)
+        )  # Connect to Google's DNS to determine the correct interface
         ip = s.getsockname()[0]  # Extract the private IP from the connection
         s.close()
         return ip
     except Exception as e:
         print(f"[ERROR] Failed to determine private IP: {e}")
         return "127.0.0.1"  # Fallback to loopback if no IP is found
+
 
 async def main():
     file_name = "chunk01.webm"
@@ -95,9 +106,9 @@ async def main():
 
     await download_file(peer_ip, file_name)
     peer_id = f"peer_{os.getpid()}"
-    ip = get_private_ip() # Automatically fetch the VM's IP
+    ip = get_private_ip()  # Automatically fetch the VM's IP
     port = 6881
     await register_downloaded_file(peer_id, ip, port, file_name)
 
-asyncio.run(main())
 
+asyncio.run(main())

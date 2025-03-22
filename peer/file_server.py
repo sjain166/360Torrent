@@ -14,13 +14,16 @@ def get_private_ip():
     try:
         # Create a dummy socket connection to determine the correct network interface
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))  # Connect to Google's DNS to determine the correct interface
+        s.connect(
+            ("8.8.8.8", 80)
+        )  # Connect to Google's DNS to determine the correct interface
         ip = s.getsockname()[0]  # Extract the private IP from the connection
         s.close()
         return ip
     except Exception as e:
         print(f"[ERROR] Failed to determine private IP: {e}")
         return "127.0.0.1"  # Fallback to loopback if no IP is found
+
 
 async def serve_file(request):
     """
@@ -31,16 +34,17 @@ async def serve_file(request):
 
     if not FILE_NAME:
         return web.json_response({"error": "No file name provided"}, status=400)
-    
+
     FILE_PATH = os.path.join(FILES_DIRECTORY, FILE_NAME)
     print(f"[INFO] Requested file: {FILE_PATH}")
 
     if not os.path.exists(FILE_PATH):
         print(f"[ERROR] File not found: {FILE_NAME}")
         return web.json_response({"error": "File not found"}, status=404)
-    
+
     print(f"[INFO] Serving file: {FILE_PATH}")
     return web.FileResponse(FILE_PATH)
+
 
 async def start_file_server():
     """
@@ -57,6 +61,6 @@ async def start_file_server():
         await runner.setup()
         site = web.TCPSite(runner, host=ip, port=port)
         await site.start()
-        
+
     except Exception as e:
         print(f"[ERROR] File server failed to start: {e}")

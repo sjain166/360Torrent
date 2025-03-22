@@ -4,8 +4,10 @@ import socket
 from scripts.class_object import Peer, Chunk, File
 from tabulate import tabulate
 
-PEERS = {} # Dictionary to store registered peers {peer_id: (ip, port)}
-TRACKER_FILE_REGISTRY = [] # Dictionary to store file locations {file_name: [list_of_peers_hosting_it]}
+PEERS = {}  # Dictionary to store registered peers {peer_id: (ip, port)}
+TRACKER_FILE_REGISTRY = (
+    []
+)  # Dictionary to store file locations {file_name: [list_of_peers_hosting_it]}
 
 
 def summarize_available_files():
@@ -14,12 +16,16 @@ def summarize_available_files():
     """
     summary = []
     for file_obj in TRACKER_FILE_REGISTRY:
-        min_seeders = min(len(chunk.peers) for chunk in file_obj.chunks) if file_obj.chunks else 0
-        summary.append({
-            "file_name": file_obj.file_name,
-            "file_size": file_obj.file_size,
-            "seeders": min_seeders
-        })
+        min_seeders = (
+            min(len(chunk.peers) for chunk in file_obj.chunks) if file_obj.chunks else 0
+        )
+        summary.append(
+            {
+                "file_name": file_obj.file_name,
+                "file_size": file_obj.file_size,
+                "seeders": min_seeders,
+            }
+        )
     return summary
 
 
@@ -31,16 +37,30 @@ def print_tracker_file_registry():
     for file_obj in TRACKER_FILE_REGISTRY:
         file_displayed = False
         for chunk_obj in file_obj.chunks:
-            peer_list = ", ".join([f"{peer.ip}:{peer.port}" for peer in chunk_obj.peers])
-            table_data.append([
-                file_obj.file_name if not file_displayed else "",  # Print file name only once
-                file_obj.file_size if not file_displayed else "",  # Print file size only once
-                chunk_obj.chunk_name,
-                chunk_obj.chunk_size,
-                peer_list
-            ])
+            peer_list = ", ".join(
+                [f"{peer.ip}:{peer.port}" for peer in chunk_obj.peers]
+            )
+            table_data.append(
+                [
+                    (
+                        file_obj.file_name if not file_displayed else ""
+                    ),  # Print file name only once
+                    (
+                        file_obj.file_size if not file_displayed else ""
+                    ),  # Print file size only once
+                    chunk_obj.chunk_name,
+                    chunk_obj.chunk_size,
+                    peer_list,
+                ]
+            )
             file_displayed = True
-    headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Peers Hosting Chunk"]
+    headers = [
+        "File Name",
+        "File Size (Bytes)",
+        "Chunk Name",
+        "Chunk Size (Bytes)",
+        "Peers Hosting Chunk",
+    ]
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
 
@@ -61,7 +81,9 @@ async def register_peer(request):
             file_size = file_data.get("file_size")
             chunks = file_data.get("chunks", [])
             # Check if file already exists in the registry
-            existing_file = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+            existing_file = next(
+                (f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None
+            )
             if not existing_file:
                 # If file does not exist, create a new file entry
                 new_file = File(file_name=file_name, file_size=file_size)
@@ -76,7 +98,10 @@ async def register_peer(request):
                 # If file exists, update existing chunks
                 for chunk_data in chunks:
                     chunk_name = chunk_data.get("chunk_name")
-                    existing_chunk = next((c for c in existing_file.chunks if c.chunk_name == chunk_name), None)
+                    existing_chunk = next(
+                        (c for c in existing_file.chunks if c.chunk_name == chunk_name),
+                        None,
+                    )
                     if existing_chunk:
                         # If chunk exists, add new peer to it
                         existing_chunk.add_peer(Peer(ip, port))
@@ -89,7 +114,7 @@ async def register_peer(request):
         print(f"[INFO] Registered peer {peer_id} at {ip}:{port}")  # Debugging output
         print_tracker_file_registry()
         return web.json_response({"status": "registered", "peers": PEERS})
-    
+
     except Exception as e:
         print(f"[ERROR] Peer registration failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
@@ -101,7 +126,9 @@ async def get_tracker_registry_summary(request):
     """
     try:
         file_summary = summarize_available_files()
-        return web.json_response({"status": "registered", "peers": PEERS, "available_files": file_summary})
+        return web.json_response(
+            {"status": "registered", "peers": PEERS, "available_files": file_summary}
+        )
     except Exception as e:
         print(f"[ERROR] Fetching Tracker File Summary failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
@@ -136,14 +163,16 @@ def get_private_ip():
     try:
         # Create a dummy socket connection to determine the correct network interface
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))  # Connect to Google's DNS to determine the correct interface
+        s.connect(
+            ("8.8.8.8", 80)
+        )  # Connect to Google's DNS to determine the correct interface
         ip = s.getsockname()[0]  # Extract the private IP from the connection
         s.close()
         return ip
     except Exception as e:
         print(f"[ERROR] Failed to determine private IP: {e}")
         return "127.0.0.1"  # Fallback to loopback if no IP is found
-    
+
 
 if __name__ == "__main__":
     try:

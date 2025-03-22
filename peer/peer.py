@@ -8,11 +8,12 @@ from scripts.utils import get_private_ip
 from tabulate import tabulate
 
 TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
-FILE_PATH = "tests/data" 
+FILE_PATH = "tests/data"
 
 # Rather a Fixed Hosted Files, Scrap the Data Folder to update teh Hosted Files before TRacker Registration
 # HOSTED_FILE = ["test_data_send.txt"]
 PEER_FILE_REGISTRY = []
+
 
 def scrape_data_folder():
     """
@@ -34,7 +35,9 @@ def scrape_data_folder():
                 if os.path.isfile(chunk_path):
                     chunk_size = os.path.getsize(chunk_path)
                     chunk_obj = Chunk(chunk_name=chunk, chunk_size=chunk_size)
-                    chunk_obj.peers.append(Peer(peer_ip, peer_port))  # Assign this peer as a host
+                    chunk_obj.peers.append(
+                        Peer(peer_ip, peer_port)
+                    )  # Assign this peer as a host
                     file_obj.chunks.append(chunk_obj)
                     file_obj.file_size += chunk_size  # Update file size
             PEER_FILE_REGISTRY.append(file_obj)
@@ -45,20 +48,34 @@ def print_peer_file_registry():
     Prints the PEER_FILE_REGISTRY in a tabular format without repeating file names.
     """
     table_data = []
-    
+
     for file_obj in PEER_FILE_REGISTRY:
         file_displayed = False
         for chunk_obj in file_obj.chunks:
-            peer_list = ", ".join([f"{peer.ip}:{peer.port}" for peer in chunk_obj.peers])
-            table_data.append([
-                file_obj.file_name if not file_displayed else "",  # Print file name only once
-                file_obj.file_size if not file_displayed else "",  # Print file size only once
-                chunk_obj.chunk_name,
-                chunk_obj.chunk_size,
-                peer_list
-            ])
+            peer_list = ", ".join(
+                [f"{peer.ip}:{peer.port}" for peer in chunk_obj.peers]
+            )
+            table_data.append(
+                [
+                    (
+                        file_obj.file_name if not file_displayed else ""
+                    ),  # Print file name only once
+                    (
+                        file_obj.file_size if not file_displayed else ""
+                    ),  # Print file size only once
+                    chunk_obj.chunk_name,
+                    chunk_obj.chunk_size,
+                    peer_list,
+                ]
+            )
             file_displayed = True
-    headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Peers Hosting Chunk"]
+    headers = [
+        "File Name",
+        "File Size (Bytes)",
+        "Chunk Name",
+        "Chunk Size (Bytes)",
+        "Peers Hosting Chunk",
+    ]
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
 
@@ -66,13 +83,32 @@ async def register_peer(peer_id, ip, port):
     """
     Registers the peer to the tracker.
     """
-    hosted_files = [{"file_name": f.file_name, "file_size": f.file_size, "chunks": 
-                         [{"chunk_name": c.chunk_name, "chunk_size": c.chunk_size, "peers": 
-                           [{"ip": p.ip, "port": p.port} for p in c.peers]} for c in f.chunks]} 
-                        for f in PEER_FILE_REGISTRY]
+    hosted_files = [
+        {
+            "file_name": f.file_name,
+            "file_size": f.file_size,
+            "chunks": [
+                {
+                    "chunk_name": c.chunk_name,
+                    "chunk_size": c.chunk_size,
+                    "peers": [{"ip": p.ip, "port": p.port} for p in c.peers],
+                }
+                for c in f.chunks
+            ],
+        }
+        for f in PEER_FILE_REGISTRY
+    ]
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.post(f"{TRACKER_URL}/register", json={"peer_id": peer_id, "ip": ip, "port": port, "files" : hosted_files}) as response:
+            async with session.post(
+                f"{TRACKER_URL}/register",
+                json={
+                    "peer_id": peer_id,
+                    "ip": ip,
+                    "port": port,
+                    "files": hosted_files,
+                },
+            ) as response:
                 result = await response.json()
                 print(f"[INFO] Registration Response: {result}")  # Debugging Output
     except Exception as e:
@@ -91,7 +127,7 @@ async def get_tracker_registry_summary():
     except Exception as e:
         print(f"[ERROR] Failed to fetch file registry summary: {e}")
         return []
-    
+
 
 def print_registry_summary(summary):
     """
@@ -101,7 +137,7 @@ def print_registry_summary(summary):
         print("[WARN] No files available on the tracker.")
         return
     table_data = [
-        [file['file_name'], file['file_size'], file['seeders']] for file in summary
+        [file["file_name"], file["file_size"], file["seeders"]] for file in summary
     ]
     headers = ["File Name", "File Size (Bytes)", "Number of Seeders"]
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
@@ -118,7 +154,9 @@ async def prompt_user_action():
             summary = await get_tracker_registry_summary()
             print_registry_summary(summary)
         elif choice == "2":
-            file_name = input("Enter the name of the file you wish to download: >> ").strip()
+            file_name = input(
+                "Enter the name of the file you wish to download: >> "
+            ).strip()
             if file_name:
                 print(f"[INFO] You selected to download: {file_name}")
                 # Placeholder for actual download logic
@@ -135,12 +173,13 @@ async def main():
     scrape_data_folder()
     peer_id = f"peer_{os.getpid()}"
     try:
-        ip = get_private_ip() # Automatically fetch the VM's IP
+        ip = get_private_ip()  # Automatically fetch the VM's IP
         port = 6881
         await register_peer(peer_id, ip, port)
-        asyncio.create_task(file_server.start_file_server()) # Start the file server
-        await prompt_user_action() # Begin prompting user to download files repeatedly
+        asyncio.create_task(file_server.start_file_server())  # Start the file server
+        await prompt_user_action()  # Begin prompting user to download files repeatedly
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
+
 
 asyncio.run(main())
