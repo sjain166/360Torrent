@@ -10,6 +10,20 @@ PEERS = {}
 # Dictionary to store file locations {file_name: [list_of_peers_hosting_it]}
 TRACKER_FILE_REGISTRY = []
 
+def summarize_available_files():
+    """
+    Summarizes the files in TRACKER_FILE_REGISTRY and returns info on file_name, file_size, and number of seeders.
+    """
+    summary = []
+    for file_obj in TRACKER_FILE_REGISTRY:
+        min_seeders = min(len(chunk.peers) for chunk in file_obj.chunks) if file_obj.chunks else 0
+        summary.append({
+            "file_name": file_obj.file_name,
+            "file_size": file_obj.file_size,
+            "seeders": min_seeders
+        })
+    return summary
+
 def print_tracker_file_registry():
     """
     Prints the TRACKER_FILE_REGISTRY in a tabular format without repeating file names.
@@ -87,15 +101,16 @@ async def register_peer(request):
         print(f"[ERROR] Peer registration failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
-async def get_peers(request):
+async def get_tracker_registry_summary(request):
     """
-    Returns a list of active peers.
+    Returns a tracker file summary.
     """
     try:
-        return web.json_response({"peers": PEERS})
+        file_summary = summarize_available_files()
+        return web.json_response({"status": "registered", "peers": PEERS, "available_files": file_summary})
     
     except Exception as e:
-        print(f"[ERROR] Fetching peers failed: {e}")
+        print(f"[ERROR] Fetching Tracker File Summary failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
 
@@ -118,7 +133,7 @@ async def get_file_peers(request):
 
 app = web.Application()
 app.router.add_post("/register", register_peer)
-app.router.add_get("/peers", get_peers)
+app.router.add_get("/file_registry", get_tracker_registry_summary)
 app.router.add_get("/file_peers", get_file_peers)
 
 

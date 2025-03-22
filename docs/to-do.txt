@@ -1,9 +1,7 @@
 Basic :
 
-* Itr in the data folder to get all the hosted files
-3. List the current files, and promt the user to download a file
-4. Intiate the Download suing the downloader.py
-1. Download Bar + Download Speed + Total-Time Taken
-*. Randomize the Peer IP Selection
+1. Intiate the Download suing the downloader.py
+2. Download Bar + Download Speed + Total-Time Taken
+3. Randomize the Peer IP Selection
 
 Aesthetic : 

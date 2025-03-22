@@ -6,6 +6,7 @@ import peer.file_server as file_server
 from scripts.class_object import Peer, Chunk, File
 from scripts.utils import get_private_ip
 from tabulate import tabulate
+import time
 
 TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
 
@@ -43,7 +44,7 @@ def scrape_data_folder():
                     file_obj.file_size += chunk_size  # Update file size
             
             PEER_FILE_REGISTRY.append(file_obj)
-            # print(f"[INFO] Registered file: {file_obj}")
+
 def print_peer_file_registry():
     """
     Prints the PEER_FILE_REGISTRY in a tabular format without repeating file names.
@@ -74,7 +75,6 @@ async def register_peer(peer_id, ip, port):
                          [{"chunk_name": c.chunk_name, "chunk_size": c.chunk_size, "peers": 
                            [{"ip": p.ip, "port": p.port} for p in c.peers]} for c in f.chunks]} 
                         for f in PEER_FILE_REGISTRY]
-    print(hosted_files)
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(f"{TRACKER_URL}/register", json={"peer_id": peer_id, "ip": ip, "port": port, "files" : hosted_files}) as response:
@@ -84,36 +84,73 @@ async def register_peer(peer_id, ip, port):
     except Exception as e:
         print(f"[ERROR] Failed to register peer: {e}")
 
-async def get_peers():
+async def get_tracker_registry_summary():
     """
-    Fetches the list of active peers from the tracker.
+    Fetches the list of available files and their seeder info from the tracker.
     """
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(f"{TRACKER_URL}/peers") as response:
-                peers = await response.json()
-                return peers.get("peers", {})
+            async with session.get(f"{TRACKER_URL}/file_registry") as response:
+                summary = await response.json()
+                return summary.get("available_files", [])
     
     except Exception as e:
-        print(f"[ERROR] Failed to fetch peers: {e}")
-        return {}
+        print(f"[ERROR] Failed to fetch file registry summary: {e}")
+        return []
+    
+def print_registry_summary(summary):
+    """
+    Display the tracker file registry summary in a table.
+    """
+    if not summary:
+        print("[WARN] No files available on the tracker.")
+        return
+
+    table_data = [
+        [file['file_name'], file['file_size'], file['seeders']] for file in summary
+    ]
+    headers = ["File Name", "File Size (Bytes)", "Number of Seeders"]
+    print(tabulate(table_data, headers=headers, tablefmt="grid"))
+
+
+async def prompt_user_action():
+    while True:
+        print("\n[OPTIONS] Select an action:")
+        print("1. Get available files")
+        print("2. Download a file")
+        print("3. Exit")
+        choice = input(">> ").strip()
+
+        if choice == "1":
+            summary = await get_tracker_registry_summary()
+            print_registry_summary(summary)
+        elif choice == "2":
+            file_name = input("Enter the name of the file you wish to download: >> ").strip()
+            if file_name:
+                print(f"[INFO] You selected to download: {file_name}")
+                # Placeholder for actual download logic
+            else:
+                print("[WARN] No file name entered.")
+        elif choice == "3":
+            print("[INFO] Exiting download prompt loop.")
+            break
+        else:
+            print("[ERROR] Invalid choice. Please select 1, 2, or 3.")
 
 async def main():
     scrape_data_folder()
-    # print_peer_file_registry()
+
     peer_id = f"peer_{os.getpid()}"
     try:
         ip = get_private_ip() # Automatically fetch the VM's IP
         port = 6881
         await register_peer(peer_id, ip, port)
-
-        peers = await get_peers()
-        print(f"[INFO] Active Peers: {peers}")
         
         # Start the file server
         asyncio.create_task(file_server.start_file_server())
-        while True:
-            await asyncio.sleep(3600)
+
+        # Begin prompting user to download files repeatedly
+        await prompt_user_action()
 
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
