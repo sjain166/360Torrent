@@ -4,11 +4,9 @@ import socket
 from scripts.class_object import Peer, Chunk, File
 from tabulate import tabulate
 
-# Dictionary to store registered peers {peer_id: (ip, port)}
-PEERS = {}
+PEERS = {} # Dictionary to store registered peers {peer_id: (ip, port)}
+TRACKER_FILE_REGISTRY = [] # Dictionary to store file locations {file_name: [list_of_peers_hosting_it]}
 
-# Dictionary to store file locations {file_name: [list_of_peers_hosting_it]}
-TRACKER_FILE_REGISTRY = []
 
 def summarize_available_files():
     """
@@ -24,12 +22,12 @@ def summarize_available_files():
         })
     return summary
 
+
 def print_tracker_file_registry():
     """
     Prints the TRACKER_FILE_REGISTRY in a tabular format without repeating file names.
     """
     table_data = []
-    
     for file_obj in TRACKER_FILE_REGISTRY:
         file_displayed = False
         for chunk_obj in file_obj.chunks:
@@ -42,9 +40,9 @@ def print_tracker_file_registry():
                 peer_list
             ])
             file_displayed = True
-    
     headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Peers Hosting Chunk"]
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
+
 
 async def register_peer(request):
     """
@@ -54,18 +52,14 @@ async def register_peer(request):
         data = await request.json()
         peer_id, ip, port = data.get("peer_id"), data.get("ip"), data.get("port")
         hosted_files = data.get("files", [])  # List of files the peer hosts
-
         if not peer_id or not ip or not port:
             return web.json_response({"error": "Invalid peer data"}, status=400)
-        
         PEERS[peer_id] = (ip, port)
-
         # Process files sent by the peer
         for file_data in hosted_files:
             file_name = file_data.get("file_name")
             file_size = file_data.get("file_size")
             chunks = file_data.get("chunks", [])
-            
             # Check if file already exists in the registry
             existing_file = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
             if not existing_file:
@@ -92,7 +86,6 @@ async def register_peer(request):
                         new_chunk = Chunk(chunk_name=chunk_name, chunk_size=chunk_size)
                         new_chunk.add_peer(Peer(ip, port))
                         existing_file.chunks.append(new_chunk)
-
         print(f"[INFO] Registered peer {peer_id} at {ip}:{port}")  # Debugging output
         print_tracker_file_registry()
         return web.json_response({"status": "registered", "peers": PEERS})
@@ -101,6 +94,7 @@ async def register_peer(request):
         print(f"[ERROR] Peer registration failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
+
 async def get_tracker_registry_summary(request):
     """
     Returns a tracker file summary.
@@ -108,7 +102,6 @@ async def get_tracker_registry_summary(request):
     try:
         file_summary = summarize_available_files()
         return web.json_response({"status": "registered", "peers": PEERS, "available_files": file_summary})
-    
     except Exception as e:
         print(f"[ERROR] Fetching Tracker File Summary failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
@@ -120,12 +113,9 @@ async def get_file_peers(request):
     """
     try:
         file_name = request.query.get("file_name")
-
         if not file_name or file_name not in file_registry:
             return web.json_response({"error": "File not found"}, status=404)
-
         return web.json_response({"peers": file_registry[file_name]})
-
     except Exception as e:
         print(f"[ERROR] Fetching file peers failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
@@ -154,6 +144,7 @@ def get_private_ip():
         print(f"[ERROR] Failed to determine private IP: {e}")
         return "127.0.0.1"  # Fallback to loopback if no IP is found
     
+
 if __name__ == "__main__":
     try:
         print_tracker_file_registry()

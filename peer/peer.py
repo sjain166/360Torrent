@@ -6,10 +6,8 @@ import peer.file_server as file_server
 from scripts.class_object import Peer, Chunk, File
 from scripts.utils import get_private_ip
 from tabulate import tabulate
-import time
 
 TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
-
 FILE_PATH = "tests/data" 
 
 # Rather a Fixed Hosted Files, Scrap the Data Folder to update teh Hosted Files before TRacker Registration
@@ -24,16 +22,13 @@ def scrape_data_folder():
     PEER_FILE_REGISTRY = []
     peer_ip = get_private_ip()
     peer_port = 6881
-    
     if not os.path.exists(FILE_PATH):
         print(f"[ERROR] Data folder not found: {FILE_PATH}")
         return
-    
     for folder in os.listdir(FILE_PATH):
         folder_path = os.path.join(FILE_PATH, folder)
         if os.path.isdir(folder_path):
             file_obj = File(file_name=folder, file_size=0)  # Initialize file object
-            
             for chunk in os.listdir(folder_path):
                 chunk_path = os.path.join(folder_path, chunk)
                 if os.path.isfile(chunk_path):
@@ -42,8 +37,8 @@ def scrape_data_folder():
                     chunk_obj.peers.append(Peer(peer_ip, peer_port))  # Assign this peer as a host
                     file_obj.chunks.append(chunk_obj)
                     file_obj.file_size += chunk_size  # Update file size
-            
             PEER_FILE_REGISTRY.append(file_obj)
+
 
 def print_peer_file_registry():
     """
@@ -63,9 +58,9 @@ def print_peer_file_registry():
                 peer_list
             ])
             file_displayed = True
-    
     headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Peers Hosting Chunk"]
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
+
 
 async def register_peer(peer_id, ip, port):
     """
@@ -80,9 +75,9 @@ async def register_peer(peer_id, ip, port):
             async with session.post(f"{TRACKER_URL}/register", json={"peer_id": peer_id, "ip": ip, "port": port, "files" : hosted_files}) as response:
                 result = await response.json()
                 print(f"[INFO] Registration Response: {result}")  # Debugging Output
-
     except Exception as e:
         print(f"[ERROR] Failed to register peer: {e}")
+
 
 async def get_tracker_registry_summary():
     """
@@ -93,11 +88,11 @@ async def get_tracker_registry_summary():
             async with session.get(f"{TRACKER_URL}/file_registry") as response:
                 summary = await response.json()
                 return summary.get("available_files", [])
-    
     except Exception as e:
         print(f"[ERROR] Failed to fetch file registry summary: {e}")
         return []
     
+
 def print_registry_summary(summary):
     """
     Display the tracker file registry summary in a table.
@@ -105,7 +100,6 @@ def print_registry_summary(summary):
     if not summary:
         print("[WARN] No files available on the tracker.")
         return
-
     table_data = [
         [file['file_name'], file['file_size'], file['seeders']] for file in summary
     ]
@@ -120,7 +114,6 @@ async def prompt_user_action():
         print("2. Download a file")
         print("3. Exit")
         choice = input(">> ").strip()
-
         if choice == "1":
             summary = await get_tracker_registry_summary()
             print_registry_summary(summary)
@@ -137,21 +130,16 @@ async def prompt_user_action():
         else:
             print("[ERROR] Invalid choice. Please select 1, 2, or 3.")
 
+
 async def main():
     scrape_data_folder()
-
     peer_id = f"peer_{os.getpid()}"
     try:
         ip = get_private_ip() # Automatically fetch the VM's IP
         port = 6881
         await register_peer(peer_id, ip, port)
-        
-        # Start the file server
-        asyncio.create_task(file_server.start_file_server())
-
-        # Begin prompting user to download files repeatedly
-        await prompt_user_action()
-
+        asyncio.create_task(file_server.start_file_server()) # Start the file server
+        await prompt_user_action() # Begin prompting user to download files repeatedly
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
 
