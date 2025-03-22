@@ -7,6 +7,7 @@ from scripts.class_object import Peer, Chunk, File, FileMetadata
 from scripts.utils import get_private_ip
 from tabulate import tabulate
 from peer.downloader import main as downloader
+import time
 
 
 
@@ -196,7 +197,7 @@ async def main():
         ip = get_private_ip()  # Automatically fetch the VM's IP
         port = 6881
         await register_peer(peer_id, ip, port)
-        asyncio.create_task(file_server.start_file_server())  # Start the file server
+        await file_server.start_file_server()
         await prompt_user_action()  # Begin prompting user to download files repeatedly
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
