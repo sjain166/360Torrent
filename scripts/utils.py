@@ -1,5 +1,14 @@
 import socket
+import multiprocessing
 
+####################################################################################################
+
+# import debugpy
+# debugpy.listen(("localhost", 5678))
+# print("🔧 Waiting for debugger to attach on port 5678...")
+# debugpy.wait_for_client()  # Blocks execution here
+
+####################################################################################################
 
 def get_private_ip():
     """
@@ -19,3 +28,12 @@ def get_private_ip():
     except Exception as e:
         print(f"[ERROR] Failed to determine private IP: {e}")
         return "127.0.0.1"  # Fallback to loopback if no IP is found
+
+def get_max_threads():
+    try:
+        max_threads = max(1, multiprocessing.cpu_count() - 2)
+        print(f"[INFO] Max threads available for downloading: {max_threads}")
+        return max_threads
+    except Exception as e:
+        print(f"[ERROR] Unable to determine max threads: {e}")
+        return 1

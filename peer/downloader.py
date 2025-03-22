@@ -2,29 +2,34 @@ import aiohttp
 import asyncio
 import os
 import socket
+import random
+
+from scripts.class_object import FileMetadata
+from scripts.utils import get_private_ip, get_max_threads
+from tabulate import tabulate
 
 
 TRACKER_URL = "http://10.0.0.130:8080"
 
 
-async def get_file_peers(file_name):
+async def get_chunk_peers(file_name, chunk_name):
     """
-    Queries the tracker for a list of peers hosting the requested file.
+    Queries the tracker for a list of peers hosting a specific chunk of the file.
     """
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(
-                f"{TRACKER_URL}/file_peers", params={"file_name": file_name}
+                f"{TRACKER_URL}/chunk_peers",
+                params={"file_name": file_name, "chunk_name": chunk_name},
             ) as response:
                 if response.status == 200:
                     data = await response.json()
-                    print(f"[INFO] Peers hosting {file_name}: {data.get('peers', [])}")
                     return data.get("peers", [])
                 else:
-                    print(f"[ERROR] Tracker returned error: {response.status}")
+                    print(f"[ERROR] Tracker returned error for chunk {chunk_name}: {response.status}")
                     return []
         except Exception as e:
-            print(f"[ERROR] Failed to fetch file peers from tracker: {e}")
+            print(f"[ERROR] Failed to fetch chunk peers: {e}")
             return []
 
 
@@ -49,66 +54,91 @@ async def register_downloaded_file(peer_id, ip, port, file_name):
             print(f"[ERROR] Failed to register downloaded file: {e}")
 
 
-async def download_file(peer_ip, file_name):
+async def download_chunk(peer_ip, file_name, chunk_name):
     """
-    Downloads a file from the peer.
+    Downloads a specific chunk from the given peer.
     """
-    URL = f"http://{peer_ip}:6881/file?file_name={file_name}"
-    DOWNLOAD_DIRECTORY = f"tests/data"
-    FILE_PATH = os.path.join(DOWNLOAD_DIRECTORY, file_name)
+    URL = f"http://{peer_ip}:6881/file?file_name={file_name}&chunk_name={chunk_name}"
+    folder_path = os.path.join("tests/data", file_name)
+    os.makedirs(folder_path, exist_ok=True)
+    file_path = os.path.join(folder_path, chunk_name)
 
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(URL) as response:
                 if response.status == 200:
-                    with open(FILE_PATH, "wb") as f:
+                    with open(file_path, "wb") as f:
                         f.write(await response.read())
-                    print(f"[INFO] File downloaded successfully to {FILE_PATH}")
+                    print(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
+                    return True
                 else:
-                    print(f"[ERROR] Failed to download file: {response.status}")
+                    print(f"[ERROR] Failed to download {chunk_name} from {peer_ip}: {response.status}")
+                    return False
     except Exception as e:
-        print(f"[ERROR] File download failed: {e}")
+        print(f"[ERROR] Download failed for {chunk_name} from {peer_ip}: {e}")
+        return False
 
 
-def get_private_ip():
-    """
-    Returns the actual private IP address of the machine.
-    This avoids using 127.0.0.1 and ensures that the peer registers
-    with its LAN IP.
-    """
-    try:
-        # Create a dummy socket connection to determine the correct network interface
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(
-            ("8.8.8.8", 80)
-        )  # Connect to Google's DNS to determine the correct interface
-        ip = s.getsockname()[0]  # Extract the private IP from the connection
-        s.close()
-        return ip
-    except Exception as e:
-        print(f"[ERROR] Failed to determine private IP: {e}")
-        return "127.0.0.1"  # Fallback to loopback if no IP is found
 
-
-async def main():
-    file_name = "chunk01.webm"
-
-    # Get the list of peers hosting the file
-    peers = await get_file_peers(file_name)
-
-    if not peers:
-        print(f"[ERROR] No peers found hosting {file_name}")
+def print_file_metadata(metadata: FileMetadata):
+    if not metadata:
+        print("[WARN] No metadata found.")
         return
+    table_data = []
+    file_displayed = False
+    for chunk in metadata.chunks:
+        table_data.append([
+            metadata.file_name if not file_displayed else "",
+            metadata.file_size if not file_displayed else "",
+            chunk.chunk_name,
+            chunk.chunk_size,
+            "Downloaded" if chunk.download_status else "Pending"
+        ])
+        file_displayed = True
+    headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Download Status"]
+    print(tabulate(table_data, headers=headers, tablefmt="grid"))
+    
 
-    # Select the first available peer
-    peer_ip, _ = peers[0]
-    print(f"[INFO] Downloading from peer: {peer_ip}")
+async def main(metadata: FileMetadata):
+    try:
+        print(f"[INFO] Preparing to download file: {metadata.file_name}")
+        print_file_metadata(metadata)
+        dead_peer_map = {}  # {chunk_name: [dead_peer_ips]}
 
-    await download_file(peer_ip, file_name)
-    peer_id = f"peer_{os.getpid()}"
-    ip = get_private_ip()  # Automatically fetch the VM's IP
-    port = 6881
-    await register_downloaded_file(peer_id, ip, port, file_name)
+        for chunk in metadata.chunks:
+            chunk_name = chunk.chunk_name
+            dead_peers = []
+            peers = await get_chunk_peers(metadata.file_name, chunk_name)
 
+            while peers:
+                peer = random.choice(peers)
+                print(peer["ip"])
+                try:
+                    success = await download_chunk(peer["ip"], metadata.file_name, chunk_name)
+                except Exception as e:
+                    print(f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}")
+                if success:
+                    chunk.download_status = True
+                    break
+                else:
+                    peers.remove(peer)
+                    dead_peers.append(peer)
+                    print(f"[WARN] Removed {peer} from retry list for {chunk_name}")
 
-asyncio.run(main())
+            if not chunk.download_status:
+                print(f"[ERROR] Failed to download chunk: {chunk_name}")
+            if dead_peers:
+                dead_peer_map[chunk_name] = dead_peers
+
+        print("\n[INFO] Download Summary:")
+        print_file_metadata(metadata)
+        print("\n[INFO] Dead Peer Map:")
+        for chunk_name, peers in dead_peer_map.items():
+            print(f"  {chunk_name}: {peers}")
+    
+    except Exception as e:
+        print(f"[ERROR] Peer Execution Failed: {e}")
+
+if __name__ == "__main__":
+    print("[INFO] Downloader script expected to be invoked with metadata passed externally.")
+    get_max_threads()

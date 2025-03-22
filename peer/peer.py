@@ -6,6 +6,10 @@ import peer.file_server as file_server
 from scripts.class_object import Peer, Chunk, File, FileMetadata
 from scripts.utils import get_private_ip
 from tabulate import tabulate
+from peer.downloader import main as downloader
+
+
+
 
 TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
 FILE_PATH = "tests/data"
@@ -157,24 +161,6 @@ async def get_file_metadata(file_name):
         print(f"[ERROR] Exception during file metadata fetch: {e}")
         return None
 
-def print_file_metadata(metadata: FileMetadata):
-    if not metadata:
-        print("[WARN] No metadata found.")
-        return
-    table_data = []
-    file_displayed = False
-    for chunk in metadata.chunks:
-        table_data.append([
-            metadata.file_name if not file_displayed else "",
-            metadata.file_size if not file_displayed else "",
-            chunk.chunk_name,
-            chunk.chunk_size,
-            "Downloaded" if chunk.download_status else "Pending"
-        ])
-        file_displayed = True
-    headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Download Status"]
-    print(tabulate(table_data, headers=headers, tablefmt="grid"))
-
     
 async def prompt_user_action():
     while True:
@@ -193,7 +179,7 @@ async def prompt_user_action():
             if file_name:
                 print(f"[INFO] You selected to download: {file_name}")
                 metadata = await get_file_metadata(file_name)
-                print_file_metadata(metadata)
+                await downloader(metadata)
             else:
                 print("[WARN] No file name entered.")
         elif choice == "3":
@@ -214,6 +200,5 @@ async def main():
         await prompt_user_action()  # Begin prompting user to download files repeatedly
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
-
 
 asyncio.run(main())

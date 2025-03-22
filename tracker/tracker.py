@@ -135,6 +135,37 @@ async def get_tracker_registry_summary(request):
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
 
+def get_best_peers(chunk_obj):
+    """
+    Placeholder function for advanced peer selection logic.
+    Currently returns all peers hosting the chunk.
+    """
+    return [{"ip": peer.ip, "port": peer.port} for peer in chunk_obj.peers]
+
+async def get_chunk_peers(request):
+    try:
+        file_name = request.query.get("file_name")
+        chunk_name = request.query.get("chunk_name")
+        if not file_name or not chunk_name:
+            return web.json_response({"error": "Missing file_name or chunk_name"}, status=400)
+
+        file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+        if not file_obj:
+            return web.json_response({"error": "File not found"}, status=404)
+
+        chunk_obj = next((c for c in file_obj.chunks if c.chunk_name == chunk_name), None)
+        if not chunk_obj:
+            return web.json_response({"error": "Chunk not found"}, status=404)
+
+        peer_list = get_best_peers(chunk_obj)
+        return web.json_response({"peers": peer_list})
+
+    except Exception as e:
+        print(f"[ERROR] Fetching chunk peers failed: {e}")
+        return web.json_response({"error": "Internal Server Error"}, status=500)
+
+
+
 async def get_file_metadata(request):
     try:
         file_name = request.query.get("file_name")
@@ -163,6 +194,7 @@ app = web.Application()
 app.router.add_post("/register", register_peer)
 app.router.add_get("/file_registry", get_tracker_registry_summary)
 app.router.add_get("/file_metadata", get_file_metadata)
+app.router.add_get("/chunk_peers", get_chunk_peers)
 
 
 if __name__ == "__main__":
