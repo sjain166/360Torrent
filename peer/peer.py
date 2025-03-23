@@ -169,14 +169,12 @@ async def prompt_user_action():
         print("1. Get available files")
         print("2. Download a file")
         print("3. Exit")
-        choice = input(">> ").strip()
+        choice = (await asyncio.to_thread(input, ">> ")).strip()
         if choice == "1":
             summary = await get_tracker_registry_summary()
             print_registry_summary(summary)
         elif choice == "2":
-            file_name = input(
-                "Enter the name of the file you wish to download: >> "
-            ).strip()
+            file_name = (await asyncio.to_thread(input, "Enter file name: >> ")).strip()
             if file_name:
                 print(f"[INFO] You selected to download: {file_name}")
                 metadata = await get_file_metadata(file_name)
