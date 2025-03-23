@@ -92,6 +92,29 @@ async def download_chunk(peer_ip, file_name, chunk_name, chunk_size):
         print(f"[ERROR] Download failed for {chunk_name} from {peer_ip}: {e}")
         return False
 
+async def update_tracker_chunk_host(file_name, chunk_name, ip, port, dead_peers, download_status):
+    """
+    Informs the tracker that the peer now hosts a newly downloaded chunk.
+    """
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post(
+                f"{TRACKER_URL}/update_chunk_host",
+                json={
+                    "file_name": file_name,
+                    "chunk_name": chunk_name,
+                    "ip": ip,
+                    "port": port,
+                    "dead_peers": dead_peers,
+                    "download_status": download_status
+                },
+            ) as response:
+                if response.status == 200:
+                    print(f"[INFO] Tracker updated with new host for {chunk_name}")
+                else:
+                    print(f"[WARN] Tracker update for {chunk_name} failed: {response.status}")
+        except Exception as e:
+            print(f"[ERROR] Tracker update exception: {e}")
 
 
 def print_file_metadata(metadata: FileMetadata):
@@ -120,6 +143,9 @@ async def main(metadata: FileMetadata):
         dead_peer_map = {}  # {chunk_name: [dead_peer_ips]}
 
         start_time = time.time()
+        self_ip = get_private_ip()
+        self_port = 6881
+
         for chunk in metadata.chunks:
             chunk_name = chunk.chunk_name
             chunk_size = chunk.chunk_size
@@ -135,13 +161,15 @@ async def main(metadata: FileMetadata):
                     print(f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}")
                 if success:
                     chunk.download_status = True
+                    await update_tracker_chunk_host(metadata.file_name, chunk_name, self_ip, self_port, dead_peers, chunk.download_status)
                     break
                 else:
                     peers.remove(peer)
                     dead_peers.append(peer)
                     print(f"[WARN] Removed {peer} from retry list for {chunk_name}")
-
+            
             if not chunk.download_status:
+                await update_tracker_chunk_host(metadata.file_name, chunk_name, self_ip, self_port, dead_peers, chunk.download_status)
                 print(f"[ERROR] Failed to download chunk: {chunk_name}")
             if dead_peers:
                 dead_peer_map[chunk_name] = dead_peers
@@ -152,7 +180,7 @@ async def main(metadata: FileMetadata):
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
         print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))
-        
+
         print("\n[INFO] Dead Peer Map:")
         for chunk_name, peers in dead_peer_map.items():
             print(f"  {chunk_name}: {peers}")

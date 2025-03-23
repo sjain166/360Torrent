@@ -121,6 +121,43 @@ async def register_peer(request):
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
 
+async def update_chunk_host(request):
+    try:
+        data = await request.json()
+        file_name = data.get("file_name")
+        chunk_name = data.get("chunk_name")
+        ip = data.get("ip")
+        port = data.get("port")
+        dead_peers = data.get("dead_peers", [])
+        download_status = data.get("download_status", False)
+
+        if not file_name or not chunk_name or not ip or not port:
+            return web.json_response({"error": "Missing required fields"}, status=400)
+
+        file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+        if not file_obj:
+            return web.json_response({"error": "File not found"}, status=404)
+
+        chunk_obj = next((c for c in file_obj.chunks if c.chunk_name == chunk_name), None)
+        if not chunk_obj:
+            return web.json_response({"error": "Chunk not found"}, status=404)
+
+        if download_status:
+            chunk_obj.add_peer(Peer(ip, port))
+
+        for dead in dead_peers:
+            chunk_obj.peers = [p for p in chunk_obj.peers if not (p.ip == dead["ip"] and p.port == dead["port"])]
+        
+        print_tracker_file_registry()
+        
+        print(f"[INFO] Updated chunk {chunk_name} of {file_name} with peer {ip}:{port}")
+        return web.json_response({"status": "updated"})
+
+    except Exception as e:
+        print(f"[ERROR] Failed to update chunk host: {e}")
+        return web.json_response({"error": "Internal Server Error"}, status=500)
+
+
 async def get_tracker_registry_summary(request):
     """
     Returns a tracker file summary.
@@ -195,6 +232,7 @@ app.router.add_post("/register", register_peer)
 app.router.add_get("/file_registry", get_tracker_registry_summary)
 app.router.add_get("/file_metadata", get_file_metadata)
 app.router.add_get("/chunk_peers", get_chunk_peers)
+app.router.add_post("/update_chunk_host", update_chunk_host)
 
 
 if __name__ == "__main__":
