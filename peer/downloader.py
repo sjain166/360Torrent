@@ -3,6 +3,7 @@ import asyncio
 import os
 import socket
 import random
+from tqdm import tqdm
 
 from scripts.class_object import FileMetadata
 from scripts.utils import get_private_ip, get_max_threads
@@ -54,9 +55,9 @@ async def register_downloaded_file(peer_id, ip, port, file_name):
             print(f"[ERROR] Failed to register downloaded file: {e}")
 
 
-async def download_chunk(peer_ip, file_name, chunk_name):
+async def download_chunk(peer_ip, file_name, chunk_name, chunk_size):
     """
-    Downloads a specific chunk from the given peer.
+    Downloads a specific chunk from the given peer with a progress bar.
     """
     URL = f"http://{peer_ip}:6881/file?file_name={file_name}&chunk_name={chunk_name}"
     folder_path = os.path.join("tests/data", file_name)
@@ -68,7 +69,19 @@ async def download_chunk(peer_ip, file_name, chunk_name):
             async with session.get(URL) as response:
                 if response.status == 200:
                     with open(file_path, "wb") as f:
-                        f.write(await response.read())
+                        downloaded = 0
+                        pbar = tqdm(
+                            total=chunk_size,
+                            unit='B',
+                            unit_scale=True,
+                            desc=f"Chunk: {chunk_name[:15]}",
+                            leave=True,
+                        )
+                        async for chunk in response.content.iter_chunked(1024):
+                            f.write(chunk)
+                            downloaded += len(chunk)
+                            pbar.update(len(chunk))
+                        pbar.close()
                     print(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
                     return True
                 else:
@@ -107,6 +120,7 @@ async def main(metadata: FileMetadata):
 
         for chunk in metadata.chunks:
             chunk_name = chunk.chunk_name
+            chunk_size = chunk.chunk_size
             dead_peers = []
             peers = await get_chunk_peers(metadata.file_name, chunk_name)
 
@@ -114,7 +128,7 @@ async def main(metadata: FileMetadata):
                 peer = random.choice(peers)
                 print(peer["ip"])
                 try:
-                    success = await download_chunk(peer["ip"], metadata.file_name, chunk_name)
+                    success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size)
                 except Exception as e:
                     print(f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}")
                 if success:
