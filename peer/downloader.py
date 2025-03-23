@@ -4,6 +4,7 @@ import os
 import socket
 import random
 from tqdm import tqdm
+import time
 
 from scripts.class_object import FileMetadata
 from scripts.utils import get_private_ip, get_max_threads
@@ -118,6 +119,7 @@ async def main(metadata: FileMetadata):
         print_file_metadata(metadata)
         dead_peer_map = {}  # {chunk_name: [dead_peer_ips]}
 
+        start_time = time.time()
         for chunk in metadata.chunks:
             chunk_name = chunk.chunk_name
             chunk_size = chunk.chunk_size
@@ -144,8 +146,13 @@ async def main(metadata: FileMetadata):
             if dead_peers:
                 dead_peer_map[chunk_name] = dead_peers
 
+        end_time = time.time()  # End timer
+        total_time = end_time - start_time
+
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
+        print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))
+        
         print("\n[INFO] Dead Peer Map:")
         for chunk_name, peers in dead_peer_map.items():
             print(f"  {chunk_name}: {peers}")
