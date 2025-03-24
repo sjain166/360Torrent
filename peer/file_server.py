@@ -3,9 +3,7 @@ import os
 import socket
 
 from scripts.utils import get_private_ip
-
-FILES_DIRECTORY = "tests/data"
-
+from scripts.utils import FILE_PATH
 
 
 async def serve_file(request):
@@ -17,9 +15,11 @@ async def serve_file(request):
     chunk_name = request.query.get("chunk_name")
 
     if not file_name or not chunk_name:
-        return web.json_response({"error": "file_name and chunk_name must be provided"}, status=400)
+        return web.json_response(
+            {"error": "file_name and chunk_name must be provided"}, status=400
+        )
 
-    chunk_path = os.path.join(FILES_DIRECTORY, file_name, chunk_name)
+    chunk_path = os.path.join(FILE_PATH, file_name, chunk_name)
     print(f"[INFO] Requested chunk: {chunk_path}")
 
     if not os.path.exists(chunk_path):

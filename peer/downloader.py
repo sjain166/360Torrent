@@ -9,9 +9,8 @@ import time
 from scripts.class_object import FileMetadata
 from scripts.utils import get_private_ip, get_max_threads
 from tabulate import tabulate
-
-
-TRACKER_URL = "http://10.0.0.130:8080"
+from scripts.utils import TRACKER_URL
+from scripts.prints import print_file_metadata
 
 
 async def get_chunk_peers(file_name, chunk_name):
@@ -28,7 +27,9 @@ async def get_chunk_peers(file_name, chunk_name):
                     data = await response.json()
                     return data.get("peers", [])
                 else:
-                    print(f"[ERROR] Tracker returned error for chunk {chunk_name}: {response.status}")
+                    print(
+                        f"[ERROR] Tracker returned error for chunk {chunk_name}: {response.status}"
+                    )
                     return []
         except Exception as e:
             print(f"[ERROR] Failed to fetch chunk peers: {e}")
@@ -73,7 +74,7 @@ async def download_chunk(peer_ip, file_name, chunk_name, chunk_size):
                         downloaded = 0
                         pbar = tqdm(
                             total=chunk_size,
-                            unit='B',
+                            unit="B",
                             unit_scale=True,
                             desc=f"Chunk: {chunk_name[:15]}",
                             leave=True,
@@ -86,13 +87,18 @@ async def download_chunk(peer_ip, file_name, chunk_name, chunk_size):
                     print(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
                     return True
                 else:
-                    print(f"[ERROR] Failed to download {chunk_name} from {peer_ip}: {response.status}")
+                    print(
+                        f"[ERROR] Failed to download {chunk_name} from {peer_ip}: {response.status}"
+                    )
                     return False
     except Exception as e:
         print(f"[ERROR] Download failed for {chunk_name} from {peer_ip}: {e}")
         return False
 
-async def update_tracker_chunk_host(file_name, chunk_name, ip, port, dead_peers, download_status):
+
+async def update_tracker_chunk_host(
+    file_name, chunk_name, ip, port, dead_peers, download_status
+):
     """
     Informs the tracker that the peer now hosts a newly downloaded chunk.
     """
@@ -106,35 +112,18 @@ async def update_tracker_chunk_host(file_name, chunk_name, ip, port, dead_peers,
                     "ip": ip,
                     "port": port,
                     "dead_peers": dead_peers,
-                    "download_status": download_status
+                    "download_status": download_status,
                 },
             ) as response:
                 if response.status == 200:
                     print(f"[INFO] Tracker updated with new host for {chunk_name}")
                 else:
-                    print(f"[WARN] Tracker update for {chunk_name} failed: {response.status}")
+                    print(
+                        f"[WARN] Tracker update for {chunk_name} failed: {response.status}"
+                    )
         except Exception as e:
             print(f"[ERROR] Tracker update exception: {e}")
 
-
-def print_file_metadata(metadata: FileMetadata):
-    if not metadata:
-        print("[WARN] No metadata found.")
-        return
-    table_data = []
-    file_displayed = False
-    for chunk in metadata.chunks:
-        table_data.append([
-            metadata.file_name if not file_displayed else "",
-            metadata.file_size if not file_displayed else "",
-            chunk.chunk_name,
-            chunk.chunk_size,
-            "Downloaded" if chunk.download_status else "Pending"
-        ])
-        file_displayed = True
-    headers = ["File Name", "File Size (Bytes)", "Chunk Name", "Chunk Size (Bytes)", "Download Status"]
-    print(tabulate(table_data, headers=headers, tablefmt="grid"))
-    
 
 async def main(metadata: FileMetadata):
     try:
@@ -156,20 +145,38 @@ async def main(metadata: FileMetadata):
                 peer = random.choice(peers)
                 print(peer["ip"])
                 try:
-                    success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size)
+                    success = await download_chunk(
+                        peer["ip"], metadata.file_name, chunk_name, chunk_size
+                    )
                 except Exception as e:
-                    print(f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}")
+                    print(
+                        f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}"
+                    )
                 if success:
                     chunk.download_status = True
-                    await update_tracker_chunk_host(metadata.file_name, chunk_name, self_ip, self_port, dead_peers, chunk.download_status)
+                    await update_tracker_chunk_host(
+                        metadata.file_name,
+                        chunk_name,
+                        self_ip,
+                        self_port,
+                        dead_peers,
+                        chunk.download_status,
+                    )
                     break
                 else:
                     peers.remove(peer)
                     dead_peers.append(peer)
                     print(f"[WARN] Removed {peer} from retry list for {chunk_name}")
-            
+
             if not chunk.download_status:
-                await update_tracker_chunk_host(metadata.file_name, chunk_name, self_ip, self_port, dead_peers, chunk.download_status)
+                await update_tracker_chunk_host(
+                    metadata.file_name,
+                    chunk_name,
+                    self_ip,
+                    self_port,
+                    dead_peers,
+                    chunk.download_status,
+                )
                 print(f"[ERROR] Failed to download chunk: {chunk_name}")
             if dead_peers:
                 dead_peer_map[chunk_name] = dead_peers
@@ -184,10 +191,13 @@ async def main(metadata: FileMetadata):
         print("\n[INFO] Dead Peer Map:")
         for chunk_name, peers in dead_peer_map.items():
             print(f"  {chunk_name}: {peers}")
-    
+
     except Exception as e:
         print(f"[ERROR] Peer Execution Failed: {e}")
 
+
 if __name__ == "__main__":
-    print("[INFO] Downloader script expected to be invoked with metadata passed externally.")
+    print(
+        "[INFO] Downloader script expected to be invoked with metadata passed externally."
+    )
     get_max_threads()

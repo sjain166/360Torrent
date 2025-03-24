@@ -47,16 +47,24 @@ class File:
 
     def __repr__(self):
         return f"FileObject(file_name={self.file_name}, file_size={self.file_size}, chunks={self.chunks})"
-    
+
 
 class FileMetadata:
     """
     Represents the metadata of a file.
     """
+
     def __init__(self, file_name, file_size, chunks):
         self.file_name = file_name
         self.file_size = file_size
-        self.chunks = [Chunk(chunk_name=c["chunk_name"], chunk_size=c["chunk_size"], download_status=False) for c in chunks]
+        self.chunks = [
+            Chunk(
+                chunk_name=c["chunk_name"],
+                chunk_size=c["chunk_size"],
+                download_status=False,
+            )
+            for c in chunks
+        ]
 
     def to_dict(self):
         return {
@@ -66,13 +74,11 @@ class FileMetadata:
                 {
                     "chunk_name": chunk.chunk_name,
                     "chunk_size": chunk.chunk_size,
-                    "download_status": chunk.download_status
+                    "download_status": chunk.download_status,
                 }
                 for chunk in self.chunks
-            ]
+            ],
         }
 
     def __repr__(self):
         return f"FileMetadata(file_name={self.file_name}, file_size={self.file_size}, chunks={self.chunks})"
-
-    

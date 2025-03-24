@@ -1,6 +1,8 @@
 import asyncio
-from aiohttp import web
 import socket
+
+from scripts.prints import print_tracker_file_registry
+from aiohttp import web
 from scripts.class_object import Peer, Chunk, File, FileMetadata
 from scripts.utils import get_private_ip
 from tabulate import tabulate
@@ -28,41 +30,6 @@ def summarize_available_files():
             }
         )
     return summary
-
-
-def print_tracker_file_registry():
-    """
-    Prints the TRACKER_FILE_REGISTRY in a tabular format without repeating file names.
-    """
-    table_data = []
-    for file_obj in TRACKER_FILE_REGISTRY:
-        file_displayed = False
-        for chunk_obj in file_obj.chunks:
-            peer_list = ", ".join(
-                [f"{peer.ip}:{peer.port}" for peer in chunk_obj.peers]
-            )
-            table_data.append(
-                [
-                    (
-                        file_obj.file_name if not file_displayed else ""
-                    ),  # Print file name only once
-                    (
-                        file_obj.file_size if not file_displayed else ""
-                    ),  # Print file size only once
-                    chunk_obj.chunk_name,
-                    chunk_obj.chunk_size,
-                    peer_list,
-                ]
-            )
-            file_displayed = True
-    headers = [
-        "File Name",
-        "File Size (Bytes)",
-        "Chunk Name",
-        "Chunk Size (Bytes)",
-        "Peers Hosting Chunk",
-    ]
-    print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
 
 async def register_peer(request):
@@ -113,7 +80,7 @@ async def register_peer(request):
                         new_chunk.add_peer(Peer(ip, port))
                         existing_file.chunks.append(new_chunk)
         print(f"[INFO] Registered peer {peer_id} at {ip}:{port}")  # Debugging output
-        print_tracker_file_registry()
+        print_tracker_file_registry(TRACKER_FILE_REGISTRY)
         return web.json_response({"status": "registered", "peers": PEERS})
 
     except Exception as e:
@@ -134,11 +101,15 @@ async def update_chunk_host(request):
         if not file_name or not chunk_name or not ip or not port:
             return web.json_response({"error": "Missing required fields"}, status=400)
 
-        file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+        file_obj = next(
+            (f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None
+        )
         if not file_obj:
             return web.json_response({"error": "File not found"}, status=404)
 
-        chunk_obj = next((c for c in file_obj.chunks if c.chunk_name == chunk_name), None)
+        chunk_obj = next(
+            (c for c in file_obj.chunks if c.chunk_name == chunk_name), None
+        )
         if not chunk_obj:
             return web.json_response({"error": "Chunk not found"}, status=404)
 
@@ -146,10 +117,14 @@ async def update_chunk_host(request):
             chunk_obj.add_peer(Peer(ip, port))
 
         for dead in dead_peers:
-            chunk_obj.peers = [p for p in chunk_obj.peers if not (p.ip == dead["ip"] and p.port == dead["port"])]
-        
-        print_tracker_file_registry()
-        
+            chunk_obj.peers = [
+                p
+                for p in chunk_obj.peers
+                if not (p.ip == dead["ip"] and p.port == dead["port"])
+            ]
+
+        print_tracker_file_registry(TRACKER_FILE_REGISTRY)
+
         print(f"[INFO] Updated chunk {chunk_name} of {file_name} with peer {ip}:{port}")
         return web.json_response({"status": "updated"})
 
@@ -179,18 +154,25 @@ def get_best_peers(chunk_obj):
     """
     return [{"ip": peer.ip, "port": peer.port} for peer in chunk_obj.peers]
 
+
 async def get_chunk_peers(request):
     try:
         file_name = request.query.get("file_name")
         chunk_name = request.query.get("chunk_name")
         if not file_name or not chunk_name:
-            return web.json_response({"error": "Missing file_name or chunk_name"}, status=400)
+            return web.json_response(
+                {"error": "Missing file_name or chunk_name"}, status=400
+            )
 
-        file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+        file_obj = next(
+            (f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None
+        )
         if not file_obj:
             return web.json_response({"error": "File not found"}, status=404)
 
-        chunk_obj = next((c for c in file_obj.chunks if c.chunk_name == chunk_name), None)
+        chunk_obj = next(
+            (c for c in file_obj.chunks if c.chunk_name == chunk_name), None
+        )
         if not chunk_obj:
             return web.json_response({"error": "Chunk not found"}, status=404)
 
@@ -202,22 +184,22 @@ async def get_chunk_peers(request):
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
 
-
 async def get_file_metadata(request):
     try:
         file_name = request.query.get("file_name")
         if not file_name:
-            return web.json_response({"error": "Missing file_name parameter"}, status=400)
+            return web.json_response(
+                {"error": "Missing file_name parameter"}, status=400
+            )
 
-        file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+        file_obj = next(
+            (f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None
+        )
         if not file_obj:
             return web.json_response({"error": "File not found"}, status=404)
 
         chunk_dicts = [
-            {
-                "chunk_name": chunk.chunk_name,
-                "chunk_size": chunk.chunk_size
-            }
+            {"chunk_name": chunk.chunk_name, "chunk_size": chunk.chunk_size}
             for chunk in file_obj.chunks
         ]
         metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
@@ -237,7 +219,7 @@ app.router.add_post("/update_chunk_host", update_chunk_host)
 
 if __name__ == "__main__":
     try:
-        print_tracker_file_registry()
+        print_tracker_file_registry(TRACKER_FILE_REGISTRY)
         my_ip = get_private_ip()
         print("[INFO] Tracker Server Started on {}:8080".format(my_ip))
         web.run_app(app, host=my_ip, port=8080)
