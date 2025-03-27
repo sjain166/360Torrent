@@ -12,7 +12,7 @@ from tabulate import tabulate
 from scripts.utils import TRACKER_URL
 from scripts.prints import print_file_metadata
 
-MAX_PARALLEL_DOWNLOADS = get_max_threads() - 4
+MAX_PARALLEL_DOWNLOADS = get_max_threads()
 
 # Rich Print
 import builtins
