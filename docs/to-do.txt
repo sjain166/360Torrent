@@ -1,5 +1,4 @@
 1. Check if a Chunck is already downloaded, mark it completed and skip
-2. Multi-Threadding Download
 3. Smart Chunk-Eviction {LRU} -- {Anton Code Implementation}
 
 

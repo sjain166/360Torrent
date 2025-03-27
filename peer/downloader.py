@@ -64,7 +64,7 @@ async def register_downloaded_file(peer_id, ip, port, file_name):
             print(f"[ERROR] Failed to register downloaded file: {e}")
 
 
-async def download_chunk(peer_ip, file_name, chunk_name, chunk_size):
+async def download_chunk(peer_ip, file_name, chunk_name, chunk_size, position):
     """
     Downloads a specific chunk from the given peer with a progress bar.
     """
@@ -85,21 +85,24 @@ async def download_chunk(peer_ip, file_name, chunk_name, chunk_size):
                             unit_scale=True,
                             desc=f"Chunk: {chunk_name[:15]}",
                             leave=True,
+                            position=position,
                         )
                         async for chunk in response.content.iter_chunked(1024):
                             f.write(chunk)
                             downloaded += len(chunk)
                             pbar.update(len(chunk))
                         pbar.close()
-                    print(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
+                        await asyncio.sleep(0.5)
+                    # print(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
+                    tqdm.write(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
                     return True
                 else:
-                    print(
+                    tqdm.write(
                         f"[ERROR] Failed to download {chunk_name} from {peer_ip}: {response.status}"
                     )
                     return False
     except Exception as e:
-        print(f"[ERROR] Download failed for {chunk_name} from {peer_ip}: {e}")
+        tqdm.write(f"[ERROR] Download failed for {chunk_name} from {peer_ip}: {e}")
         return False
 
 
@@ -123,16 +126,18 @@ async def update_tracker_chunk_host(
                 },
             ) as response:
                 if response.status == 200:
-                    print(f"[INFO] Tracker updated with new host for {chunk_name}")
+                    # print(f"[INFO] Tracker updated with new host for {chunk_name}")
+                    tqdm.write(f"[INFO] Tracker updated with new host for {chunk_name}")
+
                 else:
-                    print(
+                    tqdm.write(
                         f"[WARN] Tracker update for {chunk_name} failed: {response.status}"
                     )
         except Exception as e:
-            print(f"[ERROR] Tracker update exception: {e}")
+            tqdm.write(f"[ERROR] Tracker update exception: {e}")
 
 
-async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port):
+async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port, idx):
     chunk_name = chunk.chunk_name
     chunk_size = chunk.chunk_size
     dead_peers = []
@@ -142,7 +147,7 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
         while peers:
             peer = random.choice(peers)
             try:
-                success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size)
+                success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size, idx)
             except Exception as e:
                 print(f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}")
                 success = False
@@ -186,8 +191,8 @@ async def main(metadata: FileMetadata):
 
         semaphore = asyncio.Semaphore(MAX_PARALLEL_DOWNLOADS)
         download_tasks = [
-            download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port)
-            for chunk in metadata.chunks
+            download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port, idx)
+            for idx, chunk in enumerate(metadata.chunks)
         ]
         await asyncio.gather(*download_tasks)
 
