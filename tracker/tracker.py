@@ -1,11 +1,13 @@
-import asyncio
-import socket
-
 from scripts.prints import print_tracker_file_registry
 from aiohttp import web
 from scripts.class_object import Peer, Chunk, File, FileMetadata
 from scripts.utils import get_private_ip
-from tabulate import tabulate
+
+# Rich Print
+import builtins
+from rich import print as rich_print
+builtins.print = rich_print
+
 
 PEERS = {}  # Dictionary to store registered peers {peer_id: (ip, port)}
 TRACKER_FILE_REGISTRY = (
@@ -198,10 +200,16 @@ async def get_file_metadata(request):
         if not file_obj:
             return web.json_response({"error": "File not found"}, status=404)
 
+        ################ Using Rarest First Policy ################
+        # Sorting based on number of peers serving a chunk #
+        # sorted_chunks = sorted(file_obj.chunks, key=lambda c: len(c.peers))
+        ###########################################################
+
         chunk_dicts = [
             {"chunk_name": chunk.chunk_name, "chunk_size": chunk.chunk_size}
             for chunk in file_obj.chunks
         ]
+
         metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
         return web.json_response(metadata.to_dict())
     except Exception as e:

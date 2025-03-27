@@ -1,9 +1,13 @@
 from aiohttp import web
 import os
-import socket
 
 from scripts.utils import get_private_ip
 from scripts.utils import FILE_PATH
+
+# Rich Print
+import builtins
+from rich import print as rich_print
+builtins.print = rich_print
 
 
 async def serve_file(request):

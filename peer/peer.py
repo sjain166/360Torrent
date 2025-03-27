@@ -1,17 +1,18 @@
 import asyncio
 import aiohttp
 import os
-import socket
 import peer.file_server as file_server
-from scripts.class_object import Peer, Chunk, File, FileMetadata
+from scripts.class_object import FileMetadata
 from scripts.utils import get_private_ip, scrape_data_folder
-from tabulate import tabulate
+
 from peer.downloader import main as downloader
 from scripts.prints import print_registry_summary
-from scripts.utils import TRACKER_URL, FILE_PATH
+from scripts.utils import TRACKER_URL
 
-import time
-
+# Rich Print
+import builtins
+from rich import print as rich_print
+builtins.print = rich_print
 
 # Rather a Fixed Hosted Files, Scrap the Data Folder to update teh Hosted Files before TRacker Registration
 # HOSTED_FILE = ["test_data_send.txt"]

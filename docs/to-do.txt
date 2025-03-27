@@ -1,3 +1,9 @@
-1. Make Download Bar + Download Speed + Total-Time Taken
-2. Update the Tracker whe a chunck gets downloaded on a peer.
-3. 
+1. Check if a Chunck is already downloaded, mark it completed and skip
+2. Multi-Threadding Download
+3. Smart Chunk-Eviction {LRU} -- {Anton Code Implementation}
+
+
+Mid Term Report :
+
+1. Rarest First Solution Implemented
+2. 

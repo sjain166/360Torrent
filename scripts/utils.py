@@ -2,7 +2,12 @@ import socket
 import multiprocessing
 import os
 
-from scripts.class_object import Peer, Chunk, File, FileMetadata
+from scripts.class_object import Peer, Chunk, File
+
+# Rich Print
+import builtins
+from rich import print as rich_print
+builtins.print = rich_print
 
 
 ####################################################################################################
@@ -14,7 +19,7 @@ from scripts.class_object import Peer, Chunk, File, FileMetadata
 
 ####################################################################################################
 
-TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
+TRACKER_URL = "http://10.192.123.83:8080"  # Replace with actual tracker IP
 FILE_PATH = "tests/data"
 
 

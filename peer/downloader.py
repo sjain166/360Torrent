@@ -12,6 +12,11 @@ from tabulate import tabulate
 from scripts.utils import TRACKER_URL
 from scripts.prints import print_file_metadata
 
+# Rich Print
+import builtins
+from rich import print as rich_print
+builtins.print = rich_print
+
 
 async def get_chunk_peers(file_name, chunk_name):
     """

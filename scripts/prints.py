@@ -2,6 +2,12 @@ from tabulate import tabulate
 from scripts.class_object import Peer, Chunk, File, FileMetadata
 
 
+# Rich Print
+import builtins
+from rich import print as rich_print
+builtins.print = rich_print
+
+
 def print_tracker_file_registry(TRACKER_FILE_REGISTRY):
     """
     Prints the TRACKER_FILE_REGISTRY in a tabular format without repeating file names.
