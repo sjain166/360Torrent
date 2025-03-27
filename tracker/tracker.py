@@ -202,12 +202,12 @@ async def get_file_metadata(request):
 
         ################ Using Rarest First Policy ################
         # Sorting based on number of peers serving a chunk #
-        # sorted_chunks = sorted(file_obj.chunks, key=lambda c: len(c.peers))
+        sorted_chunks = sorted(file_obj.chunks, key=lambda c: len(c.peers))
         ###########################################################
 
         chunk_dicts = [
             {"chunk_name": chunk.chunk_name, "chunk_size": chunk.chunk_size}
-            for chunk in file_obj.chunks
+            for chunk in sorted_chunks
         ]
 
         metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
