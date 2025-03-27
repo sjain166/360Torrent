@@ -9,8 +9,9 @@ import time
 from scripts.class_object import FileMetadata
 from scripts.utils import get_private_ip, get_max_threads
 from tabulate import tabulate
-from scripts.utils import TRACKER_URL
+from scripts.utils import TRACKER_URL, FILE_PATH
 from scripts.prints import print_file_metadata
+
 
 MAX_PARALLEL_DOWNLOADS = get_max_threads()
 
@@ -69,7 +70,7 @@ async def download_chunk(peer_ip, file_name, chunk_name, chunk_size, position):
     Downloads a specific chunk from the given peer with a progress bar.
     """
     URL = f"http://{peer_ip}:6881/file?file_name={file_name}&chunk_name={chunk_name}"
-    folder_path = os.path.join("tests/data", file_name)
+    folder_path = os.path.join(FILE_PATH, file_name)
     os.makedirs(folder_path, exist_ok=True)
     file_path = os.path.join(folder_path, chunk_name)
 
@@ -146,6 +147,14 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
     async with semaphore:
         while peers:
             peer = random.choice(peers)
+
+            folder_path = os.path.join(FILE_PATH, metadata.file_name)
+            file_path = os.path.join(folder_path, chunk_name)
+            if os.path.exists(file_path) and os.path.getsize(file_path) == chunk_size:
+                tqdm.write(f"[INFO] Chunk already downloaded: {chunk_name}")
+                chunk.download_status = True
+                return
+            
             try:
                 success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size, idx)
             except Exception as e:
