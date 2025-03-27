@@ -12,6 +12,8 @@ from tabulate import tabulate
 from scripts.utils import TRACKER_URL
 from scripts.prints import print_file_metadata
 
+MAX_PARALLEL_DOWNLOADS = get_max_threads() - 4
+
 # Rich Print
 import builtins
 from rich import print as rich_print
@@ -130,6 +132,48 @@ async def update_tracker_chunk_host(
             print(f"[ERROR] Tracker update exception: {e}")
 
 
+async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port):
+    chunk_name = chunk.chunk_name
+    chunk_size = chunk.chunk_size
+    dead_peers = []
+    peers = await get_chunk_peers(metadata.file_name, chunk_name)
+
+    async with semaphore:
+        while peers:
+            peer = random.choice(peers)
+            try:
+                success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size)
+            except Exception as e:
+                print(f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}")
+                success = False
+
+            if success:
+                chunk.download_status = True
+                await update_tracker_chunk_host(
+                    metadata.file_name,
+                    chunk_name,
+                    self_ip,
+                    self_port,
+                    dead_peers,
+                    True
+                )
+                return
+            else:
+                peers.remove(peer)
+                dead_peers.append(peer)
+                print(f"[WARN] Removed {peer} from retry list for {chunk_name}")
+
+        await update_tracker_chunk_host(
+            metadata.file_name,
+            chunk_name,
+            self_ip,
+            self_port,
+            dead_peers,
+            False
+        )
+        dead_peer_map[chunk_name] = dead_peers
+        print(f"[ERROR] Failed to download chunk: {chunk_name}")
+
 async def main(metadata: FileMetadata):
     try:
         print(f"[INFO] Preparing to download file: {metadata.file_name}")
@@ -140,51 +184,12 @@ async def main(metadata: FileMetadata):
         self_ip = get_private_ip()
         self_port = 6881
 
-        for chunk in metadata.chunks:
-            chunk_name = chunk.chunk_name
-            chunk_size = chunk.chunk_size
-            dead_peers = []
-            peers = await get_chunk_peers(metadata.file_name, chunk_name)
-
-            while peers:
-                peer = random.choice(peers)
-                print(peer["ip"])
-                try:
-                    success = await download_chunk(
-                        peer["ip"], metadata.file_name, chunk_name, chunk_size
-                    )
-                except Exception as e:
-                    print(
-                        f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}"
-                    )
-                if success:
-                    chunk.download_status = True
-                    await update_tracker_chunk_host(
-                        metadata.file_name,
-                        chunk_name,
-                        self_ip,
-                        self_port,
-                        dead_peers,
-                        chunk.download_status,
-                    )
-                    break
-                else:
-                    peers.remove(peer)
-                    dead_peers.append(peer)
-                    print(f"[WARN] Removed {peer} from retry list for {chunk_name}")
-
-            if not chunk.download_status:
-                await update_tracker_chunk_host(
-                    metadata.file_name,
-                    chunk_name,
-                    self_ip,
-                    self_port,
-                    dead_peers,
-                    chunk.download_status,
-                )
-                print(f"[ERROR] Failed to download chunk: {chunk_name}")
-            if dead_peers:
-                dead_peer_map[chunk_name] = dead_peers
+        semaphore = asyncio.Semaphore(MAX_PARALLEL_DOWNLOADS)
+        download_tasks = [
+            download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port)
+            for chunk in metadata.chunks
+        ]
+        await asyncio.gather(*download_tasks)
 
         end_time = time.time()  # End timer
         total_time = end_time - start_time
