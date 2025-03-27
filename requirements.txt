@@ -8,12 +8,16 @@ click==8.1.8
 debugpy==1.8.13
 frozenlist==1.5.0
 idna==3.10
+markdown-it-py==3.0.0
+mdurl==0.1.2
 multidict==6.1.0
 mypy-extensions==1.0.0
 packaging==24.2
 pathspec==0.12.1
 platformdirs==4.3.7
 propcache==0.3.0
+Pygments==2.19.1
+rich==13.9.4
 tabulate==0.9.0
 tqdm==4.67.1
 yarl==1.18.3
