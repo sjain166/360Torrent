@@ -2,24 +2,36 @@ from fabric import Connection
 import time
 import sys
 import os
+import re
 
-from one_time_tasks import *
-from recurring_tasks import *
+import networkx as nx
 
 if not len(sys.argv) == 3:
     print("worker.py <your_username> <your_password>")
     exit()
-
 # Temporarily store pass in os.environ, this gets wiped after script finishes execution
 os.environ["UI_USER"] = sys.argv[1]
 os.environ["UI_PASS"] = sys.argv[2]
 
+from simple_tasks import *
+from net_delay import *
+
+
+def run_simple_task(target_VMs, task_func):
+    for vm in target_VMs:
+        print(f"Running task on {vm["id"]} : {vm["address"]}")
+        task_func(vm["connection"])
+        print(f"Task completed")
+
+
 USER = os.environ["UI_USER"]
 PASS = os.environ["UI_PASS"]
 CLI_DELAY = 1
+
 TARGET_VMS = [
     {
         "id": i,
+        "ip": None,
         "address": f"sp25-cs525-12{i:02}.cs.illinois.edu",
         "connection": Connection(
             f"sp25-cs525-12{i:02}.cs.illinois.edu",
@@ -27,26 +39,72 @@ TARGET_VMS = [
             connect_kwargs={"password": PASS},
         ),
     }
-    for i in range(15, 19)
+    for i in range(15, 21)
 ]
 
+def get_resolved_ip_addr(c, dns_address):
+    result = c.sudo(f"host {dns_address}", password=PASS)
+    print("! result !")
+    print(result)
 
-def run_task_on_connection(c, task_func):
-    task_func(c)
+    ip_pattern = r'\d+\.\d+\.\d+\.\d+'
+    match = re.search(ip_pattern, result.stdout)
+    print (" match")
+    print(match)
 
+    if match:
+        ip = match.group(0)
+        return ip
+    else:
+        print("IP Address not found")
+        return None
 
-def run_task_on_VMs(target_VMs, task_func):
-    for vm in target_VMs:
-        print(f"Running task on {vm["id"]} : {vm["address"]}")
-        run_task_on_connection(vm["connection"], task_func)
-        print(f"Task completed")
+for vm in TARGET_VMS:
+    vm["ip"] = get_resolved_ip_addr(vm["connection"], vm["address"])
 
+if __name__ == "__main__":
 
-# Example, on VMs 15-18:
-#   Install kernel-modules-extra
-#   Load sch_netem module
-run_task_on_VMs(TARGET_VMS, install_kernel_modules_extra)
-time.sleep(3 * CLI_DELAY)
-run_task_on_VMs(TARGET_VMS, load_sch_netem)
+    # Example, on VMs 15-18:
+    #   Install kernel-modules-extra
+    #   Load sch_netem module
+    # run_simple_task(TARGET_VMS, install_kernel_modules_extra)
+    # time.sleep(3 * CLI_DELAY)
+    # run_simple_task(TARGET_VMS, load_sch_netem)
 
-# TODO: Automate 'tc' connection delay setup
+    # Example
+    # Setting up a network delay on VMs 15-20
+
+    run_simple_task(TARGET_VMS, load_sch_netem)
+    time.sleep(CLI_DELAY)
+
+    # For easy mapping
+    def get_VMs_by_id(ids): return [vm for vm in TARGET_VMS if vm['id'] in ids]
+    
+    # Map VMs to their region
+    regions = { "A": get_VMs_by_id([15, 16]),
+                "B": get_VMs_by_id([17, 18]) ,
+                "C": get_VMs_by_id([19, 20])}
+
+    # Define delays between regions
+    net = nx.Graph(data=True)
+    net.add_edge("A","B", weight=20)
+    net.add_edge("A","C", weight=50)
+    net.add_edge("B","C", weight=40)
+
+    create_network_delay(TARGET_VMS, net, regions)
+
+    # Make sure to either run
+    # run_simple_task(TARGET_VMS, remove_network_delay)
+    # or
+    # manually execute clear_delays.py
+    # to remove the VM delays when you're done testing
+    
+    # Checked the following ping times are correct by hand:
+    # 20->19
+    # 20->17
+    # 17->20
+    # 17->16
+    # 20->15
+    # 15->16
+    # 15->17
+    # 15->20

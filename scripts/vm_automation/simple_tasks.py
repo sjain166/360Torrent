@@ -11,3 +11,14 @@ def load_sch_netem(c):
     print(result.stdout)
     result = c.run(f"lsmod | grep sch_netem")  # Verify loaded
     print(result.stdout)
+
+def test_sudo_command(c):
+    result = c.sudo(f"mkdir /home/{USER}/testsudo", password=PASS)
+    print(result.stdout)
+
+def install_kernel_modules_extra(c):
+    result = c.sudo("yum install -y kernel-modules-extra-$(uname -r)", password=PASS)
+    print(result.stdout)
+
+def remove_network_delay(c):
+    c.sudo("tc qdisc del dev ens33 root", password=PASS)
