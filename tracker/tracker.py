@@ -84,7 +84,10 @@ async def register_peer(request):
                         existing_file.chunks.append(new_chunk)
         print(f"[INFO] Registered peer {peer_id} at {ip}:{port}")  # Debugging output
         print_tracker_file_registry(TRACKER_FILE_REGISTRY)
-        return web.json_response({"status": "registered", "peers": PEERS})
+        return web.json_response({
+            "status": "registered",
+            "peers": {peer_id: peer_obj.to_dict() for peer_id, peer_obj in PEERS.items()}
+        })
 
     except Exception as e:
         print(f"[ERROR] Peer registration failed: {e}")
@@ -146,7 +149,7 @@ async def get_tracker_registry_summary(request):
     try:
         file_summary = summarize_available_files()
         return web.json_response(
-            {"status": "registered", "peers": PEERS, "available_files": file_summary}
+            {"status": "registered", "peers": {peer_id: peer_obj.to_dict() for peer_id, peer_obj in PEERS.items()} , "available_files": file_summary}
         )
     except Exception as e:
         print(f"[ERROR] Fetching Tracker File Summary failed: {e}")

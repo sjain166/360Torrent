@@ -19,8 +19,8 @@ builtins.print = rich_print
 
 ####################################################################################################
 
-TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
-# TRACKER_URL = "http://172.22.151.7:8080"  # Replace with actual tracker IP
+#TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
+TRACKER_URL = "http://10.251.140.165:8080"  # Replace with actual tracker IP
 
 FILE_PATH = "tests/data"
 
@@ -55,7 +55,7 @@ def get_max_threads():
         return 1
 
 
-def scrape_data_folder():
+def scrape_data_folder(VM_NAME, VM_REGION):
     """
     Scrape the tests/data folder to discover all files and chunks.
     """
@@ -75,7 +75,7 @@ def scrape_data_folder():
                     chunk_size = os.path.getsize(chunk_path)
                     chunk_obj = Chunk(chunk_name=chunk, chunk_size=chunk_size)
                     chunk_obj.peers.append(
-                        Peer(peer_ip, peer_port)
+                        Peer(VM_NAME, peer_ip, peer_port, VM_REGION)
                     )  # Assign this peer as a host
                     file_obj.chunks.append(chunk_obj)
                     file_obj.file_size += chunk_size  # Update file size

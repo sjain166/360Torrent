@@ -12,6 +12,14 @@ class Peer:
 
     def __repr__(self):
         return f"PeerObject(ip={self.ip}, port={self.port}, region={self.region}, id={self.id})"
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "ip": self.ip,
+            "port": self.port,
+            "region": self.region,
+        }
 
 
 class Chunk:

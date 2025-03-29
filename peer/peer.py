@@ -26,6 +26,8 @@ async def register_peer(peer_id, ip, port):
     VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
     VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
 
+    print(type(VM_NAME))
+
     hosted_files = [
         {
             "file_name": f.file_name,
@@ -120,8 +122,14 @@ async def prompt_user_action():
 
 
 async def main():
+
     global PEER_FILE_REGISTRY
-    PEER_FILE_REGISTRY = scrape_data_folder()
+    VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
+    VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
+
+    PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+
+    
 
     peer_id = f"peer_{os.getpid()}"
     try:

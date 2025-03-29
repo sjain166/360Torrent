@@ -12,35 +12,39 @@ def print_tracker_file_registry(TRACKER_FILE_REGISTRY):
     """
     Prints the TRACKER_FILE_REGISTRY in a tabular format without repeating file names.
     """
-    table_data = []
-    for file_obj in TRACKER_FILE_REGISTRY:
-        file_displayed = False
-        for chunk_obj in file_obj.chunks:
-            peer_list = ", ".join(
-                [f"{peer.ip}:{peer.port}" for peer in chunk_obj.peers]
-            )
-            table_data.append(
-                [
-                    (
-                        file_obj.file_name if not file_displayed else ""
-                    ),  # Print file name only once
-                    (
-                        file_obj.file_size if not file_displayed else ""
-                    ),  # Print file size only once
-                    chunk_obj.chunk_name,
-                    chunk_obj.chunk_size,
-                    peer_list,
-                ]
-            )
-            file_displayed = True
-    headers = [
-        "File Name",
-        "File Size (Bytes)",
-        "Chunk Name",
-        "Chunk Size (Bytes)",
-        "Peers Hosting Chunk",
-    ]
-    print(tabulate(table_data, headers=headers, tablefmt="grid"))
+    try:
+        table_data = []
+        for file_obj in TRACKER_FILE_REGISTRY:
+            file_displayed = False
+            for chunk_obj in file_obj.chunks:
+                peer_list = ", ".join(
+                    [f"{peer.id}:{peer.region}" for peer in chunk_obj.peers]
+                )
+                table_data.append(
+                    [
+                        (
+                            file_obj.file_name if not file_displayed else ""
+                        ),  # Print file name only once
+                        (
+                            file_obj.file_size if not file_displayed else ""
+                        ),  # Print file size only once
+                        chunk_obj.chunk_name,
+                        chunk_obj.chunk_size,
+                        peer_list,
+                    ]
+                )
+                file_displayed = True
+        headers = [
+            "File Name",
+            "File Size (Bytes)",
+            "Chunk Name",
+            "Chunk Size (Bytes)",
+            "Peers Hosting Chunk",
+        ]
+        print(tabulate(table_data, headers=headers, tablefmt="grid"))
+
+    except Exception as e:
+        print(f"[ERROR] Print Error : {e}")
 
 
 def print_registry_summary(summary):
