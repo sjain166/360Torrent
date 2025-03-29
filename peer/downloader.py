@@ -113,17 +113,22 @@ async def update_tracker_chunk_host(
     """
     Informs the tracker that the peer now hosts a newly downloaded chunk.
     """
+    VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
+    VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
+
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(
                 f"{TRACKER_URL}/update_chunk_host",
                 json={
+                    "peer_id" : VM_NAME,
                     "file_name": file_name,
                     "chunk_name": chunk_name,
                     "ip": ip,
                     "port": port,
                     "dead_peers": dead_peers,
                     "download_status": download_status,
+                    "vm_region" : VM_REGION
                 },
             ) as response:
                 if response.status == 200:

@@ -3,13 +3,15 @@ class Peer:
     Represents a peer in the network.
     """
 
-    def __init__(self, ip: str, port: int):
+    def __init__(self, id : str, ip: str, port: int, region: str):
+        self.id = id
         self.ip = ip
         self.port = port
         self.peer_file_registry = []  # Dictionary of files hosted by the peer
+        self.region = region
 
     def __repr__(self):
-        return f"PeerObject(ip={self.ip}, port={self.port})"
+        return f"PeerObject(ip={self.ip}, port={self.port}, region={self.region}, id={self.id})"
 
 
 class Chunk:

@@ -40,11 +40,12 @@ async def register_peer(request):
     """
     try:
         data = await request.json()
-        peer_id, ip, port = data.get("peer_id"), data.get("ip"), data.get("port")
+        peer_id, ip, port, region = data.get("peer_id"), data.get("ip"), data.get("port"), data.get("vm_region")
         hosted_files = data.get("files", [])  # List of files the peer hosts
         if not peer_id or not ip or not port:
             return web.json_response({"error": "Invalid peer data"}, status=400)
-        PEERS[peer_id] = (ip, port)
+        new_peer = Peer(peer_id, ip, port, region)
+        PEERS[peer_id] = new_peer
         # Process files sent by the peer
         for file_data in hosted_files:
             file_name = file_data.get("file_name")
@@ -61,7 +62,7 @@ async def register_peer(request):
                     chunk_name = chunk_data.get("chunk_name")
                     chunk_size = chunk_data.get("chunk_size")
                     chunk_obj = Chunk(chunk_name=chunk_name, chunk_size=chunk_size)
-                    chunk_obj.add_peer(Peer(ip, port))
+                    chunk_obj.add_peer(new_peer)
                     new_file.chunks.append(chunk_obj)
                 TRACKER_FILE_REGISTRY.append(new_file)
             else:
@@ -74,12 +75,12 @@ async def register_peer(request):
                     )
                     if existing_chunk:
                         # If chunk exists, add new peer to it
-                        existing_chunk.add_peer(Peer(ip, port))
+                        existing_chunk.add_peer(new_peer)
                     else:
                         # If chunk does not exist, create and add it
                         chunk_size = chunk_data.get("chunk_size")
                         new_chunk = Chunk(chunk_name=chunk_name, chunk_size=chunk_size)
-                        new_chunk.add_peer(Peer(ip, port))
+                        new_chunk.add_peer(new_peer)
                         existing_file.chunks.append(new_chunk)
         print(f"[INFO] Registered peer {peer_id} at {ip}:{port}")  # Debugging output
         print_tracker_file_registry(TRACKER_FILE_REGISTRY)
@@ -97,8 +98,11 @@ async def update_chunk_host(request):
         chunk_name = data.get("chunk_name")
         ip = data.get("ip")
         port = data.get("port")
+        peer_id = data.get("peer_id")
+        region = data.get("vm_region")
         dead_peers = data.get("dead_peers", [])
         download_status = data.get("download_status", False)
+        new_peer = Peer(peer_id, ip, port, region)
 
         if not file_name or not chunk_name or not ip or not port:
             return web.json_response({"error": "Missing required fields"}, status=400)
@@ -116,7 +120,7 @@ async def update_chunk_host(request):
             return web.json_response({"error": "Chunk not found"}, status=404)
 
         if download_status:
-            chunk_obj.add_peer(Peer(ip, port))
+            chunk_obj.add_peer(new_peer)
 
         for dead in dead_peers:
             chunk_obj.peers = [

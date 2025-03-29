@@ -23,6 +23,9 @@ async def register_peer(peer_id, ip, port):
     """
     Registers the peer to the tracker.
     """
+    VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
+    VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
+
     hosted_files = [
         {
             "file_name": f.file_name,
@@ -43,10 +46,11 @@ async def register_peer(peer_id, ip, port):
             async with session.post(
                 f"{TRACKER_URL}/register",
                 json={
-                    "peer_id": peer_id,
+                    "peer_id": VM_NAME,
                     "ip": ip,
                     "port": port,
                     "files": hosted_files,
+                    "vm_region" : VM_REGION
                 },
             ) as response:
                 result = await response.json()

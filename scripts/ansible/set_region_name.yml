@@ -1,0 +1,53 @@
+# ---
+# - name: Export PEER_VM_NAME (vm02 to vm20) on all peers
+#   hosts: peers
+#   gather_facts: no
+
+#   tasks:
+#     - name: Set PEER_VM_NAME and persist it in ~/.bashrc
+#       ansible.builtin.shell: |
+#         idx=$(hostname | grep -oP '\d{4}' | awk '{printf "vm%02d", $1 - 1200}')
+#         echo "export PEER_VM_NAME=$idx" >> ~/.bashrc
+#       args:
+#         executable: /bin/bash
+
+---
+- name: Set REGION_NAME on WA VMs
+  hosts: WA
+  gather_facts: no
+  tasks:
+    - name: Export REGION_NAME=WA to ~/.bashrc
+      ansible.builtin.shell: |
+        echo 'export REGION_NAME=WA' >> ~/.bashrc
+      args:
+        executable: /bin/bash
+
+- name: Set REGION_NAME on NY VMs
+  hosts: NY
+  gather_facts: no
+  tasks:
+    - name: Export REGION_NAME=NY to ~/.bashrc
+      ansible.builtin.shell: |
+        echo 'export REGION_NAME=NY' >> ~/.bashrc
+      args:
+        executable: /bin/bash
+
+- name: Set REGION_NAME on CA VMs
+  hosts: CA
+  gather_facts: no
+  tasks:
+    - name: Export REGION_NAME=CA to ~/.bashrc
+      ansible.builtin.shell: |
+        echo 'export REGION_NAME=CA' >> ~/.bashrc
+      args:
+        executable: /bin/bash
+
+- name: Set REGION_NAME on FL VMs
+  hosts: FL
+  gather_facts: no
+  tasks:
+    - name: Export REGION_NAME=FL to ~/.bashrc
+      ansible.builtin.shell: |
+        echo 'export REGION_NAME=FL' >> ~/.bashrc
+      args:
+        executable: /bin/bash
