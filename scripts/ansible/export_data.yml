@@ -1,0 +1,8 @@
+- name: Sync scripts/data folder
+  hosts: sp25-cs525-1202.cs.illinois.edu
+  tasks:
+    - name: Rsync data
+      ansible.posix.synchronize:
+        src: "../../tests/data/"
+        dest: "/home/sj99/app/tests/data/"
+        recursive: yes

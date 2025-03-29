@@ -1,0 +1,8 @@
+ssh-copy-id  sj99@sp25-cs525-1201.cs.illinois.edu
+
+
+##### HELP-FUL COMMANDS ####
+
+
+# Migrate Data
+ansible % rsync -avz ../../tests/data/ sj99@sp25-cs525-1202.cs.illinois.edu:/home/sj99/app/tests/data/

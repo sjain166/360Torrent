@@ -1,8 +1,4 @@
-1. Check if a Chunck is already downloaded, mark it completed and skip
-3. Smart Chunk-Eviction {LRU} -- {Anton Code Implementation}
-
-
 Mid Term Report :
 
-1. Rarest First Solution Implemented
-2. 
+1. Longest First Download
+2. Map the VM-IPs to VM-Name

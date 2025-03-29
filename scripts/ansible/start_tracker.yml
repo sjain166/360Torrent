@@ -1,0 +1,11 @@
+- name: Launch tracker inside tmux
+  hosts: tracker
+  tasks:
+    - name: Start tracker in tmux
+      shell: |
+        tmux new-session -d -s tracker_session 'cd /home/sj99/app && source myenv/bin/activate && python3 -m tracker.tracker'
+
+
+# ansible-playbook -i hosts.ini start_tracker.yml
+# ssh user@peer_vm
+# tmux attach-session -t start_tracker

@@ -1,0 +1,45 @@
+import subprocess
+
+# Define your VM hosts (hostnames or IPs)
+VM_HOSTS = [
+    "sp25-cs525-1215.cs.illinois.edu"
+    # Add more as needed...
+]
+
+COMMANDS = [
+    "2",
+    "Pacific_Rim"
+]
+
+
+# Username for ssh
+USERNAME = "sj99"
+
+# Tmux session name
+SESSION_NAME = "peer_session"
+
+def send_command_to_vm(host, command):
+    tmux_cmd = (
+        f"tmux send-keys -t {SESSION_NAME} '{command}' C-m"
+    )
+    full_cmd = f"ssh {USERNAME}@{host} \"{tmux_cmd}\""
+    print(f"[INFO] Sending to {host}:\n  {command}")
+    subprocess.run(full_cmd, shell=True)
+
+def ensure_tmux_session_exists(host):
+    check_cmd = f"ssh {USERNAME}@{host} 'tmux has-session -t {SESSION_NAME} 2>/dev/null || tmux new-session -d -s {SESSION_NAME}'"
+    subprocess.run(check_cmd, shell=True)
+
+def main():
+    # command = input("💬 Enter the command to run on all VMs via tmux: ")
+
+    for command in COMMANDS:
+
+        for host in VM_HOSTS:
+            ensure_tmux_session_exists(host)
+            send_command_to_vm(host, command)
+
+        print("\n✅ Command sent to all VMs in tmux session:", SESSION_NAME)
+
+if __name__ == "__main__":
+    main()

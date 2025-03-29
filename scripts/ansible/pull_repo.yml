@@ -1,0 +1,11 @@
+- name: Pull Repo
+  hosts: all
+  become: false
+  tasks:
+
+    - name: Pull in /home/sj99/app
+      shell: git pull
+      args:
+        chdir: /home/sj99/app
+
+# ansible-playbook -i hosts.ini pull_repo.yml
