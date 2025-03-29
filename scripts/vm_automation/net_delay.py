@@ -10,6 +10,7 @@ def create_network_delay(TARGET_VMs, net, regions):
 
     for vm in TARGET_VMs:
         c = vm["connection"]
+        print(vm)
         c.sudo(f"tc qdisc add dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
 
 

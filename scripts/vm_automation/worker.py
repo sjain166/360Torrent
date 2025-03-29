@@ -39,7 +39,7 @@ TARGET_VMS = [
             connect_kwargs={"password": PASS},
         ),
     }
-    for i in range(15, 21)
+    for i in range(2, 21)
 ]
 
 def get_resolved_ip_addr(c, dns_address):
@@ -68,28 +68,33 @@ if __name__ == "__main__":
     #   Install kernel-modules-extra
     #   Load sch_netem module
     # run_simple_task(TARGET_VMS, install_kernel_modules_extra)
-    # time.sleep(3 * CLI_DELAY)
-    # run_simple_task(TARGET_VMS, load_sch_netem)
+
+    time.sleep(3 * CLI_DELAY)
+    run_simple_task(TARGET_VMS, load_sch_netem)
 
     # Example
     # Setting up a network delay on VMs 15-20
 
-    run_simple_task(TARGET_VMS, load_sch_netem)
+    # run_simple_task(TARGET_VMS, load_sch_netem)
     time.sleep(CLI_DELAY)
 
     # For easy mapping
     def get_VMs_by_id(ids): return [vm for vm in TARGET_VMS if vm['id'] in ids]
     
     # Map VMs to their region
-    regions = { "A": get_VMs_by_id([15, 16]),
-                "B": get_VMs_by_id([17, 18]) ,
-                "C": get_VMs_by_id([19, 20])}
+    regions = { "W": get_VMs_by_id([2,3,4,5]),
+                "N": get_VMs_by_id([6,7,8,9,10]) ,
+                "C": get_VMs_by_id([11,12,13,14,15]),
+                "F": get_VMs_by_id([16,17,18,19,20])}
 
     # Define delays between regions
     net = nx.Graph(data=True)
-    net.add_edge("A","B", weight=20)
-    net.add_edge("A","C", weight=50)
-    net.add_edge("B","C", weight=40)
+    net.add_edge("W","N", weight=100)
+    net.add_edge("W","C", weight=35)
+    net.add_edge("W", "F", weight=120)
+    net.add_edge("N", "C", weight=120)
+    net.add_edge("N", "F", weight = 35)
+    net.add_edge("C", "F", weight=100)
 
     create_network_delay(TARGET_VMS, net, regions)
 

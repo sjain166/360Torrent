@@ -25,10 +25,10 @@ TARGET_VMS = [
             connect_kwargs={"password": PASS},
         ),
     }
-    for i in range(15, 21)
+    for i in range(2, 21)
 ]
 
 from worker import run_simple_task
-from net_delay import remove_network_delay
+from simple_tasks import remove_network_delay
 
 run_simple_task(TARGET_VMS, remove_network_delay)
