@@ -12,30 +12,3 @@
 
 
 
-# ---
-# - name: Delete project directories from /home/sj99
-#   hosts: all  # Change to 'peers', 'WA', etc. as needed
-#   gather_facts: no
-
-#   tasks:
-    # - name: Remove ~/360Torrent
-    #   ansible.builtin.file:
-    #     path: /home/sj99/360Torrent
-    #     state: absent
-
-    # - name: Remove ~/app
-    #   ansible.builtin.file:
-    #     path: /home/sj99/app
-    #     state: absent
-
-    # - name: Remove ~/myenv
-    #   ansible.builtin.file:
-    #     path: /home/sj99/myenv
-    #     state: absent
-
-    # - name: Clone Git repo into ~/360Torrent
-    #   ansible.builtin.git:
-    #     repo: https://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@github.com/sjain166/360Torrent.git  # 🔁 Replace this
-    #     dest: /home/sj99/360Torrent
-    #     clone: yes
-    #     update: yes

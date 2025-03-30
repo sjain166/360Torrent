@@ -3,6 +3,40 @@
   tasks:
     - name: Rsync data
       ansible.posix.synchronize:
-        src: "../../tests/data/"
-        dest: "/home/sj99/app/tests/data/"
+        src: "../../tests/data/Pacific_Rim"
+        dest: "/home/sj99/360Torrent/tests/data/Pacific_Rim"
         recursive: yes
+
+# ---
+# - name: Delete project directories from /home/sj99
+#   hosts: peers  # Change to 'peers', 'WA', etc. as needed
+#   gather_facts: no
+
+#   tasks:
+#     - name: Remove ~/Data
+#       ansible.builtin.file:
+#         path: /home/sj99/360Torrent/tests/data/
+#         state: absent
+
+#     - name: Recreate ~/360Torrent/tests/data
+#       ansible.builtin.file:
+#         path: /home/sj99/360Torrent/tests/data/
+#         state: directory
+#         mode: '0755'
+
+    # - name: Remove ~/app
+    #   ansible.builtin.file:
+    #     path: /home/sj99/app
+    #     state: absent
+
+    # - name: Remove ~/myenv
+    #   ansible.builtin.file:
+    #     path: /home/sj99/myenv
+    #     state: absent
+
+    # - name: Clone Git repo into ~/360Torrent
+    #   ansible.builtin.git:
+    #     repo: https://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@github.com/sjain166/360Torrent.git  # 🔁 Replace this
+    #     dest: /home/sj99/360Torrent
+    #     clone: yes
+    #     update: yes
