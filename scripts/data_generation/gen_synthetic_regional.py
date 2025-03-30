@@ -12,7 +12,7 @@ NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
 USER_FILE = DATA_DIR + "\\user_schedules.csv"
 
 
-N_CLIENTS = 20
+N_CLIENTS = 10
 N_ELAPSED_EXPERIMENT_TIME = 60000 # in ms
 
 
@@ -100,14 +100,16 @@ content_arrival_times = np.cumsum(np.random.exponential(1/content_arrival_intens
 
 # - Generate request arrival times per user from a poisson distribution
 
-request_arrival_intensity_per_minute_per_user = 1 # for the duration of our entire experiment, how much content do we want our users to request?
+request_arrival_intensity_per_minute_per_user = 2 # for the duration of our entire experiment, how much content do we want our users to request?
 
 content_request_times_per_user = np.empty((N_CLIENTS, 0)) # Each user has their individual request times defined from a poisson process
+# Don't really need to modify this array, just going to store this on each user.
+
 for i, user in enumerate(users):
     request_arrival_intensity = request_arrival_intensity_per_minute_per_user / 60000 # TODO: maybe set the total_number of requests per user up as a gaussian draw?
     N_TOTAL_REQ = request_arrival_intensity * N_ELAPSED_EXPERIMENT_TIME
     user_request_times = np.cumsum(np.random.exponential(1/request_arrival_intensity, int(N_TOTAL_REQ)))
-    content_request_times_per_user[i] = user_request_times
+    # content_request_times_per_user[i, :] = user_request_times
     user["request_times"] = user_request_times
 
 
@@ -125,55 +127,90 @@ content_arrived = []
 
 ZIPF_ALPHA = 1.01 # skewness param
 ZIPF_SIZE = 1 # draw one element from the distribution at any time
+ZIPF_N = 10**4
 
-def zipf_rank_to_prob(rank):
-    return (1/(rank**ZIPF_ALPHA) 
+def zipf_rank_to_probability(rank):
+    harmonic_sum = np.sum(1 / np.arange(1, ZIPF_N + 1) ** ZIPF_ALPHA)
+    return (1 / rank**ZIPF_ALPHA) / harmonic_sum
 
-
+def zipf_probability_to_rank(prob):
+    harmonic_sum = np.sum(1 / np.arange(1, ZIPF_N + 1) ** ZIPF_ALPHA)
+    rank = (1 / (prob * harmonic_sum)) ** (1 / ZIPF_ALPHA)
+    print(f"computed rank {rank}")
+    # return int(round(rank)) #TODO: A problem somewhere here...
+    return 1/prob
 
 def draw_content_from_roster(user):
     popularities = np.array([c["popularity"] for c in user["content_roster"]])
 
-    print(user["content_roster"])
-    print(popularities)
-
     # TODO: FIgure out how to convert back from the zipf popularity score to a probability?
-    drawn = np.random.choice(user["content_roster"], p=())
+    probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities] )
+    
+    probabilities /= np.sum(probabilities)
+
+    # Note: if we only have one piece of content, and the users requests it, it'll immediately be drawn from the distribution
+
+    drawn = np.random.choice(user["content_roster"], p=(probabilities))
+
     user["content_roster"].remove(drawn)
 
-    new_popularities= map( lambda c: c["popularity"] , user["content_roster"])
-    new_popularities /= new_popularities.sum()
+    if len(user["content_roster"]) != 0:
 
-    # re-assign selection probabilities to each file
-    for c, p in enumerate(new_popularities):
-        user["content_roster"][c] = p
+        probabilities /= np.sum(probabilities)
+
+        new_popularities = [ zipf_probability_to_rank(p) for p in probabilities]
+
+        print(new_popularities)
+
+        # re-assign popularities to each file
+        for c, p in enumerate(new_popularities):
+            print(f"c {c} p {p} ")
+            user["content_roster"][c]["popularity"] = p
 
     return drawn
 
 def push_content_to_roster(user, new_content):
-    # Why is user["content_roster"] a map???
+
     if len(user["content_roster"]) == 0:
         user["content_roster"].append(new_content)
         return
 
+    print("Entering push")
+    print(f" Roster: {user["content_roster"]} content : {new_content}")
     roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"], reverse=True) 
     # Lower ranks are inherently more popular, we sort in opposite order so that higher ranks (less popular) are to the left
 
     popularities = np.array([c["popularity"] for c in roster_sorted_by_popularity])
 
-
+    # The way this is set up now, it is deleting content at the highest (least popular rank)
+    # We want to insert the element at the bisection point
     # Shift current content down by one rank
-    new_content_idx = bisect.bisect_left(popularities, new_content["popularity"]) # Inserts our popularity and returns the index it was inserted at
-    popularities[0:new_content_idx] = popularities[1:new_content_idx+1] # Shift Zipf ranks i.e. popularities
-    popularities /= popularities.sum() # Normalize
+    new_content_idx = bisect.bisect_right(popularities, new_content["popularity"]) # Index where the new_conent's rank belongs in the sorted array
 
-    roster_sorted_by_popularity.insert(new_content_idx, new_content) # Place content in its proper place in the roster
+    popularities = np.insert(popularities, 0, 0)
+    popularities[0:new_content_idx] = popularities[1:new_content_idx+1] # Shift Zipf ranks down by one i.e. popularities
+    popularities[new_content_idx] = new_content["popularity"]
+    print(f" popularities post shift {popularities}")
+    # Re-normalize s.t. probabilites sum to 1   
+
+
+    # Zipf_rank_to_probability is assigning the same probability to rank 451 and rank 10000
+    probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities])
+    print(probabilities)
+    probabilities /= probabilities.sum()
+    print(f"probabilities post normalization {probabilities}")
+    popularities = [ zipf_probability_to_rank(p) for p in probabilities]
+    print(f"popularities converted by gpt code {popularities}") # So I think the ranks it gets back are <1, and then it runs int round, turning them int 0,1?
+
+    roster_sorted_by_popularity.insert(new_content_idx, new_content) # Place new content at its proper index in the roster
     # Map new popularities to content in roster
 
     for c in range(len(roster_sorted_by_popularity)):
-        roster_sorted_by_popularity[c] = popularities[c]
+        roster_sorted_by_popularity[c]["popularity"] = popularities[c]
 
     user["content_roster"] = roster_sorted_by_popularity # Update content roster with new shifted and sorted roster
+    print(" Exiting push ")
+    print(user["content_roster"])
 
 
     # What does "shifting down all content of equal or lesser popularity by one zipf position" mean?
@@ -187,11 +224,10 @@ def push_content_to_roster(user, new_content):
 for file_num, t_arrive in enumerate(content_arrival_times):
 
     seeder_client_id = int(np.random.uniform(low=0, high=N_CLIENTS))
-    seeder_client_reigon = users[seeder_client_id]
+    seeder_client_reigon = users[seeder_client_id]["region"]
 
     popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
-    # Ok, TODO: understand exactly why this only returns ranks from one to infinity
-    # Also, popularity should have some kind of cap on it?
+    popularity = np.clip(popularity, 0, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
 
     new_content = {
         "id": file_num,
@@ -218,7 +254,7 @@ for file_num, t_arrive in enumerate(content_arrival_times):
     
     # Now run the next request for each user
     for user in users_excluding_seeder:
-        if t_arrive < user["request_times"][0]:
+        if t_arrive < user["request_times"][user["last_request_index"]]:
 
             req_content = draw_content_from_roster(user)
 
@@ -228,7 +264,7 @@ for file_num, t_arrive in enumerate(content_arrival_times):
                 "content": req_content
             })
             
-            user["request_times"].pop(0) # Remove that request time
+            user["last_request_index"] += 1 # step forward to the next request
 
 
 # Print for debugging
