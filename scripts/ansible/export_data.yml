@@ -1,28 +1,28 @@
-- name: Sync scripts/data folder
-  hosts: sp25-cs525-1202.cs.illinois.edu
-  tasks:
-    - name: Rsync data
-      ansible.posix.synchronize:
-        src: "../../tests/data/Pacific_Rim"
-        dest: "/home/sj99/360Torrent/tests/data/Pacific_Rim"
-        recursive: yes
-
-# ---
-# - name: Delete project directories from /home/sj99
-#   hosts: peers  # Change to 'peers', 'WA', etc. as needed
-#   gather_facts: no
-
+# - name: Sync scripts/data folder
+#   hosts: sp25-cs525-1202.cs.illinois.edu
 #   tasks:
-#     - name: Remove ~/Data
-#       ansible.builtin.file:
-#         path: /home/sj99/360Torrent/tests/data/
-#         state: absent
+#     - name: Rsync data
+#       ansible.posix.synchronize:
+#         src: "../../tests/data/Pacific_Rim"
+#         dest: "/home/sj99/360Torrent/tests/data/Pacific_Rim"
+#         recursive: yes
 
-#     - name: Recreate ~/360Torrent/tests/data
-#       ansible.builtin.file:
-#         path: /home/sj99/360Torrent/tests/data/
-#         state: directory
-#         mode: '0755'
+---
+- name: Delete project directories from /home/sj99
+  hosts: test_peers  # Change to 'peers', 'WA', etc. as needed
+  gather_facts: no
+
+  tasks:
+    - name: Remove ~/Data
+      ansible.builtin.file:
+        path: /home/sj99/360Torrent/tests/data/
+        state: absent
+
+    - name: Recreate ~/360Torrent/tests/data
+      ansible.builtin.file:
+        path: /home/sj99/360Torrent/tests/data/
+        state: directory
+        mode: '0755'
 
     # - name: Remove ~/app
     #   ansible.builtin.file:

@@ -6,3 +6,16 @@ ssh-copy-id  sj99@sp25-cs525-1201.cs.illinois.edu
 
 # Migrate Data
 ansible % rsync -avz ../../tests/data sj99@sp25-cs525-1202.cs.illinois.edu:/home/sj99/360Torrent/tests/
+
+
+## Testing Command Sequence 
+
+ansible-playbook -i hosts.ini pull_repo.yml 
+
+ansible-playbook -i hosts.ini export_data.yml  
+ansible-playbook -i hosts.ini start_tracker.yml 
+ansible-playbook -i hosts.ini start_peer.yml
+python vm_interaction.py 
+
+ansible-playbook -i hosts.ini fetch_logs.yml
+

@@ -1,12 +1,21 @@
-- name: Pull Repo
+- name: Pull Repo and install dependencies
   hosts: all
   become: false
-  tasks:
+  gather_facts: no
 
-    - name: Pull in /home/sj99/360Torrent
+  tasks:
+    - name: Pull latest code from Git
       shell: git pull
       args:
         chdir: /home/sj99/360Torrent
+
+    - name: Install Python dependencies from requirements.txt
+      shell: |
+        source myenv/bin/activate
+        pip install -r requirements.txt
+      args:
+        chdir: /home/sj99/360Torrent
+        executable: /bin/bash
 
 # ansible-playbook -i hosts.ini pull_repo.yml
 
