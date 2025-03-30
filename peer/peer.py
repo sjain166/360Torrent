@@ -128,9 +128,7 @@ async def main():
     VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
 
     PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
-
-    
-
+    # PEER_FILE_REGISTRY = []
     peer_id = f"peer_{os.getpid()}"
     try:
         ip = get_private_ip()  # Automatically fetch the VM's IP

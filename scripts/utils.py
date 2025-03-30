@@ -22,8 +22,8 @@ builtins.print = rich_print
 
 ####################################################################################################
 
-TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
-# TRACKER_URL = "http://10.251.140.165:8080"  # Replace with actual tracker IP
+# TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
+TRACKER_URL = "http://10.251.175.158:8080"  # Replace with actual tracker IP
 
 FILE_PATH = "tests/data"
 
@@ -89,8 +89,7 @@ def scrape_data_folder(VM_NAME, VM_REGION):
 
 
 
-
-def check_server_status(host, port, path="/", connect_timeout=2, get_timeout=4):
+def check_server_status(host, port, path="/health_check", connect_timeout=4, get_timeout=6):
     try:
         # Step 1: Test TCP connection
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -98,7 +97,6 @@ def check_server_status(host, port, path="/", connect_timeout=2, get_timeout=4):
         sock.connect((host, port))
         sock.close()
         print("✅ Server is reachable at network level.")
-
     except socket.timeout:
         print("⛔ Server unreachable: connection timed out.")
         return "UNREACHABLE"
@@ -110,21 +108,25 @@ def check_server_status(host, port, path="/", connect_timeout=2, get_timeout=4):
         return "UNREACHABLE"
 
     try:
-        # Step 2: Send HTTP GET to test responsiveness
+        # Step 2: Perform 5 GET requests to measure max latency
         url = f"http://{host}:{port}{path}"
-        start = time.time()
-        response = requests.get(url, timeout=get_timeout)
-        latency = time.time() - start
+        latencies = []
 
-        if response.status_code == 200:
-            print(f"✅ Server responded in {latency:.2f}s.")
-            return "RESPONSIVE" if latency < 2 else "BUSY"
-        elif 500 <= response.status_code < 600:
-            print(f"⚠️ Server error {response.status_code} — likely busy.")
-            return "BUSY"
-        else:
-            print(f"ℹ️ Unexpected status {response.status_code}")
-            return "RESPONSIVE"
+        for i in range(10):
+            start = time.time()
+            response = requests.get(url, timeout=get_timeout)
+            end = time.time()
+            latency = end - start
+            latencies.append(latency)
+
+            if response.status_code != 200:
+                # print(f"ℹ️ Unexpected status {response.status_code}")
+                return "UNREACHABLE"
+
+        max_latency = max(latencies)
+        print(f"Max response latency over 10 pings: {max_latency:.2f}s.")
+
+        return "RESPONSIVE" if max_latency <= 1 else "BUSY"
 
     except requests.exceptions.Timeout:
         print("⏳ Server reachable but GET timed out — server likely busy.")

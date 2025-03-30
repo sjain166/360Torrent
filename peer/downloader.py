@@ -148,25 +148,46 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
     chunk_size = chunk.chunk_size
     dead_peers = []
     peers = await get_chunk_peers(metadata.file_name, chunk_name)
+    ip = get_private_ip()
 
+    folder_path = os.path.join(FILE_PATH, metadata.file_name)
+    file_path = os.path.join(folder_path, chunk_name)
+
+    if os.path.exists(file_path):
+        tqdm.write(f"[INFO] Chunk already downloaded: {chunk_name}")
+        chunk.download_status = True
+        return
+    
     async with semaphore:
         peer_index = 0
 
         while peers:
             peer = peers[peer_index]
+
+            if peer["ip"] == ip:
+                peers.pop(peer_index)
+                if len(peers) == 0:
+                    break
+                peer_index = peer_index % len(peers)
+                tqdm.write(f"[WARN] SKIPPING self.peer_ip : {peer}")
+                continue
+
             host_status = check_server_status(peer["ip"], peer["port"], path="/health_check", connect_timeout=2, get_timeout=4)
+            print(host_status)
 
             if host_status == "UNREACHABLE":
-                tqdm.write(f"[WARN] Unreachable peer removed: {peer}")
+                tqdm.write(f"[WARN]❗ Unreachable peer removed: {peer}")
                 dead_peers.append(peer)
                 peers.pop(peer_index)
-                if not peers:
+                if len(peers) == 0:
                     break
                 peer_index = peer_index % len(peers)  # stay in bounds
                 continue
 
             elif host_status == "BUSY":
-                tqdm.write(f"[INFO] Peer is busy, trying next: {peer}")
+                tqdm.write(f"[INFO] ℹ️ Peer is busy, trying next: {peer}")
+                if len(peers) == 0:
+                    break
                 peer_index = (peer_index + 1) % len(peers)
                 continue
 
@@ -190,6 +211,8 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
                 break
             else:
                 tqdm.write(f"[WARN] Peer failed, skipping for now: {peer}")
+                if len(peers) == 0:
+                    break
                 peer_index = (peer_index + 1) % len(peers)
 
         await update_tracker_chunk_host(
