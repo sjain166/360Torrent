@@ -4,6 +4,7 @@ import numpy as np
 import math
 
 import json
+import bisect
 
 
 DATA_DIR = "../../data/"
@@ -21,7 +22,8 @@ users = [{
     "region": None,
     "events": [],
     "content_roster": None,
-    "last_request_index": 0
+    "last_request_index": 0,
+    "request_times": []
 } for client_id in range(N_CLIENTS)]
 
 
@@ -103,6 +105,7 @@ for user in users:
     request_arrival_intensity = request_arrival_intensity_per_minute_per_user / 60000 # TODO: maybe set the total_number of requests per user up as a gaussian draw?
     user_request_times = np.cumsum(np.random.exponential(1/request_arrival_intensity, N_TOTAL_CONTENT))
     content_request_times_per_user[user, :] = user_request_times
+    user["request_times"] = user_request_times
 
 
 # ! Now that we have defined upload and download times, we need to model file upload and download !
@@ -119,12 +122,12 @@ content_arrived = []
 
 
 def draw_content_from_roster(user):
-    probabilities = map(user["content_roster"], lambda x: x["popularity"])
+    probabilities = map(lambda c: c["popularity"], user["content_roster"])
 
     drawn = np.random.choice(user["content_roster"], p=probabilities)
     user["content_roster"].remove(drawn)
 
-    new_probabilities = map(user["content_roster"], lambda x: x["popularity"])
+    new_probabilities = map( lambda c: c["popularity"] , user["content_roster"])
     new_probabilities /= new_probabilities.sum()
 
     # re-assign selection probabilities to each file
@@ -133,16 +136,31 @@ def draw_content_from_roster(user):
 
     return drawn
 
-def push_content_to_roster(user, content):
-    probabilities = map(user["content_roster"], lambda x: x["popularity"])
+def push_content_to_roster(user, new_content):
+
+    roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"])
+
+    popularities = np.array(map(lambda c: c["popularity"], roster_sorted_by_popularity))
+
+
+    # Shift current content down by one rank
+    new_content_idx = bisect.bisect_left(popularities, new_content["popularity"]) # Inserts our popularity and returns the index it was inserted at
+    popularities[0:new_content_idx] = popularities[1:new_content_idx+1] # Shift Zipf ranks i.e. popularities
+    popularities /= popularities.sum() # Normalize
+
+    roster_sorted_by_popularity.insert(new_content_idx, new_content) # Place content in its proper place in the roster
+    # Map new popularities to content in roster
+
+    for c in range(len(roster_sorted_by_popularity)):
+        roster_sorted_by_popularity[c] = popularities[c]
+
+    user["content_roster"] = roster_sorted_by_popularity # Update content roster with new shifted and sorted roster
+
 
     # What does "shifting down all content of equal or lesser popularity by one zipf position" mean?
     # If we just insert and renormalize, then we won't be "shifting"
     # "shifting" probabilities of other content down is what represents that the new content is inherently more popular / interesting?
     # Oh I see, so shifting content is basically just assigning each piece of content the popularity of the next highest popular node
-
-    # TODO
-    return 
 
     
 
@@ -151,27 +169,40 @@ for file_num, t_arrive in enumerate(content_arrival_times):
 
     seeder_client_id = np.random.uniform(range(N_CLIENTS))
     seeder_client_reigon = users[seeder_client_id]
-
     popularity = np.random.zipf(1, 1.0) # Generate 1 sample from a zipf(1) distribution
 
-    content_arrived.append({
+    new_content = {
         "id": file_num,
         "name": f"video{file_num}",
         "seeder": seeder_client_id,
         "seeder_region": seeder_client_reigon,
         "popularity": popularity #probability of being selected
+    }
+
+    content_arrived.append(new_content)
+
+    # Add this to the seeder client's list of events
+    seeder = users[seeder_client_id]
+    seeder["events"].append({
+        "type":"upload",
+        "content": new_content
     })
 
     # Update each client's content roster
+    # Exclude the seeder, beause they won't be downloading that content, they already have it
+    for user in users-seeder:
+        push_content_to_roster(user, new_content)
+    
+    # Now run the next request for each user
     for user in users:
-        if file_num < user["last_request_index"]:
+        if t_arrive < user["request_times"][0]:
 
-            # Need to write a method "Push content to user" that handles the zipf swap they talk about
-            # Then at the user's next timestep they'll pull the data from their content roster
-            user["content_roster"] 
-    
-    #
+            req_content = draw_content_from_roster(user)
 
-    
-
-    # Note: set up a conditional so that files can only be requested after they are uploaded, ignore any timestamps before the first file upload.
+            # Add this request to this client's list of events
+            user["events"].append({
+                "type":"request",
+                "content": req_content
+            })
+            
+            user["request_times"].pop(0) # Remove that request time
