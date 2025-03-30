@@ -152,7 +152,7 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
 
     folder_path = os.path.join(FILE_PATH, metadata.file_name)
     file_path = os.path.join(folder_path, chunk_name)
-
+    
     if os.path.exists(file_path):
         tqdm.write(f"[INFO] Chunk already downloaded: {chunk_name}")
         chunk.download_status = True
@@ -162,7 +162,8 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
         peer_index = 0
 
         while peers:
-            peer = peers[peer_index]
+            # peer = peers[peer_index] 
+            peer = random.choice(peers) # Randomized Peer Choice  
 
             if peer["ip"] == ip:
                 peers.pop(peer_index)
