@@ -1,6 +1,9 @@
 import socket
 import multiprocessing
 import os
+import socket
+import requests
+import time
 
 from scripts.class_object import Peer, Chunk, File
 
@@ -82,3 +85,50 @@ def scrape_data_folder(VM_NAME, VM_REGION):
             PEER_FILE_REGISTRY.append(file_obj)
 
     return PEER_FILE_REGISTRY
+
+
+
+
+
+def check_server_status(host, port, path="/", connect_timeout=2, get_timeout=4):
+    try:
+        # Step 1: Test TCP connection
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(connect_timeout)
+        sock.connect((host, port))
+        sock.close()
+        print("✅ Server is reachable at network level.")
+
+    except socket.timeout:
+        print("⛔ Server unreachable: connection timed out.")
+        return "UNREACHABLE"
+    except ConnectionRefusedError:
+        print("🔌 Server unreachable: connection refused.")
+        return "UNREACHABLE"
+    except Exception as e:
+        print(f"❗ Unexpected connection error: {e}")
+        return "UNREACHABLE"
+
+    try:
+        # Step 2: Send HTTP GET to test responsiveness
+        url = f"http://{host}:{port}{path}"
+        start = time.time()
+        response = requests.get(url, timeout=get_timeout)
+        latency = time.time() - start
+
+        if response.status_code == 200:
+            print(f"✅ Server responded in {latency:.2f}s.")
+            return "RESPONSIVE" if latency < 2 else "BUSY"
+        elif 500 <= response.status_code < 600:
+            print(f"⚠️ Server error {response.status_code} — likely busy.")
+            return "BUSY"
+        else:
+            print(f"ℹ️ Unexpected status {response.status_code}")
+            return "RESPONSIVE"
+
+    except requests.exceptions.Timeout:
+        print("⏳ Server reachable but GET timed out — server likely busy.")
+        return "BUSY"
+    except Exception as e:
+        print(f"❗ Error during GET request: {e}")
+        return "BUSY"

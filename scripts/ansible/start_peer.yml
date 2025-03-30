@@ -1,13 +1,18 @@
 - name: Launch peer inside tmux
   hosts: peers
+  gather_facts: no
+  
   tasks:
     - name: Start tracker in tmux
       shell: |
-        tmux new-session -d -s peer_session 'cd /home/sj99/app && source myenv/bin/activate && python3 -m peer.peer'
+        tmux new-session -d -s peer_session 'cd /home/sj99/360Torrent && source myenv/bin/activate && python3 -m peer.peer >> /home/sj99/360Torrent/tests/peer.log 2>&1'
+      args:
+        executable: /bin/bash
 
 # ansible-playbook -i hosts.ini start_peer.yml
 # ssh user@peer_vm
 # tmux attach-session -t peer_session
+# tmux attach-session -t tracker_session
 
 # TERMINATES ALl VMs
 # ansible all -i hosts.ini -a "tmux kill-session -t peer_session"

@@ -1,0 +1,17 @@
+---
+- name: Set up 360Torrent on all selected VMs
+  hosts: all  # or 'peers', 'WA', etc.
+  gather_facts: no
+
+  tasks:
+    - name: Ensure setup.sh is executable
+      ansible.builtin.file:
+        path: /home/sj99/360Torrent/scripts/vm_automation/setup.sh
+        mode: '0755'
+
+    - name: Run setup.sh script
+      ansible.builtin.shell: |
+        ./scripts/vm_automation/setup.sh
+      args:
+        chdir: /home/sj99/360Torrent/
+        executable: /bin/bash

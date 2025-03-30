@@ -161,7 +161,7 @@ def get_best_peers(chunk_obj):
     Placeholder function for advanced peer selection logic.
     Currently returns all peers hosting the chunk.
     """
-    return [{"ip": peer.ip, "port": peer.port} for peer in chunk_obj.peers]
+    return [{"ip": peer.ip, "port": peer.port} for peer in reversed(chunk_obj.peers)]
 
 
 async def get_chunk_peers(request):

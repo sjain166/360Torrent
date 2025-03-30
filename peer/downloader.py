@@ -7,7 +7,7 @@ from tqdm import tqdm
 import time
 
 from scripts.class_object import FileMetadata
-from scripts.utils import get_private_ip, get_max_threads
+from scripts.utils import get_private_ip, get_max_threads, check_server_status
 from tabulate import tabulate
 from scripts.utils import TRACKER_URL, FILE_PATH
 from scripts.prints import print_file_metadata
@@ -150,20 +150,31 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
     peers = await get_chunk_peers(metadata.file_name, chunk_name)
 
     async with semaphore:
-        while peers:
-            peer = random.choice(peers)
+        peer_index = 0
 
-            folder_path = os.path.join(FILE_PATH, metadata.file_name)
-            file_path = os.path.join(folder_path, chunk_name)
-            if os.path.exists(file_path) and os.path.getsize(file_path) == chunk_size:
-                tqdm.write(f"[INFO] Chunk already downloaded: {chunk_name}")
-                chunk.download_status = True
-                return
-            
+        while peers:
+            peer = peers[peer_index]
+            host_status = check_server_status(peer["ip"], peer["port"], path="/health_check", connect_timeout=2, get_timeout=4)
+
+            if host_status == "UNREACHABLE":
+                tqdm.write(f"[WARN] Unreachable peer removed: {peer}")
+                dead_peers.append(peer)
+                peers.pop(peer_index)
+                if not peers:
+                    break
+                peer_index = peer_index % len(peers)  # stay in bounds
+                continue
+
+            elif host_status == "BUSY":
+                tqdm.write(f"[INFO] Peer is busy, trying next: {peer}")
+                peer_index = (peer_index + 1) % len(peers)
+                continue
+
+            # ✅ Peer is responsive → try download
             try:
                 success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size, idx)
             except Exception as e:
-                print(f"[ERROR] Failed to download chunk {chunk_name} from {peer}: {e}")
+                tqdm.write(f"[ERROR] Download attempt failed from {peer}: {e}")
                 success = False
 
             if success:
@@ -176,11 +187,10 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
                     dead_peers,
                     True
                 )
-                return
+                break
             else:
-                peers.remove(peer)
-                dead_peers.append(peer)
-                print(f"[WARN] Removed {peer} from retry list for {chunk_name}")
+                tqdm.write(f"[WARN] Peer failed, skipping for now: {peer}")
+                peer_index = (peer_index + 1) % len(peers)
 
         await update_tracker_chunk_host(
             metadata.file_name,

@@ -10,6 +10,9 @@ from rich import print as rich_print
 builtins.print = rich_print
 
 
+async def health_check(request):
+    return web.Response(status=200, text="OK")
+
 async def serve_file(request):
     """
     Serves a specific chunk file to requesting peers.
@@ -43,6 +46,7 @@ async def start_file_server():
         port = 6881
         app = web.Application()
         app.router.add_get("/file", serve_file)
+        app.router.add_get("/health_check", health_check)
         print(f"[INFO] File Server Started on {ip}:{port}")
 
         runner = web.AppRunner(app)
