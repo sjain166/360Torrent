@@ -1,5 +1,6 @@
+---
 - name: Download peer.log files from all peers
-  hosts: all
+  hosts: peers
   gather_facts: no
 
   tasks:
@@ -15,8 +16,14 @@
         dest: "../../tests/logs/{{ vm_log_name.stdout }}"
         flat: yes
 
-    - name: Fetch tracker.log from remote to local
+
+- name: Download tracker.log from tracker
+  hosts: tracker
+  gather_facts: no
+
+  tasks:
+    - name: Fetch tracker.log and save it locally
       ansible.builtin.fetch:
         src: /home/sj99/360Torrent/tests/tracker.log
-        dest: ../../tests/logs/  # Local path on your machine
+        dest: "../../tests/logs/tracker.log"
         flat: yes
