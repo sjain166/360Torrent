@@ -21,7 +21,7 @@ users = [{
     "id": client_id,
     "region": None,
     "events": [],
-    "content_roster": None,
+    "content_roster": [],
     "last_request_index": 0,
     "request_times": []
 } for client_id in range(N_CLIENTS)]
@@ -93,7 +93,9 @@ content_arrival_intensity = content_arrival_intensity_per_minute / 60000 # Conte
 
 N_TOTAL_CONTENT = content_arrival_intensity * N_ELAPSED_EXPERIMENT_TIME # ex. 2 vids per minute, 8 minute simulation, should be 16 total videos - but this is scaled in ms
 
-content_arrival_times = np.cumsum(np.random.exponential(1/content_arrival_intensity, N_TOTAL_CONTENT))
+
+## TODO: is 1/intensity correct?
+content_arrival_times = np.cumsum(np.random.exponential(1/content_arrival_intensity, int(N_TOTAL_CONTENT)))
 
 
 # - Generate request arrival times per user from a poisson distribution
@@ -101,10 +103,11 @@ content_arrival_times = np.cumsum(np.random.exponential(1/content_arrival_intens
 request_arrival_intensity_per_minute_per_user = 1 # for the duration of our entire experiment, how much content do we want our users to request?
 
 content_request_times_per_user = np.empty((N_CLIENTS, 0)) # Each user has their individual request times defined from a poisson process
-for user in users:
+for i, user in enumerate(users):
     request_arrival_intensity = request_arrival_intensity_per_minute_per_user / 60000 # TODO: maybe set the total_number of requests per user up as a gaussian draw?
-    user_request_times = np.cumsum(np.random.exponential(1/request_arrival_intensity, N_TOTAL_CONTENT))
-    content_request_times_per_user[user, :] = user_request_times
+    N_TOTAL_REQ = request_arrival_intensity * N_ELAPSED_EXPERIMENT_TIME
+    user_request_times = np.cumsum(np.random.exponential(1/request_arrival_intensity, int(N_TOTAL_REQ)))
+    content_request_times_per_user[i] = user_request_times
     user["request_times"] = user_request_times
 
 
@@ -120,27 +123,43 @@ for user in users:
 # }
 content_arrived = []
 
+ZIPF_ALPHA = 1.01 # skewness param
+ZIPF_SIZE = 1 # draw one element from the distribution at any time
+
+def zipf_rank_to_prob(rank):
+    return (1/(rank**ZIPF_ALPHA) 
+
+
 
 def draw_content_from_roster(user):
-    probabilities = map(lambda c: c["popularity"], user["content_roster"])
+    popularities = np.array([c["popularity"] for c in user["content_roster"]])
 
-    drawn = np.random.choice(user["content_roster"], p=probabilities)
+    print(user["content_roster"])
+    print(popularities)
+
+    # TODO: FIgure out how to convert back from the zipf popularity score to a probability?
+    drawn = np.random.choice(user["content_roster"], p=())
     user["content_roster"].remove(drawn)
 
-    new_probabilities = map( lambda c: c["popularity"] , user["content_roster"])
-    new_probabilities /= new_probabilities.sum()
+    new_popularities= map( lambda c: c["popularity"] , user["content_roster"])
+    new_popularities /= new_popularities.sum()
 
     # re-assign selection probabilities to each file
-    for c, p in enumerate(new_probabilities):
+    for c, p in enumerate(new_popularities):
         user["content_roster"][c] = p
 
     return drawn
 
 def push_content_to_roster(user, new_content):
+    # Why is user["content_roster"] a map???
+    if len(user["content_roster"]) == 0:
+        user["content_roster"].append(new_content)
+        return
 
-    roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"])
+    roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"], reverse=True) 
+    # Lower ranks are inherently more popular, we sort in opposite order so that higher ranks (less popular) are to the left
 
-    popularities = np.array(map(lambda c: c["popularity"], roster_sorted_by_popularity))
+    popularities = np.array([c["popularity"] for c in roster_sorted_by_popularity])
 
 
     # Shift current content down by one rank
@@ -167,9 +186,12 @@ def push_content_to_roster(user, new_content):
 
 for file_num, t_arrive in enumerate(content_arrival_times):
 
-    seeder_client_id = np.random.uniform(range(N_CLIENTS))
+    seeder_client_id = int(np.random.uniform(low=0, high=N_CLIENTS))
     seeder_client_reigon = users[seeder_client_id]
-    popularity = np.random.zipf(1, 1.0) # Generate 1 sample from a zipf(1) distribution
+
+    popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
+    # Ok, TODO: understand exactly why this only returns ranks from one to infinity
+    # Also, popularity should have some kind of cap on it?
 
     new_content = {
         "id": file_num,
@@ -188,13 +210,14 @@ for file_num, t_arrive in enumerate(content_arrival_times):
         "content": new_content
     })
 
+    users_excluding_seeder = [user for user in users if user != seeder]
     # Update each client's content roster
     # Exclude the seeder, beause they won't be downloading that content, they already have it
-    for user in users-seeder:
+    for user in users_excluding_seeder:
         push_content_to_roster(user, new_content)
     
     # Now run the next request for each user
-    for user in users:
+    for user in users_excluding_seeder:
         if t_arrive < user["request_times"][0]:
 
             req_content = draw_content_from_roster(user)
@@ -206,3 +229,9 @@ for file_num, t_arrive in enumerate(content_arrival_times):
             })
             
             user["request_times"].pop(0) # Remove that request time
+
+
+# Print for debugging
+for user in users:
+    print(f" USER: {user["id"]}")
+    print(user["events"])
