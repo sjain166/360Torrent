@@ -135,12 +135,15 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
 
     start_time_chunk = time.time()
     peers_information = await get_chunk_peers(metadata.file_name, chunk_name)
-
     peers = peers_information[0]
     same_region_count = peers_information[1]
     other_region_count = peers_information[2]
+    
+    print("[INFO] List of Peers Hosting Chunk : " ,  chunk_name ,  " : " ,  ", ".join(peers))
+    print("[INFO] SR : " , same_region_count)
+    print("[INFO] OR : " , other_region_count)
+    
     is_peer_same_region = False
-
     ip = get_private_ip()
 
     folder_path = os.path.join(FILE_PATH, metadata.file_name)
@@ -267,6 +270,9 @@ async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
         end_time = time.time()  # End timer
         total_time = end_time - start_time
 
+        for c in metadata.chunks:
+            print(f"[DEBUG] {c.chunk_name}: Tried={c.peers_tried}, Failed={c.peers_failed}")
+        
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
         print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))

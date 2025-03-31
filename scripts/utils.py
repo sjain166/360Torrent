@@ -133,13 +133,6 @@ def check_server_status(host, port, path="/health_check", connect_timeout=4, get
     
 
 def append_file_download_summary_to_json(metadata, total_time):
-    for chunk in metadata.chunks:
-        peers_tried_str = ", ".join(
-                    [f"{peer_id}" for peer_id in chunk.peers_tried]
-                )
-        peers_failed_str = ", ".join(
-                    [f"{peer_id}" for peer_id in chunk.peers_failed]
-                )
     
     result_summary = {
         "file_name": metadata.file_name,
@@ -150,8 +143,8 @@ def append_file_download_summary_to_json(metadata, total_time):
                 "chunk_name": chunk.chunk_name,
                 "chunk_size": chunk.chunk_size,
                 "downloaded": chunk.download_status,
-                "peers_tried" : peers_tried_str,
-                "peers_failed" : peers_failed_str,
+                "peers_tried" : ", ".join(chunk.peers_tried or []),
+                "peers_failed" : ", ".join(chunk.peers_failed or []),
                 "download_time" : chunk.download_time
             }
             for chunk in metadata.chunks
