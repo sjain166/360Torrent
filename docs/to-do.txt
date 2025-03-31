@@ -1,4 +1,6 @@
 Mid Term Report :
 
-1. Longest First Download
-2. Map the VM-IPs to VM-Name
+1. Remove Table Prints
+2. Remove Downloading BAR
+3. Add A Table to know the chunck the peer downloaded from.
+4. Make a Script to Verify the File Size in all the peers

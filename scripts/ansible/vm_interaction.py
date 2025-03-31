@@ -2,12 +2,14 @@ import subprocess
 import time
 
 # Define your VM hosts (hostnames or IPs)
-VM_HOSTS = [
+VM_HOSTS_EXCEPT_11 = [
     "sp25-cs525-1203.cs.illinois.edu",
     "sp25-cs525-1216.cs.illinois.edu",
     "sp25-cs525-1217.cs.illinois.edu",
     "sp25-cs525-1206.cs.illinois.edu",
     "sp25-cs525-1207.cs.illinois.edu",
+    "sp25-cs525-1214.cs.illinois.edu",
+    "sp25-cs525-1215.cs.illinois.edu",
     "sp25-cs525-1212.cs.illinois.edu",
     "sp25-cs525-1213.cs.illinois.edu",
     "sp25-cs525-1204.cs.illinois.edu",
@@ -18,10 +20,9 @@ VM_HOSTS = [
     "sp25-cs525-1218.cs.illinois.edu",
     "sp25-cs525-1219.cs.illinois.edu",
     "sp25-cs525-1220.cs.illinois.edu",
-    "sp25-cs525-1214.cs.illinois.edu",
-    "sp25-cs525-1215.cs.illinois.edu",
-    "sp25-cs525-1211.cs.illinois.edu",
 ]
+
+VM_HOSTS_11 = ["sp25-cs525-1211.cs.illinois.edu"]
 
 COMMANDS = [
     "2",
@@ -52,10 +53,18 @@ def main():
 
     for command in COMMANDS:
 
-        for host in VM_HOSTS:
+        for host in VM_HOSTS_EXCEPT_11:
             ensure_tmux_session_exists(host)
             send_command_to_vm(host, command)
             time.sleep(2)
+
+        time.sleep(150)
+
+        for host in VM_HOSTS_11:
+            ensure_tmux_session_exists(host)
+            send_command_to_vm(host, command)
+            time.sleep(2)
+        
         print("\n✅ Command sent to all VMs in tmux session:", SESSION_NAME)
 
 if __name__ == "__main__":
