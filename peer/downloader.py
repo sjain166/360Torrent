@@ -214,7 +214,7 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
             try:
                 success = await download_chunk(peer["ip"], peer["id"], metadata.file_name, chunk_name)
             except Exception as e:
-                print(f"[ERROR] Download attempt failed from {peer["id"]}: {e}")
+                print(f"[ERROR] Download attempt failed from {peer['id']}: {e}")
                 success = False
 
             if success:

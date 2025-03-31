@@ -1,4 +1,4 @@
-ssh-copy-id  sj99@sp25-cs525-1201.cs.illinois.edu
+ssh-copy-id  sj99@sp25-cs525-1206.cs.illinois.edu
 
 
 ##### HELP-FUL COMMANDS ####

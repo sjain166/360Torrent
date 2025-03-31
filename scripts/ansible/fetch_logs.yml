@@ -6,14 +6,20 @@
   tasks:
     - name: Extract vm index and register filename
       ansible.builtin.shell: |
-        echo "vm$(hostname | grep -oP '\d{4}' | awk '{printf "%02d", $1 - 1200}').log"
+        echo "vm$(hostname | grep -oP '\d{4}' | awk '{printf "%02d", $1 - 1200}')"
       register: vm_log_name
       changed_when: false
 
     - name: Fetch peer.log and save as vmXX.log locally
       ansible.builtin.fetch:
         src: /home/sj99/360Torrent/tests/peer.log
-        dest: "../../tests/logs/{{ vm_log_name.stdout }}"
+        dest: "../../tests/logs/{{ vm_log_name.stdout }}.log"
+        flat: yes
+    
+    - name: Fetch peer.log and save as vmXX.log locally
+      ansible.builtin.fetch:
+        src: /home/sj99/360Torrent/tests/summary.json
+        dest: "../../tests/json/{{ vm_log_name.stdout }}.json"
         flat: yes
 
 
@@ -27,3 +33,4 @@
         src: /home/sj99/360Torrent/tests/tracker.log
         dest: "../../tests/logs/tracker.log"
         flat: yes
+    
