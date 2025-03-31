@@ -143,25 +143,23 @@ def zipf_probability_to_rank(prob):
 def draw_content_from_roster(user):
     popularities = np.array([c["popularity"] for c in user["content_roster"]])
 
-    # TODO: FIgure out how to convert back from the zipf popularity score to a probability?
+    old_total = popularities.sum()
+
+
     probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities] )
-    
     probabilities /= np.sum(probabilities)
-
-    # Note: if we only have one piece of content, and the users requests it, it'll immediately be drawn from the distribution
-
     drawn = np.random.choice(user["content_roster"], p=(probabilities))
 
     user["content_roster"].remove(drawn)
 
-    if len(user["content_roster"]) != 0:
+    if len(user["content_roster"]) > 0:
 
-        probabilities /= np.sum(probabilities)
-        new_popularities = [ zipf_probability_to_rank(p) for p in probabilities]
+        # Now re-normalize ranks
 
+        new_popularities = np.array([c["popularity"] for c in user["content_roster"]])
         # Normalize ranks with ranks
-        # new_popularities = np.array([c["popularity"] for c in user["content_roster"]])
-        # new_popularities /= new_popularities.sum()
+        # new_popularities = popularities / (old_total - drawn["popularity"])
+        new_popularities = new_popularities * ZIPF_N / new_popularities.sum()
 
         print(new_popularities)
 
@@ -184,6 +182,7 @@ def push_content_to_roster(user, new_content):
     # Lower ranks are inherently more popular, we sort in opposite order so that higher ranks (less popular) are to the left
 
     popularities = np.array([c["popularity"] for c in roster_sorted_by_popularity])
+    old_total = popularities.sum()
 
     # The way this is set up now, it is deleting content at the highest (least popular rank)
     # We want to insert the element at the bisection point
@@ -197,13 +196,15 @@ def push_content_to_roster(user, new_content):
     # Re-normalize s.t. probabilites sum to 1   
 
 
-    # Zipf_rank_to_probability is assigning the same probability to rank 451 and rank 10000
-    probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities])
-    print(probabilities)
-    probabilities /= probabilities.sum()
-    print(f"probabilities post normalization {probabilities}")
-    popularities = [ zipf_probability_to_rank(p) for p in probabilities]
-    print(f"popularities converted by gpt code {popularities}") # So I think the ranks it gets back are <1, and then it runs int round, turning them int 0,1?
+    # Zipf_rank_to_probability is tweaking!
+    # probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities])
+    # print(probabilities)
+    # probabilities /= probabilities.sum()
+    # print(f"probabilities post normalization {probabilities}")
+    # popularities = [ zipf_probability_to_rank(p) for p in probabilities]
+    # print(f"popularities converted by gpt code {popularities}") # So I think the ranks it gets back are <1, and then it runs int round, turning them int 0,1?
+
+    popularities = popularities * ZIPF_N / popularities.sum() # re-normalize ranks using ranks
 
     roster_sorted_by_popularity.insert(new_content_idx, new_content) # Place new content at its proper index in the roster
     # Map new popularities to content in roster
@@ -246,6 +247,7 @@ for file_num, t_arrive in enumerate(content_arrival_times):
     seeder = users[seeder_client_id]
     seeder["events"].append({
         "type":"upload",
+        "time": t_arrive,
         "content": new_content
     })
 
@@ -257,17 +259,24 @@ for file_num, t_arrive in enumerate(content_arrival_times):
     
     # Now run the next request for each user
     for user in users_excluding_seeder:
-        if t_arrive < user["request_times"][user["last_request_index"]]:
+        print(f" req times {user["request_times"]}")
+        print(f" user last req idx {user["last_request_index"]}")
 
-            req_content = draw_content_from_roster(user)
+        if user["last_request_index"] < len(user["request_times"]):
+            t_req = user["request_times"][user["last_request_index"]]
 
-            # Add this request to this client's list of events
-            user["events"].append({
-                "type":"request",
-                "content": req_content
-            })
-            
-            user["last_request_index"] += 1 # step forward to the next request
+            if t_arrive < t_req:
+
+                req_content = draw_content_from_roster(user)
+
+                # Add this request to this client's list of events
+                user["events"].append({
+                    "type":"request",
+                    "time": t_req,
+                    "content": req_content
+                })
+                
+                user["last_request_index"] += 1 # step forward to the next request
 
 
 # Print for debugging
