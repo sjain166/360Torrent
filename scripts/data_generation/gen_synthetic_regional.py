@@ -6,6 +6,8 @@ import math
 import json
 import bisect
 
+import matplotlib.pyplot as plt
+
 
 DATA_DIR = "../../data/"
 NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
@@ -195,7 +197,6 @@ def push_content_to_roster(user, new_content):
     print(f" popularities post shift {popularities}")
     # Re-normalize s.t. probabilites sum to 1   
 
-
     # Zipf_rank_to_probability is tweaking!
     # probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities])
     # print(probabilities)
@@ -279,7 +280,35 @@ for file_num, t_arrive in enumerate(content_arrival_times):
                 user["last_request_index"] += 1 # step forward to the next request
 
 
-# Print for debugging
+
+# Timeline for debugging
+event_times_and_labels = []
+
+
+# Print for debugging and timeline plotting
 for user in users:
     print(f" USER: {user["id"]}")
     print(user["events"])
+
+    for event in user["events"]:
+        event_times_and_labels.append((event["time"], f" User {user['id']} {event['type']} content: {event['content']}"))
+
+event_times_and_labels = sorted(event_times_and_labels, key=lambda x: x[0])
+event_times = [e[0] for e in event_times_and_labels]
+event_labels = [e[1] for e in event_times_and_labels]
+
+fig, ax = plt.subplots(figsize=(10,2))
+ax.scatter(event_times, np.zeros_like(event_times), color='red', s=100, zorder=5)
+# Add labels for each event
+
+stagger_step = 0.1
+for i, label in enumerate(event_labels):
+    ax.text(event_times[i], 0.05 + stagger_step*i, label, ha='center', va='bottom', fontsize=10)
+
+# Format the plot
+ax.set_ylim(-0.1, 0.1)  # Keep the events on the x-axis
+ax.set_yticks([])  # Hide y-axis
+ax.set_xlabel('Time')
+ax.set_title('Timeline of Events')
+
+plt.show()
