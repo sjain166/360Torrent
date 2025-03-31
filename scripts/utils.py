@@ -4,6 +4,7 @@ import os
 import socket
 import requests
 import time
+import json
 
 from scripts.class_object import Peer, Chunk, File
 
@@ -26,6 +27,7 @@ builtins.print = rich_print
 TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
 
 FILE_PATH = "tests/data"
+JSON_LOG_FILE_PATH = "tests/summary.json"
 
 
 def get_private_ip():
@@ -87,8 +89,6 @@ def scrape_data_folder(VM_NAME, VM_REGION):
     return PEER_FILE_REGISTRY
 
 
-
-
 def check_server_status(host, port, path="/health_check", connect_timeout=4, get_timeout=6):
     try:
         # Step 1: Test TCP connection
@@ -130,3 +130,47 @@ def check_server_status(host, port, path="/health_check", connect_timeout=4, get
     except Exception as e:
         print(f"❗ Error during GET request: {e}")
         return "BUSY"
+    
+
+def append_file_download_summary_to_json(metadata, total_time):
+    for chunk in metadata.chunks:
+        peers_tried_str = ", ".join(
+                    [f"{peer_id}" for peer_id in chunk.peers_tried]
+                )
+        peers_failed_str = ", ".join(
+                    [f"{peer_id}" for peer_id in chunk.peers_failed]
+                )
+    
+    result_summary = {
+        "file_name": metadata.file_name,
+        "file_size": metadata.file_size,
+        "total_download_time_sec": round(total_time, 2),
+        "chunks": [
+            {
+                "chunk_name": chunk.chunk_name,
+                "chunk_size": chunk.chunk_size,
+                "downloaded": chunk.download_status,
+                "peers_tried" : peers_tried_str,
+                "peers_failed" : peers_failed_str,
+                "download_time" : chunk.download_time
+            }
+            for chunk in metadata.chunks
+        ]
+    }
+
+    # Convert to JSON string
+    json_result = json.dumps(result_summary, indent=4)
+    print("\n📦 [JSON] Download Summary Result:")
+    print(json_result)
+
+    if os.path.exists(JSON_LOG_FILE_PATH):
+        with open(JSON_LOG_FILE_PATH, "r") as f:
+            data = json.load(f)
+    else:
+        data = []
+
+    data.append(result_summary)
+
+    with open(JSON_LOG_FILE_PATH, "w") as f:
+        json.dump(data, f, indent=4)
+

@@ -3,17 +3,17 @@ import asyncio
 import os
 import socket
 import random
-from tqdm import tqdm
 import time
+import json
 
 from scripts.class_object import FileMetadata
-from scripts.utils import get_private_ip, get_max_threads, check_server_status
-from tabulate import tabulate
+from scripts.utils import get_private_ip, get_max_threads, check_server_status, append_file_download_summary_to_json
 from scripts.utils import TRACKER_URL, FILE_PATH
 from scripts.prints import print_file_metadata
 
 
 MAX_PARALLEL_DOWNLOADS = get_max_threads()
+RESULTS_JSON_PATH = "download_results.json"
 
 # Rich Print
 import builtins
@@ -239,7 +239,8 @@ async def main(metadata: FileMetadata):
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
         print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))
-
+        append_file_download_summary_to_json(metadata, total_time)
+        
     except Exception as e:
         print(f"[ERROR] Peer Execution Failed: {e}")
 
