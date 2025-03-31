@@ -157,8 +157,11 @@ def draw_content_from_roster(user):
     if len(user["content_roster"]) != 0:
 
         probabilities /= np.sum(probabilities)
-
         new_popularities = [ zipf_probability_to_rank(p) for p in probabilities]
+
+        # Normalize ranks with ranks
+        # new_popularities = np.array([c["popularity"] for c in user["content_roster"]])
+        # new_popularities /= new_popularities.sum()
 
         print(new_popularities)
 
