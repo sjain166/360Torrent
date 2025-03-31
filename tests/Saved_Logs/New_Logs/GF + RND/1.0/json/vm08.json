@@ -1,0 +1,105 @@
+[
+    {
+        "file_name": "Pacific_Rim",
+        "file_size": 1363089768,
+        "total_download_time_sec": 65.84,
+        "chunks": [
+            {
+                "chunk_name": "chunk11.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm04",
+                "peers_failed": "",
+                "download_time": 38.49188566207886
+            },
+            {
+                "chunk_name": "chunk10.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm02",
+                "peers_failed": "",
+                "download_time": 6.578986406326294
+            },
+            {
+                "chunk_name": "chunk02.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm06",
+                "peers_failed": "",
+                "download_time": 9.906444072723389
+            },
+            {
+                "chunk_name": "chunk03.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm07",
+                "peers_failed": "",
+                "download_time": 7.203787803649902
+            },
+            {
+                "chunk_name": "chunk04.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm02",
+                "peers_failed": "",
+                "download_time": 17.091942310333252
+            },
+            {
+                "chunk_name": "chunk05.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm03",
+                "peers_failed": "",
+                "download_time": 24.194310665130615
+            },
+            {
+                "chunk_name": "chunk06.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm02",
+                "peers_failed": "",
+                "download_time": 31.380463361740112
+            },
+            {
+                "chunk_name": "chunk07.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm16",
+                "peers_failed": "",
+                "download_time": 43.8651180267334
+            },
+            {
+                "chunk_name": "chunk08.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm04",
+                "peers_failed": "",
+                "download_time": 50.97656869888306
+            },
+            {
+                "chunk_name": "chunk09.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm04",
+                "peers_failed": "",
+                "download_time": 58.083213567733765
+            },
+            {
+                "chunk_name": "chunk12.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm03",
+                "peers_failed": "",
+                "download_time": 65.19410371780396
+            },
+            {
+                "chunk_name": "chunk01.webm",
+                "chunk_size": 113590814,
+                "downloaded": true,
+                "peers_tried": "vm07",
+                "peers_failed": "",
+                "download_time": 65.79701066017151
+            }
+        ]
+    }
+]
