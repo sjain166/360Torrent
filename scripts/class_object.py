@@ -32,6 +32,10 @@ class Chunk:
         self.chunk_size = chunk_size
         self.peers = []  # List of PeerObjects hosting this chunk
         self.download_status = download_status
+        self.peers_tried = []
+        self.peers_failed = []
+        self.download_time = -1
+
 
     def add_peer(self, peer: Peer):
         if all(existing_peer.ip != peer.ip for existing_peer in self.peers):

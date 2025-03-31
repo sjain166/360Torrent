@@ -103,7 +103,15 @@ def print_file_metadata(metadata: FileMetadata):
         return
     table_data = []
     file_displayed = False
+    
     for chunk in metadata.chunks:
+        peers_tried_list = ", ".join(
+                    [f"{peer_id}" for peer_id in chunk.peers_tried]
+                )
+        peers_failed_list = ", ".join(
+                    [f"{peer_id}" for peer_id in chunk.peers_failed]
+                )
+        
         table_data.append(
             [
                 metadata.file_name if not file_displayed else "",
@@ -111,6 +119,9 @@ def print_file_metadata(metadata: FileMetadata):
                 chunk.chunk_name,
                 chunk.chunk_size,
                 "Downloaded" if chunk.download_status else "Pending",
+                peers_tried_list,
+                peers_failed_list,
+                chunk.download_time
             ]
         )
         file_displayed = True
@@ -120,5 +131,8 @@ def print_file_metadata(metadata: FileMetadata):
         "Chunk Name",
         "Chunk Size (Bytes)",
         "Download Status",
+        "Peers_Tried",
+        "Peers_Failed",
+        "Download_Time"
     ]
     print(tabulate(table_data, headers=headers, tablefmt="grid"))

@@ -22,8 +22,8 @@ builtins.print = rich_print
 
 ####################################################################################################
 
-TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
-# TRACKER_URL = "http://10.251.175.158:8080"  # Replace with actual tracker IP
+# TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
+TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
 
 FILE_PATH = "tests/data"
 
@@ -96,7 +96,6 @@ def check_server_status(host, port, path="/health_check", connect_timeout=4, get
         sock.settimeout(connect_timeout)
         sock.connect((host, port))
         sock.close()
-        print("✅ Server is reachable at network level.")
     except socket.timeout:
         print("⛔ Server unreachable: connection timed out.")
         return "UNREACHABLE"
@@ -120,12 +119,9 @@ def check_server_status(host, port, path="/health_check", connect_timeout=4, get
             latencies.append(latency)
 
             if response.status_code != 200:
-                # print(f"ℹ️ Unexpected status {response.status_code}")
                 return "UNREACHABLE"
 
         max_latency = max(latencies)
-        print(f"Max response latency over 10 pings: {max_latency:.2f}s.")
-
         return "RESPONSIVE" if max_latency <= 1 else "BUSY"
 
     except requests.exceptions.Timeout:

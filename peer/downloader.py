@@ -65,7 +65,7 @@ async def register_downloaded_file(peer_id, ip, port, file_name):
             print(f"[ERROR] Failed to register downloaded file: {e}")
 
 
-async def download_chunk(peer_ip, file_name, chunk_name, chunk_size, position):
+async def download_chunk(peer_ip, peer_id, file_name, chunk_name):
     """
     Downloads a specific chunk from the given peer with a progress bar.
     """
@@ -79,31 +79,16 @@ async def download_chunk(peer_ip, file_name, chunk_name, chunk_size, position):
             async with session.get(URL) as response:
                 if response.status == 200:
                     with open(file_path, "wb") as f:
-                        downloaded = 0
-                        pbar = tqdm(
-                            total=chunk_size,
-                            unit="B",
-                            unit_scale=True,
-                            desc=f"Chunk: {chunk_name[:15]}",
-                            leave=True,
-                            position=position,
-                        )
                         async for chunk in response.content.iter_chunked(1024):
                             f.write(chunk)
-                            downloaded += len(chunk)
-                            pbar.update(len(chunk))
-                        pbar.close()
-                        await asyncio.sleep(0.5)
-                    # print(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
-                    tqdm.write(f"[INFO] Downloaded {chunk_name} from {peer_ip}")
                     return True
                 else:
-                    tqdm.write(
-                        f"[ERROR] Failed to download {chunk_name} from {peer_ip}: {response.status}"
+                    print(
+                        f"[ERROR] Failed to download {chunk_name} from {peer_id}: {response.status}"
                     )
                     return False
     except Exception as e:
-        tqdm.write(f"[ERROR] Download failed for {chunk_name} from {peer_ip}: {e}")
+        print(f"[ERROR] Download failed for {chunk_name} from {peer_id}: {e}")
         return False
 
 
@@ -131,22 +116,21 @@ async def update_tracker_chunk_host(
                     "vm_region" : VM_REGION
                 },
             ) as response:
-                if response.status == 200:
-                    # print(f"[INFO] Tracker updated with new host for {chunk_name}")
-                    tqdm.write(f"[INFO] Tracker updated with new host for {chunk_name}")
-
-                else:
-                    tqdm.write(
+                if response.status != 200:
+                    print(
                         f"[WARN] Tracker update for {chunk_name} failed: {response.status}"
                     )
+                    
         except Exception as e:
-            tqdm.write(f"[ERROR] Tracker update exception: {e}")
+            print(f"[ERROR] Tracker update exception: {e}")
 
 
-async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port, idx):
+async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_port, idx):
     chunk_name = chunk.chunk_name
     chunk_size = chunk.chunk_size
     dead_peers = []
+
+    start_time_chunk = time.time()
     peers = await get_chunk_peers(metadata.file_name, chunk_name)
     ip = get_private_ip()
 
@@ -154,15 +138,16 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
     file_path = os.path.join(folder_path, chunk_name)
     
     if os.path.exists(file_path):
-        tqdm.write(f"[INFO] Chunk already downloaded: {chunk_name}")
+        print(f"[WARN] Chunk already downloaded: {chunk_name}")
         chunk.download_status = True
+        chunk.peers_tried.append("SELF")
+        chunk.download_time = 0.0
         return
     
     async with semaphore:
         peer_index = 0
-
         while peers:
-            # peer = peers[peer_index] 
+            # peer = peers[peer_index]
             peer = random.choice(peers) # Randomized Peer Choice  
 
             if peer["ip"] == ip:
@@ -170,15 +155,16 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
                 if len(peers) == 0:
                     break
                 peer_index = peer_index % len(peers)
-                tqdm.write(f"[WARN] SKIPPING self.peer_ip : {peer}")
+                chunk.peers_tried.append("SELF")
+                print(f"[WARN] SKIPPING self.peer_ip : {peer}")
                 continue
 
             host_status = check_server_status(peer["ip"], peer["port"], path="/health_check", connect_timeout=2, get_timeout=4)
-            print(host_status)
 
             if host_status == "UNREACHABLE":
-                tqdm.write(f"[WARN]❗ Unreachable peer removed: {peer}")
+                print(f"[WARN]❗ Unreachable peer removed: {peer}")
                 dead_peers.append(peer)
+                chunk.peers_failed.append(peer["id"])
                 peers.pop(peer_index)
                 if len(peers) == 0:
                     break
@@ -186,7 +172,8 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
                 continue
 
             elif host_status == "BUSY":
-                tqdm.write(f"[INFO] ℹ️ Peer is busy, trying next: {peer}")
+                print(f"[INFO] ℹ️ Peer is busy, trying next: {peer}")
+                chunk.peers_tried.append(peer["id"])
                 if len(peers) == 0:
                     break
                 peer_index = (peer_index + 1) % len(peers)
@@ -194,13 +181,17 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
 
             # ✅ Peer is responsive → try download
             try:
-                success = await download_chunk(peer["ip"], metadata.file_name, chunk_name, chunk_size, idx)
+                success = await download_chunk(peer["ip"], peer["id"], metadata.file_name, chunk_name)
             except Exception as e:
-                tqdm.write(f"[ERROR] Download attempt failed from {peer}: {e}")
+                print(f"[ERROR] Download attempt failed from {peer["id"]}: {e}")
                 success = False
 
             if success:
                 chunk.download_status = True
+                chunk.peers_tried.append(peer["id"])
+                end_time_chunk = time.time()
+                chunk.download_time = end_time_chunk-start_time_chunk
+
                 await update_tracker_chunk_host(
                     metadata.file_name,
                     chunk_name,
@@ -211,7 +202,8 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
                 )
                 break
             else:
-                tqdm.write(f"[WARN] Peer failed, skipping for now: {peer}")
+                print(f"[WARN] Peer failed, skipping for now: {peer}")
+                chunk.peers_tried.append(peer["id"])
                 if len(peers) == 0:
                     break
                 peer_index = (peer_index + 1) % len(peers)
@@ -224,14 +216,11 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, s
             dead_peers,
             False
         )
-        dead_peer_map[chunk_name] = dead_peers
-        print(f"[ERROR] Failed to download chunk: {chunk_name}")
 
 async def main(metadata: FileMetadata):
     try:
         print(f"[INFO] Preparing to download file: {metadata.file_name}")
         print_file_metadata(metadata)
-        dead_peer_map = {}  # {chunk_name: [dead_peer_ips]}
 
         start_time = time.time()
         self_ip = get_private_ip()
@@ -239,7 +228,7 @@ async def main(metadata: FileMetadata):
 
         semaphore = asyncio.Semaphore(MAX_PARALLEL_DOWNLOADS)
         download_tasks = [
-            download_chunk_with_retry(chunk, metadata, semaphore, dead_peer_map, self_ip, self_port, idx)
+            download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_port, idx)
             for idx, chunk in enumerate(metadata.chunks)
         ]
         await asyncio.gather(*download_tasks)
@@ -250,10 +239,6 @@ async def main(metadata: FileMetadata):
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
         print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))
-
-        print("\n[INFO] Dead Peer Map:")
-        for chunk_name, peers in dead_peer_map.items():
-            print(f"  {chunk_name}: {peers}")
 
     except Exception as e:
         print(f"[ERROR] Peer Execution Failed: {e}")
