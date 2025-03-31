@@ -4,12 +4,13 @@ import os
 import socket
 import random
 import time
-import json
+import sys
 
 from scripts.class_object import FileMetadata
 from scripts.utils import get_private_ip, get_max_threads, check_server_status, append_file_download_summary_to_json
 from scripts.utils import TRACKER_URL, FILE_PATH
 from scripts.prints import print_file_metadata
+
 
 
 MAX_PARALLEL_DOWNLOADS = get_max_threads()
@@ -25,15 +26,17 @@ async def get_chunk_peers(file_name, chunk_name):
     """
     Queries the tracker for a list of peers hosting a specific chunk of the file.
     """
+    VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
+
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(
                 f"{TRACKER_URL}/chunk_peers",
-                params={"file_name": file_name, "chunk_name": chunk_name},
+                params={"file_name": file_name, "chunk_name": chunk_name, "vm_region" : VM_REGION},
             ) as response:
                 if response.status == 200:
                     data = await response.json()
-                    return data.get("peers", [])
+                    return data.get("peers", []), data.get("same_region_count"), data.get("other_region_count")
                 else:
                     print(
                         f"[ERROR] Tracker returned error for chunk {chunk_name}: {response.status}"
@@ -125,13 +128,19 @@ async def update_tracker_chunk_host(
             print(f"[ERROR] Tracker update exception: {e}")
 
 
-async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_port, idx):
+async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_port, PEER_SELECTION_METHOD):
     chunk_name = chunk.chunk_name
     chunk_size = chunk.chunk_size
     dead_peers = []
 
     start_time_chunk = time.time()
-    peers = await get_chunk_peers(metadata.file_name, chunk_name)
+    peers_information = await get_chunk_peers(metadata.file_name, chunk_name)
+
+    peers = peers_information[0]
+    same_region_count = peers_information[1]
+    other_region_count = peers_information[2]
+    is_peer_same_region = False
+
     ip = get_private_ip()
 
     folder_path = os.path.join(FILE_PATH, metadata.file_name)
@@ -147,13 +156,29 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
     async with semaphore:
         peer_index = 0
         while peers:
-            # peer = peers[peer_index]
-            peer = random.choice(peers) # Randomized Peer Choice  
+            
+            if PEER_SELECTION_METHOD == "SEQ":
+                peer = peers[peer_index]
+            else :
+                if same_region_count > 0 :
+                    peer_idx = random.randint(0 , same_region_count - 1) # Randomized Peer Choice  
+                    peer = peers[peer_idx]
+                    is_peer_same_region = True
+                else :
+                    peer = random.choice(peers)
+                    is_peer_same_region = False
 
             if peer["ip"] == ip:
                 peers.pop(peer_index)
+
+                if is_peer_same_region:
+                    same_region_count -= 1
+                else :
+                    other_region_count -= 1
+                
                 if len(peers) == 0:
                     break
+
                 peer_index = peer_index % len(peers)
                 chunk.peers_tried.append("SELF")
                 print(f"[WARN] SKIPPING self.peer_ip : {peer}")
@@ -163,6 +188,12 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
 
             if host_status == "UNREACHABLE":
                 print(f"[WARN]❗ Unreachable peer removed: {peer}")
+
+                if is_peer_same_region:
+                    same_region_count -= 1
+                else :
+                    other_region_count -= 1
+
                 dead_peers.append(peer)
                 chunk.peers_failed.append(peer["id"])
                 peers.pop(peer_index)
@@ -217,7 +248,7 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
             False
         )
 
-async def main(metadata: FileMetadata):
+async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
     try:
         print(f"[INFO] Preparing to download file: {metadata.file_name}")
         print_file_metadata(metadata)
@@ -228,7 +259,7 @@ async def main(metadata: FileMetadata):
 
         semaphore = asyncio.Semaphore(MAX_PARALLEL_DOWNLOADS)
         download_tasks = [
-            download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_port, idx)
+            download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_port, PEER_SELECTION_METHOD)
             for idx, chunk in enumerate(metadata.chunks)
         ]
         await asyncio.gather(*download_tasks)
@@ -240,7 +271,7 @@ async def main(metadata: FileMetadata):
         print_file_metadata(metadata)
         print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))
         append_file_download_summary_to_json(metadata, total_time)
-        
+
     except Exception as e:
         print(f"[ERROR] Peer Execution Failed: {e}")
 

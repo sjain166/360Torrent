@@ -1,7 +1,9 @@
 import asyncio
 import aiohttp
 import os
+import sys
 import peer.file_server as file_server
+
 from scripts.class_object import FileMetadata
 from scripts.utils import get_private_ip, scrape_data_folder
 
@@ -111,7 +113,7 @@ async def prompt_user_action():
             if file_name:
                 print(f"[INFO] You selected to download: {file_name}")
                 metadata = await get_file_metadata(file_name)
-                await downloader(metadata)
+                await downloader(metadata, PEER_SELECTION_METHOD)
             else:
                 print("[WARN] No file name entered.")
         elif choice == "3":
@@ -127,9 +129,13 @@ async def main():
     VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
     VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
 
+    global PEER_SELECTION_METHOD
+    PEER_SELECTION_METHOD = sys.argv[1]
+    print("[INFO] Peer Selection Criteria Method : " + PEER_SELECTION_METHOD)
+
     PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
     # PEER_FILE_REGISTRY = []
-    peer_id = f"peer_{os.getpid()}"
+    peer_id = VM_NAME
     try:
         ip = get_private_ip()  # Automatically fetch the VM's IP
         port = 6881
@@ -138,6 +144,5 @@ async def main():
         await prompt_user_action()  # Begin prompting user to download files repeatedly
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
-
 
 asyncio.run(main())

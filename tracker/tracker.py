@@ -3,9 +3,11 @@ from aiohttp import web
 from scripts.class_object import Peer, Chunk, File, FileMetadata
 from scripts.utils import get_private_ip
 
+
 # Rich Print
 import builtins
 from rich import print as rich_print
+import sys
 builtins.print = rich_print
 
 
@@ -156,18 +158,36 @@ async def get_tracker_registry_summary(request):
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
 
-def get_best_peers(chunk_obj):
+def get_best_peers(chunk_obj, requester_region):
     """
     Placeholder function for advanced peer selection logic.
     Currently returns all peers hosting the chunk.
     """
-    return [{"ip": peer.ip, "port": peer.port, "id": peer.id} for peer in reversed(chunk_obj.peers)]
+    if PEER_SELECTION_CRITERIA == "LF":
+        peers_list = [{"ip": peer.ip, "port": peer.port, "id": peer.id} for peer in reversed(chunk_obj.peers)]
+        return peers_list, 0, len(peers_list)
+     
+    else :
+        same_region = []
+        other_region = []
+
+        for peer in chunk_obj.peers:
+            peer_info = {"ip": peer.ip, "port": peer.port, "id": peer.id}
+            if requester_region and peer.region == requester_region:
+                same_region.append(peer_info)  # Prioritize peers from same region
+            else:
+                other_region.append(peer_info)
+
+        return list(reversed(same_region)) + list(reversed(other_region)), len(same_region), len(other_region)
+        
 
 
 async def get_chunk_peers(request):
     try:
         file_name = request.query.get("file_name")
         chunk_name = request.query.get("chunk_name")
+        requester_region = request.get("vm_region")
+
         if not file_name or not chunk_name:
             return web.json_response(
                 {"error": "Missing file_name or chunk_name"}, status=400
@@ -185,8 +205,8 @@ async def get_chunk_peers(request):
         if not chunk_obj:
             return web.json_response({"error": "Chunk not found"}, status=404)
 
-        peer_list = get_best_peers(chunk_obj)
-        return web.json_response({"peers": peer_list})
+        peer_information = get_best_peers(chunk_obj, requester_region)
+        return web.json_response({"peers": peer_information[0],  "same_region_count" : peer_information[1], "other_region_count" : peer_information[2]})
 
     except Exception as e:
         print(f"[ERROR] Fetching chunk peers failed: {e}")
@@ -208,9 +228,7 @@ async def get_file_metadata(request):
             return web.json_response({"error": "File not found"}, status=404)
 
         ################ Using Rarest First Policy ################
-        # Sorting based on number of peers serving a chunk #
         sorted_chunks = sorted(file_obj.chunks, key=lambda c: len(c.peers))
-        ###########################################################
 
         chunk_dicts = [
             {"chunk_name": chunk.chunk_name, "chunk_size": chunk.chunk_size}
@@ -234,6 +252,13 @@ app.router.add_post("/update_chunk_host", update_chunk_host)
 
 if __name__ == "__main__":
     try:
+        # if sys.argv != 2 :
+        #     print("[ERROR] Invalid Argument Count" + len(sys.argv))
+            
+        global PEER_SELECTION_CRITERIA
+        PEER_SELECTION_CRITERIA = sys.argv[1]
+        print("[INFO] Peer Selection Criteria Activated : " + PEER_SELECTION_CRITERIA)
+        
         print_tracker_file_registry(TRACKER_FILE_REGISTRY)
         my_ip = get_private_ip()
         print("[INFO] Tracker Server Started on {}:8080".format(my_ip))
