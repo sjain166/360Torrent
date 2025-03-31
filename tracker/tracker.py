@@ -186,7 +186,7 @@ async def get_chunk_peers(request):
     try:
         file_name = request.query.get("file_name")
         chunk_name = request.query.get("chunk_name")
-        requester_region = request.get("vm_region")
+        requester_region = request.query.get("vm_region")
 
         if not file_name or not chunk_name:
             return web.json_response(
