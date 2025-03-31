@@ -139,10 +139,10 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
     same_region_count = peers_information[1]
     other_region_count = peers_information[2]
     
-    print("[INFO] List of Peers Hosting Chunk : " ,  chunk_name ,  " : " ,  ", ".join(peers))
+    print("[INFO] List of Peers Hosting Chunk:", chunk_name, ":", ", ".join(peer["id"] for peer in peers))
     print("[INFO] SR : " , same_region_count)
     print("[INFO] OR : " , other_region_count)
-    
+
     is_peer_same_region = False
     ip = get_private_ip()
 
