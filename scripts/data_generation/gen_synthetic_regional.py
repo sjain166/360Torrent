@@ -8,6 +8,11 @@ import bisect
 
 import matplotlib.pyplot as plt
 
+import sys
+
+VISUALIZE = len(sys.argv) > 1 # Any second argument lets you visualize
+
+
 
 DATA_DIR = "../../data/"
 NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
@@ -162,6 +167,7 @@ def draw_content_from_roster(user):
         # Normalize ranks with ranks
         # new_popularities = popularities / (old_total - drawn["popularity"])
         new_popularities = new_popularities * ZIPF_N / new_popularities.sum()
+        new_popularities = [int(p) for p in new_popularities]
 
         print(new_popularities)
 
@@ -205,7 +211,8 @@ def push_content_to_roster(user, new_content):
     # popularities = [ zipf_probability_to_rank(p) for p in probabilities]
     # print(f"popularities converted by gpt code {popularities}") # So I think the ranks it gets back are <1, and then it runs int round, turning them int 0,1?
 
-    popularities = popularities * ZIPF_N / popularities.sum() # re-normalize ranks using ranks
+    popularities =popularities * ZIPF_N / popularities.sum() # re-normalize ranks using ranks
+    popularities = [int(p) for p in popularities]
 
     roster_sorted_by_popularity.insert(new_content_idx, new_content) # Place new content at its proper index in the roster
     # Map new popularities to content in roster
@@ -280,35 +287,63 @@ for file_num, t_arrive in enumerate(content_arrival_times):
                 user["last_request_index"] += 1 # step forward to the next request
 
 
+# TODO: Shouldn't be getting decimal popularity ever!
+
 
 # Timeline for debugging
-event_times_and_labels = []
+
+if VISUALIZE:
+
+    fig, ax = plt.subplots(figsize=(10,2))
+
+    # Print for debugging and timeline plotting
+    for user in users:
+        print(f" USER: {user["id"]}")
+        print(user["events"])
+
+        event_times = [event["time"] for event in user["events"]]
+        event_labels = [
+            f" User {user['id']}\n {event['type']}\n [{event["content"]["name"]}\n seeder {event["content"]["seeder"]} \n pop {int(event["content"]["popularity"])}] " 
+            
+            for event in user["events"]
+            ]
+
+        levels = []
+        level = 0.3
+        for i in range(len(event_times)):
+            levels.append(level * math.ceil(np.random.uniform(-4,4)))
 
 
-# Print for debugging and timeline plotting
-for user in users:
-    print(f" USER: {user["id"]}")
-    print(user["events"])
+        event_to_color = {
+            "upload": "yellow",
+            "request":"blue",
+            "join":"green",
+            "exit":"red"
+        }
 
-    for event in user["events"]:
-        event_times_and_labels.append((event["time"], f" User {user['id']} {event['type']} content: {event['content']}"))
+        ax.vlines(event_times, 0, levels, color=[(event_to_color[e["type"]]) for e in user["events"]])
+        ax.axhline(0, c="black")
 
-event_times_and_labels = sorted(event_times_and_labels, key=lambda x: x[0])
-event_times = [e[0] for e in event_times_and_labels]
-event_labels = [e[1] for e in event_times_and_labels]
+        ax.plot(event_times, np.zeros_like(event_times), "ko", mfc="white")
+        # Add labels for each event
 
-fig, ax = plt.subplots(figsize=(10,2))
-ax.scatter(event_times, np.zeros_like(event_times), color='red', s=100, zorder=5)
-# Add labels for each event
+        stagger_step = 0.1
+        for time, level, label in zip(event_times, levels, event_labels):
 
-stagger_step = 0.1
-for i, label in enumerate(event_labels):
-    ax.text(event_times[i], 0.05 + stagger_step*i, label, ha='center', va='bottom', fontsize=10)
+            ax.annotate(label, xy=(time, level),
+            xytext=(-3, np.sign(level)*3), textcoords="offset points",
+                    verticalalignment="bottom" if level > 0 else "top",
+                    weight="normal",
+                    bbox=dict(boxstyle='square', pad=0, lw=0, fc=(1, 1, 1, 0.7))          
+                        )
 
-# Format the plot
-ax.set_ylim(-0.1, 0.1)  # Keep the events on the x-axis
-ax.set_yticks([])  # Hide y-axis
-ax.set_xlabel('Time')
-ax.set_title('Timeline of Events')
+    # Format the plot
+    ax.yaxis.set_visible(False)
+    ax.spines[["left","top","right"]].set_visible(False)
+
+    ax.set_ylim((-3,3))
+    ax.set_xlim((0, N_ELAPSED_EXPERIMENT_TIME))
+    ax.set_xlabel('Time')
+    ax.set_title(f'User Timeline')
 
 plt.show()
