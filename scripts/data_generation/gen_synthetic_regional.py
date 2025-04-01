@@ -57,8 +57,8 @@ define_regional_userbase_and_delay(regions, N_CLIENTS, net, NET_FILE, users)
 # All timing units in ms
 
 minute = 60000 # TODO: I think events are being generated outside of the set interval
-EXPERIMENT_T = minute
-UPLOAD_INTENSITY = 4 / minute
+EXPERIMENT_T = 10 * minute
+UPLOAD_INTENSITY = 1 / minute
 
 # - Generate content arrival times from a poisson distribution
 
@@ -69,14 +69,15 @@ UPLOAD_INTENSITY = 4 / minute
 
 TOTAL_UPLOADS = UPLOAD_INTENSITY * EXPERIMENT_T
 UPLOAD_TIMES = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(TOTAL_UPLOADS)))
-
 # - Generate request arrival times per user from a poisson distribution
 
 MEAN_REQ_INTENSITY = 2 / minute # TODO: Can vary this later to simulate clients with highly varying request rate
 for i, user in enumerate(users):
     TOTAL_REQ = MEAN_REQ_INTENSITY * EXPERIMENT_T
     user_request_times = np.cumsum(np.random.exponential(1/MEAN_REQ_INTENSITY, int(TOTAL_REQ)))
+    # TODO: WHy are these request times still capped off at around 60k?
     user["request_times"] = user_request_times
+    if args.dbg_print: print(f" User {i} requests: {user_request_times}")
 
 
 # Model file uploads and downloads
@@ -101,17 +102,24 @@ def zipf_rank_to_probability(rank):
     return (1 / rank**ZIPF_ALPHA) / harmonic_sum
 
 def draw_content_from_roster(user):
+    PRINT_HERE = True
+
+    if len(user["content_roster"]) == 0: return None
+
     popularities = np.array([c["popularity"] for c in user["content_roster"]])
 
     probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities] )
     probabilities /= np.sum(probabilities)
-    drawn = np.random.choice(user["content_roster"], p=(probabilities))
 
-    if args.dbg_print:
+    if args.dbg_print and PRINT_HERE:
         print()
         print(f" Entering draw to user {user["id"]}")
         print(f" User {user["id"]} roster {user["content_roster"]}")
         print(f" Rank:Probability {list(zip(popularities, probabilities))}")
+
+    drawn = np.random.choice(user["content_roster"], p=(probabilities))
+
+    if args.dbg_print and PRINT_HERE:
         print(f" User {user["id"]} draws {drawn}")
 
     user["content_roster"].remove(drawn)
@@ -126,12 +134,12 @@ def draw_content_from_roster(user):
     return drawn
 
 def push_content_to_roster(user, new_content):
-
+    PRINT_HERE = False
     if len(user["content_roster"]) == 0:
         user["content_roster"].append(new_content)
         return
 
-    if args.dbg_print:
+    if args.dbg_print and PRINT_HERE:
         print()
         print(f" Entering push to {user["id"]}")
         print(f" User {user["id"]} roster {user["content_roster"]}")
@@ -146,7 +154,7 @@ def push_content_to_roster(user, new_content):
     popularities = popularities * ZIPF_N / popularities.sum() # Normalize
     popularities = [int(p) for p in popularities] # Make sure ranks are ints
 
-    if args.dbg_print:
+    if args.dbg_print and PRINT_HERE:
         print(f" popularities pre-insert {old_popularities}")
         print(f" popularities post-insert {popularities}")
 
@@ -164,7 +172,7 @@ for i, t_arrive in enumerate(UPLOAD_TIMES):
     seeder_client_id = int(np.random.uniform(low=0, high=N_CLIENTS))
     seeder_client_reigon = users[seeder_client_id]["region"]
     popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
-    popularity = np.clip(popularity, 0, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
+    popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
     new_content = {
         "id": file_num,
         "name": f"video{file_num}",
@@ -199,31 +207,52 @@ for i, t_arrive in enumerate(UPLOAD_TIMES):
     for user in users_excluding_seeder:
 
         if user["last_request_index"] < len(user["request_times"]): # If this user has requests remaining it its schedule
-            t_req = user["request_times"][user["last_request_index"]]
 
-            # If our current request time falls in the window
-            if arrivals_interval[0] < t_req and t_req < arrivals_interval[1]:
+            # Get all of this users request times, that fall between this arrival and the next arrival
+            # These will all select from the same content roster.
+            requests_to_perform = user["request_times"][ (arrivals_interval[0] < user["request_times"]) & (user["request_times"] < arrivals_interval[1])]
+
+            # t_req = user["request_times"][user["last_request_index"]]
+
+            for t_req in requests_to_perform:
 
                 req_content = draw_content_from_roster(user) # Use 'fetch-at-most-once' behavior to make a request
+                # req_content can be None when there is no content that the user hasn't downloaded
 
-                # Add this request to this client's list of events
-                user["events"].append({
-                    "type":"request",
-                    "time": t_req,
-                    "content": req_content
-                })
+                if req_content != None:
+                    # Add this request to this client's list of events
+                    user["events"].append({
+                        "type":"request",
+                        "time": t_req,
+                        "content": req_content
+                    })
                 
                 user["last_request_index"] += 1 # step forward to the next request timestamp
+            # # A request index can be incremented multiple times within one window...
+
+            # # If our current request time falls in the window
+            # if arrivals_interval[0] < t_req and t_req < arrivals_interval[1]:
+
+
 
 
 global_events = []
 for user in users:
     for event in user["events"]:
         global_events.append({"user":user["id"], "event":event})
-print(global_events)
 global_events = sorted(global_events, key=lambda e: e["event"]["time"])
+print(global_events)
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):  # Handles int32, int64, etc.
+            return int(obj)
+        elif isinstance(obj, np.floating):  # Handles float32, float64
+            return float(obj)
+        elif isinstance(obj, np.ndarray):  # Handles numpy arrays
+            return obj.tolist()
+        return super().default(obj)
 with open(EVENT_FILE, "w") as fs:
-    json.dump(global_events, fs, indent=1)
+    json.dump(global_events, fs, indent=1, cls=NumpyEncoder)
 
 # Timeline for debugging
 
