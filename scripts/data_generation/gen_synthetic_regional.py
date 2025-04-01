@@ -29,7 +29,7 @@ users = [{
     "region": None,
     "events": [],
     "content_roster": [],
-    "last_request_index": 0,
+    "last_request_index": 1,
     "request_times": []
 } for client_id in range(N_CLIENTS)]
 
@@ -151,11 +151,12 @@ def draw_content_from_roster(user):
     popularities = np.array([c["popularity"] for c in user["content_roster"]])
 
     old_total = popularities.sum()
-
-
     probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities] )
     probabilities /= np.sum(probabilities)
     drawn = np.random.choice(user["content_roster"], p=(probabilities))
+
+    print(f" User {user["id"]} roster {user["content_roster"]}")
+    print(f" User {user["id"]} draws {drawn}")
 
     user["content_roster"].remove(drawn)
 
@@ -184,7 +185,7 @@ def push_content_to_roster(user, new_content):
         user["content_roster"].append(new_content)
         return
 
-    print("Entering push")
+    print(f"Entering push to {user["id"]}")
     print(f" Roster: {user["content_roster"]} content : {new_content}")
     roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"], reverse=True) 
     # Lower ranks are inherently more popular, we sort in opposite order so that higher ranks (less popular) are to the left
@@ -233,7 +234,9 @@ def push_content_to_roster(user, new_content):
     
 
 
-for file_num, t_arrive in enumerate(content_arrival_times):
+for i, t_arrive in enumerate(content_arrival_times):
+
+    file_num = i
 
     seeder_client_id = int(np.random.uniform(low=0, high=N_CLIENTS))
     seeder_client_reigon = users[seeder_client_id]["region"]
@@ -259,23 +262,31 @@ for file_num, t_arrive in enumerate(content_arrival_times):
         "content": new_content
     })
 
-    users_excluding_seeder = [user for user in users if user != seeder]
+    # Its like new content neve gets pushed to certain user's rosters...
+    users_excluding_seeder = [user for user in users if user["id"] != seeder_client_id]
+    # print(f" Seeded at {seeder_client_id}, pushing to {users_excluding_seeder}")
     # Update each client's content roster
     # Exclude the seeder, beause they won't be downloading that content, they already have it
     for user in users_excluding_seeder:
         push_content_to_roster(user, new_content)
     
+    arrivals_interval = []
+    if i+1 < len(content_arrival_times):
+        arrivals_interval = [t_arrive, content_arrival_times[i+1]]
+    else:
+        arrivals_interval = [t_arrive, N_ELAPSED_EXPERIMENT_TIME]
+    
     # Now run the next request for each user
     for user in users_excluding_seeder:
-        print(f" req times {user["request_times"]}")
-        print(f" user last req idx {user["last_request_index"]}")
 
         if user["last_request_index"] < len(user["request_times"]):
+
             t_req = user["request_times"][user["last_request_index"]]
 
-            if t_arrive < t_req:
+            # This should cover all requests between the first and the next arrival time...
+            if arrivals_interval[0] < t_req and t_req < arrivals_interval[1]:
 
-                req_content = draw_content_from_roster(user)
+                req_content = draw_content_from_roster(user) # Only running once
 
                 # Add this request to this client's list of events
                 user["events"].append({
