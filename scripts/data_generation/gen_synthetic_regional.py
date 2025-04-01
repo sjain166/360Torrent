@@ -29,7 +29,7 @@ users = [{
     "region": None,
     "events": [],
     "content_roster": [],
-    "last_request_index": 1,
+    "last_request_index": 0,
     "request_times": []
 } for client_id in range(N_CLIENTS)]
 
@@ -186,34 +186,36 @@ def push_content_to_roster(user, new_content):
         return
 
     print(f"Entering push to {user["id"]}")
-    print(f" Roster: {user["content_roster"]} content : {new_content}")
-    roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"], reverse=True) 
+    print(f" Roster: {user["content_roster"]} \ncontent : {new_content}")
+    roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"]) 
+    # Sort list s.t. low ranks (more popular) are at the front
+
     # Lower ranks are inherently more popular, we sort in opposite order so that higher ranks (less popular) are to the left
 
     popularities = np.array([c["popularity"] for c in roster_sorted_by_popularity])
-    old_total = popularities.sum()
+    print(f" popularities pre-insert {popularities}")
+    # TODO: Shifting is going wrong somewhere
 
     # The way this is set up now, it is deleting content at the highest (least popular rank)
     # We want to insert the element at the bisection point
     # Shift current content down by one rank
-    new_content_idx = bisect.bisect_right(popularities, new_content["popularity"]) # Index where the new_conent's rank belongs in the sorted array
+    new_content_idx = bisect.bisect_left(popularities, new_content["popularity"]) # Index where the new_conent's rank belongs in the sorted array
+    print(f" new content idx {new_content_idx}")
+    # popularities = np.append(popularities, 0) # Leave a space at the end for content to be shifted to
 
-    popularities = np.insert(popularities, 0, 0)
-    popularities[0:new_content_idx] = popularities[1:new_content_idx+1] # Shift Zipf ranks down by one i.e. popularities
-    popularities[new_content_idx] = new_content["popularity"]
-    print(f" popularities post shift {popularities}")
+    # if new_content_idx < popularities.shape[0]:
+    #     popularities[new_content_idx-1:] = popularities[new_content_idx:] # Shift Zipf ranks up by one 
+    #     print(f" popularities post shift {popularities}")
+    # popularities[new_content_idx] = new_content["popularity"]
+
+    popularities = np.insert(popularities, new_content_idx, new_content["popularity"])
+
     # Re-normalize s.t. probabilites sum to 1   
-
-    # Zipf_rank_to_probability is tweaking!
-    # probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities])
-    # print(probabilities)
-    # probabilities /= probabilities.sum()
-    # print(f"probabilities post normalization {probabilities}")
-    # popularities = [ zipf_probability_to_rank(p) for p in probabilities]
-    # print(f"popularities converted by gpt code {popularities}") # So I think the ranks it gets back are <1, and then it runs int round, turning them int 0,1?
 
     popularities =popularities * ZIPF_N / popularities.sum() # re-normalize ranks using ranks
     popularities = [int(p) for p in popularities]
+
+    print(f" popularities post-insert {popularities}")
 
     roster_sorted_by_popularity.insert(new_content_idx, new_content) # Place new content at its proper index in the roster
     # Map new popularities to content in roster
