@@ -2,16 +2,12 @@ import networkx as nx
 import csv
 import numpy as np
 import math
-
 import json
 import bisect
-
 import matplotlib.pyplot as plt
-
 import sys
 
-VISUALIZE = len(sys.argv) > 1 # Any second argument lets you visualize
-
+from gen_regions import *
 
 
 DATA_DIR = "../../data/"
@@ -23,7 +19,6 @@ N_CLIENTS = 10
 N_ELAPSED_EXPERIMENT_TIME = 60000 # in ms
 
 
-
 users = [{
     "id": client_id,
     "region": None,
@@ -33,44 +28,6 @@ users = [{
     "request_times": []
 } for client_id in range(N_CLIENTS)]
 
-
-
-# Map userids to regions
-# for simplicity, contiguous id users will be assigned the same region
-# Mutates 'regions' and 'users'
-# Dumps computed regional delays to 'NET_FILE'
-
-def define_regional_userbase_and_delay(regions, N_CLIENTS, net, NET_FILE, users):
-
-    lower = 0 # id=0 is reserved for the tracker! So assume the tracker is always in the first region
-    for i in range(len(regions)):
-        region, percent, _ = regions[i]
-        upper = lower + percent
-
-        client_range_for_region = list(range(math.floor(lower*N_CLIENTS), math.ceil(upper*N_CLIENTS), 1))
-        regions[i][2] = client_range_for_region # Assign region its list of clients
-        for client_id in client_range_for_region: # Assign each client its corresponding region
-            users[client_id]["region"] = region
-
-        lower = upper
-
-
-    def get_regionusers_by_string(region_str): return [r[2] for r in regions if r[0]==region_str][0]
-
-    with open(NET_FILE, 'w', newline='') as csvfile:
-        fieldnames = ['src', 'dst', 'rtt']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-        for src, dst, delay in net.edges(data=True):
-
-            src_users = get_regionusers_by_string(src)
-            dst_users = get_regionusers_by_string(dst)
-
-            for srcu in src_users:
-                for dstu in dst_users:
-                    writer.writerow({'src': srcu, 'dst': dstu, 'rtt': delay["weight"]})
-
-    return users
 
 # Define regions and their share of the userbase < 1
 regions = [["W", 0.3, []], ["N", 0.4, []], ["C", 0.2, []], ["F", 0.1, []]] # This should probably be a map...
@@ -84,8 +41,12 @@ net.add_edge("N", "C", weight=120)
 net.add_edge("N", "F", weight = 35)
 net.add_edge("C", "F", weight=100)
 
-
+# 1. Map userids to regions (for simplicity, contiguous id users will be assigned the same region)
+# 2. Mutates 'regions' and 'users' accordingly
+# 3. Dumps computed regional delays to 'NET_FILE' - we can later read these to set up net_delay.py
 define_regional_userbase_and_delay(regions, N_CLIENTS, net, NET_FILE, users)
+
+
 
 
 # ! Now I need to generate events per user !
@@ -95,6 +56,10 @@ define_regional_userbase_and_delay(regions, N_CLIENTS, net, NET_FILE, users)
 
 
 # - Generate content arrival times from a poisson distribution
+
+
+VISUALIZE = len(sys.argv) > 1 and sys.argv[1] == 'vis'
+
 content_arrival_intensity_per_minute = 4 # "4 videos arrive per minute on average"
 content_arrival_intensity = content_arrival_intensity_per_minute / 60000 # Content arrived per millisecond
 
@@ -103,6 +68,7 @@ N_TOTAL_CONTENT = content_arrival_intensity * N_ELAPSED_EXPERIMENT_TIME # ex. 2 
 
 ## TODO: is 1/intensity correct?
 content_arrival_times = np.cumsum(np.random.exponential(1/content_arrival_intensity, int(N_TOTAL_CONTENT)))
+
 
 
 # - Generate request arrival times per user from a poisson distribution
@@ -301,8 +267,6 @@ for i, t_arrive in enumerate(content_arrival_times):
 
 
 # TODO: Shouldn't be getting decimal popularity ever!
-
-
 # Timeline for debugging
 
 if VISUALIZE:
