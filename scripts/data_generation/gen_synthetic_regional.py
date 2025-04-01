@@ -63,14 +63,40 @@ EXPERIMENT_T = 10 * minute
 
 # - Generate client arrival/ times from a poisson distribution
 
-# Join and leave rates must be about the same to make sure the same number of clients stay in the system at any given time.
+# These variables roughly correspond to "churn rate"
+STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
+INTERVAL_T = 4 * minute
 
-# JOIN_INTENSITY = 1/minute
-# TOTAL_JOINS = JOIN_INTENSITY * EXPERIMENT_T 
-# # Set a minimum that every client joins
-# # If a client leaves, it may join back in 
-# JOIN_TIMES = np.cumsum(np.random.exponential(1/JOIN_INTENSITY, int(TOTAL_UPLOADS)))
+JOIN_INTENSITY = N_CLIENTS/EXPERIMENT_T/4 # Assume all 20 clients join, in the first 4th of the experiment
+INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/4, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
 
+for i, user in enumerate(users):
+    if len(user["join_times"]) == 0: user["join_times"].append(INITIAL_JOIN_TIMES[i])
+
+    # While the join / leave event is still in the bound of our experiment
+    while user["join_times"][-1] < EXPERIMENT_T or user["leave_times"][-1] < EXPERIMENT_T:
+
+        if len(user["join_times"]) > len(user["leave_times"]): # Currently "haven't left"
+            current_join_time = user["join_times"][-1]
+            mean_stay_time = STAY_VS_LEAVE_RATIO * INTERVAL_T
+            next_leave_time = current_join_time + np.random.normal(mean_stay_time, INTERVAL_T/4, 1)[0]
+            # Determine how long we stay "in" from a gaussian
+            user["leave_times"].append(next_leave_time)
+
+        elif len(user["join_times"]) == len(user["leave_times"]): # Currently "left" the system
+            current_leave_time = user["leave_times"][-1]
+            mean_leave_time = INTERVAL_T
+            next_join_time = current_leave_time + np.random.normal(mean_leave_time, INTERVAL_T/4, 1)[0]
+            # Determine how long we stay "out" from a gaussian
+            user["join_times"].append(next_join_time)
+
+    if args.dbg_print:
+        print()
+        print(f"User {user['id']}")
+        print(f" Join times: {user['join_times']}")
+        print(f" Leave times: {user['leave_times']}")
+
+exit()
 
 # - Generate content arrival times from a poisson distribution
 
