@@ -13,7 +13,7 @@ from gen_regions import *
 
 DATA_DIR = "../../data/"
 NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
-USER_FILE = DATA_DIR + "\\user_schedules.csv"
+EVENT_FILE = DATA_DIR + "events.json"
 
 parser = argparse.ArgumentParser(description="Workload generator")
 parser.add_argument("--visualize", "-v", action="store_true")
@@ -216,6 +216,15 @@ for i, t_arrive in enumerate(UPLOAD_TIMES):
                 user["last_request_index"] += 1 # step forward to the next request timestamp
 
 
+global_events = []
+for user in users:
+    for event in user["events"]:
+        global_events.append({"user":user["id"], "event":event})
+print(global_events)
+global_events = sorted(global_events, key=lambda e: e["event"]["time"])
+with open(EVENT_FILE, "w") as fs:
+    json.dump(global_events, fs, indent=1)
+
 # Timeline for debugging
 
 if args.visualize:
@@ -224,8 +233,6 @@ if args.visualize:
 
     # Print for debugging and timeline plotting
     for user in users:
-        print(f" USER: {user["id"]}")
-        print(user["events"])
 
         event_times = [event["time"] for event in user["events"]]
         event_labels = [
