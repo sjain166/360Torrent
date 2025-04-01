@@ -28,7 +28,9 @@ users = [{
     "events": [],
     "content_roster": [],
     "last_request_index": 0,
-    "request_times": []
+    "request_times": [],
+    "join_times": [],
+    "leave_times": [],
 } for client_id in range(N_CLIENTS)]
 
 
@@ -58,7 +60,17 @@ define_regional_userbase_and_delay(regions, N_CLIENTS, net, NET_FILE, users)
 
 minute = 60000 # TODO: I think events are being generated outside of the set interval
 EXPERIMENT_T = 10 * minute
-UPLOAD_INTENSITY = 1 / minute
+
+# - Generate client arrival/ times from a poisson distribution
+
+# Join and leave rates must be about the same to make sure the same number of clients stay in the system at any given time.
+
+# JOIN_INTENSITY = 1/minute
+# TOTAL_JOINS = JOIN_INTENSITY * EXPERIMENT_T 
+# # Set a minimum that every client joins
+# # If a client leaves, it may join back in 
+# JOIN_TIMES = np.cumsum(np.random.exponential(1/JOIN_INTENSITY, int(TOTAL_UPLOADS)))
+
 
 # - Generate content arrival times from a poisson distribution
 
@@ -67,8 +79,11 @@ UPLOAD_INTENSITY = 1 / minute
 # what you actually see per minute will vary due to randomness, ex. you may get 1 or 0 events in one minute.
 # 1/UPLOAD_INTENSITY is the mean inter-arrival time
 
+UPLOAD_INTENSITY = 1 / minute
 TOTAL_UPLOADS = UPLOAD_INTENSITY * EXPERIMENT_T
 UPLOAD_TIMES = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(TOTAL_UPLOADS)))
+
+
 # - Generate request arrival times per user from a poisson distribution
 
 MEAN_REQ_INTENSITY = 2 / minute # TODO: Can vary this later to simulate clients with highly varying request rate
@@ -77,7 +92,6 @@ for i, user in enumerate(users):
     user_request_times = np.cumsum(np.random.exponential(1/MEAN_REQ_INTENSITY, int(TOTAL_REQ)))
     # TODO: WHy are these request times still capped off at around 60k?
     user["request_times"] = user_request_times
-    if args.dbg_print: print(f" User {i} requests: {user_request_times}")
 
 
 # Model file uploads and downloads
@@ -111,11 +125,11 @@ def draw_content_from_roster(user):
     probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities] )
     probabilities /= np.sum(probabilities)
 
-    if args.dbg_print and PRINT_HERE:
-        print()
-        print(f" Entering draw to user {user["id"]}")
-        print(f" User {user["id"]} roster {user["content_roster"]}")
-        print(f" Rank:Probability {list(zip(popularities, probabilities))}")
+    # if args.dbg_print and PRINT_HERE:
+    print()
+    print(f" Entering draw to user {user["id"]}")
+    print(f" User {user["id"]} roster {user["content_roster"]}")
+    print(f" Rank:Probability {list(zip(popularities, probabilities))}")
 
     drawn = np.random.choice(user["content_roster"], p=(probabilities))
 
@@ -127,14 +141,14 @@ def draw_content_from_roster(user):
     if len(user["content_roster"]) > 0:
         new_popularities = np.array([c["popularity"] for c in user["content_roster"]]) # Re-create popularities excluding our drawn object
         new_popularities = new_popularities * ZIPF_N / new_popularities.sum() # Normalize
-        new_popularities = [int(p) for p in new_popularities] # Make sure popularity ranks are integers
+        new_popularities = np.clip([int(p) for p in new_popularities], a_min=1, a_max=None) # Make sure popularity ranks are integers
         for c, p in enumerate(new_popularities):
             user["content_roster"][c]["popularity"] = p # Re-assign popularities to each file
 
     return drawn
 
 def push_content_to_roster(user, new_content):
-    PRINT_HERE = False
+    PRINT_HERE = True
     if len(user["content_roster"]) == 0:
         user["content_roster"].append(new_content)
         return
@@ -152,7 +166,7 @@ def push_content_to_roster(user, new_content):
     popularities = np.insert(old_popularities, new_content_idx, new_content["popularity"])
 
     popularities = popularities * ZIPF_N / popularities.sum() # Normalize
-    popularities = [int(p) for p in popularities] # Make sure ranks are ints
+    popularities = np.clip([int(p) for p in popularities], a_min=1, a_max=None) # Make sure ranks are ints
 
     if args.dbg_print and PRINT_HERE:
         print(f" popularities pre-insert {old_popularities}")
@@ -209,12 +223,10 @@ for i, t_arrive in enumerate(UPLOAD_TIMES):
         if user["last_request_index"] < len(user["request_times"]): # If this user has requests remaining it its schedule
 
             # Get all of this users request times, that fall between this arrival and the next arrival
-            # These will all select from the same content roster.
-            requests_to_perform = user["request_times"][ (arrivals_interval[0] < user["request_times"]) & (user["request_times"] < arrivals_interval[1])]
+            # These will all select from the same content roster, so we should generate them all at once
+            requests_to_generate = user["request_times"][ (arrivals_interval[0] < user["request_times"]) & (user["request_times"] < arrivals_interval[1])]
 
-            # t_req = user["request_times"][user["last_request_index"]]
-
-            for t_req in requests_to_perform:
+            for t_req in requests_to_generate:
 
                 req_content = draw_content_from_roster(user) # Use 'fetch-at-most-once' behavior to make a request
                 # req_content can be None when there is no content that the user hasn't downloaded
@@ -228,11 +240,6 @@ for i, t_arrive in enumerate(UPLOAD_TIMES):
                     })
                 
                 user["last_request_index"] += 1 # step forward to the next request timestamp
-            # # A request index can be incremented multiple times within one window...
-
-            # # If our current request time falls in the window
-            # if arrivals_interval[0] < t_req and t_req < arrivals_interval[1]:
-
 
 
 
@@ -241,7 +248,6 @@ for user in users:
     for event in user["events"]:
         global_events.append({"user":user["id"], "event":event})
 global_events = sorted(global_events, key=lambda e: e["event"]["time"])
-print(global_events)
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):  # Handles int32, int64, etc.
