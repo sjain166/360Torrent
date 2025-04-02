@@ -106,8 +106,10 @@ if CHURN:
     # - Generate client arrival/ times from a poisson distribution
 
     # These variables roughly correspond to "churn rate"
-    STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
-    INTERVAL_T = 4 * minute
+    # STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
+    STAY_VS_LEAVE_RATIO = 3 / 1
+    # INTERVAL_T = 4 * minute
+    INTERVAL_T = EXPERIMENT_T # Want nodes to stay in for well over the duration of the experiment.
     exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
     exp.interval_t = INTERVAL_T / minute
 
@@ -178,6 +180,8 @@ if CHURN:
         ALL_UPLOAD_TIMES += user["upload_times"] # Build this array so that you can easily define an interval between arrival i and arrival i+1
 
     ALL_UPLOAD_TIMES = sorted(ALL_UPLOAD_TIMES) # Sort by ascending upload times
+    ALL_UPLOAD_TIMES_idx = 0
+
     N_files_generated = len(ALL_UPLOAD_TIMES)
     exp.n_files = N_files_generated
     content_uploaded = []
@@ -189,12 +193,18 @@ if CHURN:
     exp.zipf_size = ZIPF_SIZE
     exp.zipf_n = ZIPF_N
 
+    # We're looping over users
+    # BUT WE GO THROUGH ALL UPLOAD TIMES NONCHRONOLOGICALLY
+
     for user in users:
 
-        for t_upload in user["upload_times"]:
+        # print(f" User {user["upload_times"]=}")
+        # print(f" All upload times { ALL_UPLOAD_TIMES=}")
+
+        for t_upload in sorted(user["upload_times"]):
 
             last_upload_idx = len(content_uploaded)
-            file_num = last_upload_idx
+            file_num = ALL_UPLOAD_TIMES_idx
 
             seeder_client_id = user["id"]
             seeder_client_reigon = user["region"]
@@ -209,6 +219,7 @@ if CHURN:
             }
 
             content_uploaded.append(new_content)
+            ALL_UPLOAD_TIMES_idx += 1
 
             # Add this to the seeder client's list of events
             user["events"].append({
@@ -221,9 +232,24 @@ if CHURN:
             for r_user in users_excluding_seeder:
                 push_content_to_roster(r_user, new_content)
 
+                # Each time an upload happens, you want to increment the index towards the next upload
+
             INTERVAL = [] # Define a window of requests that will run before the next content arrival
-            if last_upload_idx+1 < len(ALL_UPLOAD_TIMES):
-                INTERVAL = ALL_UPLOAD_TIMES[last_upload_idx : last_upload_idx+2] # Window of time between this, and the next upload
+
+            # How could I get a request for content, before I have called push on it?
+
+            # print(f"{ALL_UPLOAD_TIMES=}")
+            print(f"{t_upload=}")
+            next_upload_time = 0
+            for ut in ALL_UPLOAD_TIMES:
+                if t_upload < ut: # The first upload time that is <= to our t_upload
+                    next_upload_time = ut
+                    break
+            # print(f"{next_upload_time=}")
+
+            if next_upload_time < EXPERIMENT_T:
+                INTERVAL = [t_upload, next_upload_time] # Window of time between this, and the next upload
+                # arrival index is not getting incremented properly
             else:
                 INTERVAL = [t_upload, EXPERIMENT_T]
 
@@ -233,6 +259,9 @@ if CHURN:
                 # These will all select from the same content roster, so we should generate them all at once
                 if r_user["last_request_index"] < len(r_user["request_times"]): # If this user has requests remaining it its schedule
                     requests_to_generate = [ r for r in r_user["request_times"] if (INTERVAL[0] < r) and (r < INTERVAL[1])]
+                    # print(f" Arrival interval {INTERVAL}")
+                    # print(f" Requests to generate {requests_to_generate}")
+
                     for t_req in requests_to_generate:
                         req_content = draw_content_from_roster(r_user) # Use 'fetch-at-most-once' behavior to make a request
                         # req_content can be None when there is no content that the user hasn't downloaded
@@ -243,6 +272,7 @@ if CHURN:
                                 "time": t_req,
                                 "content": req_content
                             })
+                            print(f" Content request generated at {t_req}")
                         r_user["last_request_index"] += 1 # step forward to the next request timestamp
 
               
@@ -257,7 +287,7 @@ else: # NOTE: NO CHURN present
     # what you actually see per minute will vary due to randomness, ex. you may get 1 or 0 events in one minute.
     # 1/UPLOAD_INTENSITY is the mean inter-arrival time
 
-    UPLOAD_INTENSITY = 1 / minute
+    UPLOAD_INTENSITY = 1/4 / minute
     TOTAL_UPLOADS = UPLOAD_INTENSITY * EXPERIMENT_T
     UPLOAD_TIMES = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(TOTAL_UPLOADS)))
     exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
@@ -296,7 +326,7 @@ else: # NOTE: NO CHURN present
         file_num = i
 
         seeder_client_id = int(np.random.uniform(low=0, high=N_CLIENTS))
-        users["upload_times"].append(t_arrive)
+        users[seeder_client_id]["upload_times"].append(t_arrive)
         seeder_client_reigon = users[seeder_client_id]["region"]
         popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
         popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
@@ -380,15 +410,15 @@ with open(EVENT_FILE, "w") as fs:
 
 # Testing churn. Verify that no user requests or downloads content outside of when they are "in" the system
 
-if args.dbg_print:
-    for user in users:
-        joined_intervals = list(zip(user["join_times"], user["leave_times"]))
-        for event in user["events"]:
-            correct_event = False
-            for t_join, t_leave in joined_intervals:
-                correct_event = (t_join <= event["time"] <= t_leave) or correct_event # an event is correct, if it falls in at least one valid time interval
-            if not correct_event: 
-                print(f" User {user["id"]}, {t_join=}, {t_leave=}, INCORRECT EVENT AT {event["time"]}")
+#if args.dbg_print:
+    # for user in users:
+    #     joined_intervals = list(zip(user["join_times"], user["leave_times"]))
+    #     for event in user["events"]:
+    #         correct_event = False
+    #         for t_join, t_leave in joined_intervals:
+    #             correct_event = (t_join <= event["time"] <= t_leave) or correct_event # an event is correct, if it falls in at least one valid time interval
+    #         if not correct_event: 
+    #             print(f" User {user["id"]}, {t_join=}, {t_leave=}, INCORRECT EVENT AT {event["time"]}")
 
 
 # Timeline for debugging
