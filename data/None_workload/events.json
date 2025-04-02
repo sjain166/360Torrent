@@ -1,89 +1,9 @@
 [
  {
-  "user": 20,
+  "user": 8,
   "event": {
    "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 17,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 10,
-  "event": {
-   "type": "join",
-   "time": 1000,
+   "time": 40041.496695741094,
    "content": null
   }
  },
@@ -91,133 +11,65 @@
   "user": 9,
   "event": {
    "type": "join",
-   "time": 1000,
+   "time": 45385.86355851266,
    "content": null
   }
  },
  {
-  "user": 8,
+  "user": 10,
   "event": {
    "type": "join",
-   "time": 1000,
+   "time": 59908.14486298401,
    "content": null
+  }
+ },
+ {
+  "user": 10,
+  "event": {
+   "type": "upload",
+   "time": 77527.41487786749,
+   "content": {
+    "id": 34,
+    "name": "video34",
+    "seeder": 10,
+    "seeder_region": "F",
+    "popularity": 8626
+   }
+  }
+ },
+ {
+  "user": 10,
+  "event": {
+   "type": "request",
+   "time": 80407.57266876641,
+   "content": {
+    "id": 0,
+    "name": "video0",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 1
+   }
   }
  },
  {
   "user": 7,
   "event": {
    "type": "join",
-   "time": 1000,
+   "time": 87798.35019447282,
    "content": null
   }
  },
  {
-  "user": 6,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 5,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 4,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "join",
-   "time": 1000,
-   "content": null
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "upload",
-   "time": 12669.592938577478,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 3,
+  "user": 9,
   "event": {
    "type": "request",
-   "time": 14405.633461967878,
+   "time": 90779.85184697004,
    "content": {
     "id": 0,
     "name": "video0",
-    "seeder": 0,
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 8,
-  "event": {
-   "type": "request",
-   "time": 16866.898232631014,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 5,
-  "event": {
-   "type": "request",
-   "time": 18471.458521900986,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 19193.869216288294,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
+    "popularity": 1
    }
   }
  },
@@ -225,13 +77,27 @@
   "user": 9,
   "event": {
    "type": "request",
-   "time": 19851.15338202178,
+   "time": 90779.85184697004,
    "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
+    "id": 19,
+    "name": "video19",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 12
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "upload",
+   "time": 102228.90237006714,
+   "content": {
+    "id": 17,
+    "name": "video17",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
    }
   }
  },
@@ -239,419 +105,41 @@
   "user": 10,
   "event": {
    "type": "request",
-   "time": 23070.002256727388,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 26081.365287990593,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "request",
-   "time": 30584.28567152786,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 4,
-  "event": {
-   "type": "request",
-   "time": 37864.670337111755,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "request",
-   "time": 38479.25495865369,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 6,
-  "event": {
-   "type": "request",
-   "time": 40351.58344727802,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 44438.890221138354,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 46596.79233266554,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "request",
-   "time": 53676.0871097067,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 17,
-  "event": {
-   "type": "request",
-   "time": 55385.0624633887,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "upload",
-   "time": 58190.92164785327,
+   "time": 102564.78109543095,
    "content": {
     "id": 1,
     "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 68
    }
   }
  },
  {
-  "user": 18,
+  "user": 7,
   "event": {
    "type": "request",
-   "time": 59413.33167092762,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 6,
-  "event": {
-   "type": "request",
-   "time": 63724.45057729396,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 8,
-  "event": {
-   "type": "request",
-   "time": 64853.57643474183,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 4,
-  "event": {
-   "type": "request",
-   "time": 65019.28887620533,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 5,
-  "event": {
-   "type": "request",
-   "time": 65517.39149760888,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "request",
-   "time": 71285.53008487655,
+   "time": 106505.61836720747,
    "content": {
     "id": 0,
     "name": "video0",
-    "seeder": 0,
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 4992
+    "popularity": 1
    }
   }
  },
  {
-  "user": 20,
+  "user": 7,
   "event": {
    "type": "request",
-   "time": 71322.38296912936,
+   "time": 106505.61836720747,
    "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 73274.9333747657,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 73552.6540878682,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "request",
-   "time": 75898.72763518148,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 76395.31197521667,
-   "content": {
-    "id": 0,
-    "name": "video0",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 4992
-   }
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "request",
-   "time": 77053.73992951687,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "request",
-   "time": 80219.23185031049,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 83909.53787659621,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "upload",
-   "time": 88512.36902427548,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 4,
-  "event": {
-   "type": "request",
-   "time": 92907.52969130267,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "request",
-   "time": 92992.30450498097,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 95873.50351076933,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 96228.32989242676,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
+    "id": 27,
+    "name": "video27",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 1
    }
   }
  },
@@ -659,293 +147,135 @@
   "user": 9,
   "event": {
    "type": "request",
-   "time": 96507.36295150028,
+   "time": 106670.06976090444,
    "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
+    "id": 1,
+    "name": "video1",
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 42
+    "popularity": 68
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 106670.06976090444,
+   "content": {
+    "id": 15,
+    "name": "video15",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "join",
+   "time": 117982.30794489653,
+   "content": null
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "join",
+   "time": 118891.31438888071,
+   "content": null
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "request",
+   "time": 118953.32305299501,
+   "content": {
+    "id": 1,
+    "name": "video1",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 68
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "request",
+   "time": 118953.32305299501,
+   "content": {
+    "id": 13,
+    "name": "video13",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "request",
+   "time": 121040.15854609432,
+   "content": {
+    "id": 8,
+    "name": "video8",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "request",
+   "time": 125646.94755140581,
+   "content": {
+    "id": 9,
+    "name": "video9",
+    "seeder": 4,
+    "seeder_region": "N",
+    "popularity": 3
    }
   }
  },
  {
   "user": 2,
   "event": {
-   "type": "request",
-   "time": 97093.99803500378,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
+   "type": "join",
+   "time": 127623.56268913859,
+   "content": null
   }
  },
  {
-  "user": 17,
-  "event": {
-   "type": "request",
-   "time": 98798.39674256495,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "request",
-   "time": 102601.65642057732,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 8,
-  "event": {
-   "type": "request",
-   "time": 103178.18403966774,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "request",
-   "time": 106811.62173689842,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 19,
+  "user": 7,
   "event": {
    "type": "upload",
-   "time": 108482.21693392615,
+   "time": 129767.48420491446,
    "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 9,
-  "event": {
-   "type": "request",
-   "time": 109046.91554287079,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
+    "id": 18,
+    "name": "video18",
+    "seeder": 7,
     "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 111797.79257355613,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 116737.3878050095,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
+    "popularity": 1
    }
   }
  },
  {
   "user": 8,
   "event": {
-   "type": "request",
-   "time": 117236.36253026612,
+   "type": "upload",
+   "time": 132886.77495915056,
    "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 10,
-  "event": {
-   "type": "request",
-   "time": 118578.52413405248,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 119153.46365758168,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 7,
-  "event": {
-   "type": "request",
-   "time": 120340.06819987162,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 10,
-  "event": {
-   "type": "request",
-   "time": 124885.53473577675,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 5,
-  "event": {
-   "type": "request",
-   "time": 127837.50067409706,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 127932.05689099852,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 4,
-  "event": {
-   "type": "request",
-   "time": 132703.67853829666,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 132847.64454935113,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 133685.95269319916,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 6,
-  "event": {
-   "type": "request",
-   "time": 139478.37633411115,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
+    "id": 20,
+    "name": "video20",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 7
    }
   }
  },
@@ -953,279 +283,49 @@
   "user": 3,
   "event": {
    "type": "request",
-   "time": 145950.870926861,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 9,
-  "event": {
-   "type": "request",
-   "time": 147103.08007157745,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 7,
-  "event": {
-   "type": "request",
-   "time": 149640.6488825765,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 153790.45143003773,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 156100.78398470156,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "request",
-   "time": 157785.20100967513,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 158886.8977127001,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "request",
-   "time": 159992.80060411833,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "request",
-   "time": 162308.2547882674,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "request",
-   "time": 165043.0480336063,
-   "content": {
-    "id": 2,
-    "name": "video2",
-    "seeder": 1,
-    "seeder_region": "W",
-    "popularity": 42
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 165045.23077003108,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 5,
-  "event": {
-   "type": "request",
-   "time": 165682.8971174599,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 7,
-  "event": {
-   "type": "request",
-   "time": 166237.76390969293,
+   "time": 133922.9788761089,
    "content": {
     "id": 0,
     "name": "video0",
-    "seeder": 0,
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 4992
+    "popularity": 1
    }
   }
  },
  {
-  "user": 19,
+  "user": 4,
   "event": {
-   "type": "request",
-   "time": 174860.29643319064,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
+   "type": "join",
+   "time": 139061.96245206217,
+   "content": null
   }
  },
  {
-  "user": 16,
+  "user": 10,
   "event": {
    "type": "request",
-   "time": 179489.4237622403,
+   "time": 139265.9397683415,
    "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "request",
-   "time": 187227.14192982716,
-   "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 7,
-  "event": {
-   "type": "request",
-   "time": 189747.63142153434,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
+    "id": 2,
+    "name": "video2",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 63
    }
   }
  },
  {
   "user": 6,
   "event": {
-   "type": "request",
-   "time": 196541.6224380195,
+   "type": "upload",
+   "time": 144072.68255774348,
    "content": {
-    "id": 3,
-    "name": "video3",
-    "seeder": 17,
-    "seeder_region": "F",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 207817.99403487163,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
+    "id": 13,
+    "name": "video13",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 5000
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 210516.48802428745,
-   "content": {
-    "id": 1,
-    "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
+    "popularity": 1
    }
   }
  },
@@ -1233,251 +333,27 @@
   "user": 9,
   "event": {
    "type": "upload",
-   "time": 211562.66104234045,
+   "time": 146047.84356584027,
    "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 8,
-  "event": {
-   "type": "request",
-   "time": 213661.8159578366,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 26,
+    "name": "video26",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 482
    }
   }
  },
  {
   "user": 4,
-  "event": {
-   "type": "request",
-   "time": 214007.77451355068,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 17,
-  "event": {
-   "type": "request",
-   "time": 214166.28460863366,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 6,
-  "event": {
-   "type": "request",
-   "time": 214772.43633585022,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 9,
-  "event": {
-   "type": "request",
-   "time": 217185.26670093383,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 10,
-  "event": {
-   "type": "request",
-   "time": 217193.0888393346,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "request",
-   "time": 219978.03988381242,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "request",
-   "time": 221739.82097924495,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 5,
-  "event": {
-   "type": "request",
-   "time": 223687.2189553667,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 226363.43280946228,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 233956.1527541457,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 242505.62244826008,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "request",
-   "time": 242615.73357702926,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 249443.55945560968,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "request",
-   "time": 261638.12123138452,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 2,
   "event": {
    "type": "upload",
-   "time": 262324.33160790784,
+   "time": 147792.12651194807,
    "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 8,
-  "event": {
-   "type": "request",
-   "time": 263986.76692650956,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
+    "id": 9,
+    "name": "video9",
+    "seeder": 4,
+    "seeder_region": "N",
+    "popularity": 3
    }
   }
  },
@@ -1485,279 +361,49 @@
   "user": 6,
   "event": {
    "type": "request",
-   "time": 264297.61927248165,
+   "time": 148291.92000801116,
    "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
+    "id": 2,
+    "name": "video2",
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "request",
-   "time": 265483.3716358217,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 273474.091770305,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "request",
-   "time": 273557.510597156,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 273996.19799695193,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 276192.9788441405,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 279013.5219484506,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 9,
-  "event": {
-   "type": "request",
-   "time": 280111.56787997275,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 10,
-  "event": {
-   "type": "request",
-   "time": 281251.72368494474,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
+    "popularity": 63
    }
   }
  },
  {
   "user": 5,
   "event": {
-   "type": "request",
-   "time": 284134.9231993149,
+   "type": "join",
+   "time": 148330.96845483338,
+   "content": null
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "upload",
+   "time": 154044.36091103978,
    "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
+    "id": 27,
+    "name": "video27",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 1
    }
   }
  },
  {
-  "user": 3,
+  "user": 5,
   "event": {
-   "type": "request",
-   "time": 293636.12957889034,
+   "type": "upload",
+   "time": 154296.92544537285,
    "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "request",
-   "time": 297153.5313978252,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 297741.450089042,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
+    "id": 12,
+    "name": "video12",
+    "seeder": 5,
     "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 301441.46755380096,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 302122.5079113883,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "request",
-   "time": 310917.59250268445,
-   "content": {
-    "id": 4,
-    "name": "video4",
-    "seeder": 7,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 311833.2001824506,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "request",
-   "time": 316250.3009023905,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 4,
-  "event": {
-   "type": "request",
-   "time": 327082.1517107637,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
-   }
-  }
- },
- {
-  "user": 17,
-  "event": {
-   "type": "request",
-   "time": 332918.8064498763,
-   "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 284
+    "popularity": 1
    }
   }
  },
@@ -1765,125 +411,125 @@
   "user": 7,
   "event": {
    "type": "request",
-   "time": 336408.58963290707,
+   "time": 155264.6872343602,
    "content": {
-    "id": 5,
-    "name": "video5",
-    "seeder": 0,
+    "id": 7,
+    "name": "video7",
+    "seeder": 3,
     "seeder_region": "W",
-    "popularity": 284
+    "popularity": 3
    }
   }
  },
  {
-  "user": 11,
-  "event": {
-   "type": "upload",
-   "time": 343411.5069470872,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 17,
+  "user": 7,
   "event": {
    "type": "request",
-   "time": 343781.5969407373,
+   "time": 155264.6872343602,
+   "content": {
+    "id": 12,
+    "name": "video12",
+    "seeder": 5,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "request",
+   "time": 156081.4784514853,
+   "content": {
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "upload",
+   "time": 156374.06529537865,
+   "content": {
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 10,
+  "event": {
+   "type": "request",
+   "time": 157124.02316268653,
+   "content": {
+    "id": 7,
+    "name": "video7",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "request",
+   "time": 157390.8805456883,
+   "content": {
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "request",
+   "time": 159213.0437528864,
    "content": {
     "id": 1,
     "name": "video1",
-    "seeder": 10,
-    "seeder_region": "N",
-    "popularity": 5000
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 68
    }
   }
  },
  {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 344207.4792839868,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 15,
-  "event": {
-   "type": "request",
-   "time": 344787.8189443017,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "request",
-   "time": 346247.5638145102,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 7,
-  "event": {
-   "type": "request",
-   "time": 346636.8854933928,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 7,
+  "user": 6,
   "event": {
    "type": "upload",
-   "time": 347235.4850160673,
+   "time": 165002.36173261254,
    "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
+    "id": 14,
+    "name": "video14",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
    }
   }
  },
  {
-  "user": 20,
+  "user": 2,
   "event": {
-   "type": "request",
-   "time": 347290.7645157083,
+   "type": "upload",
+   "time": 169095.5440853419,
    "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 0,
+    "name": "video0",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 1
    }
   }
  },
@@ -1891,111 +537,41 @@
   "user": 6,
   "event": {
    "type": "request",
-   "time": 350499.2394627416,
+   "time": 180541.95476682045,
    "content": {
     "id": 7,
     "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
    }
   }
  },
  {
-  "user": 10,
+  "user": 3,
   "event": {
    "type": "request",
-   "time": 352408.73046739236,
+   "time": 189324.3308314209,
    "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 2,
+    "name": "video2",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 63
    }
   }
  },
  {
-  "user": 7,
+  "user": 3,
   "event": {
    "type": "request",
-   "time": 355047.28663719073,
+   "time": 191074.3720146214,
    "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 17,
-  "event": {
-   "type": "request",
-   "time": 357684.23285502114,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 360105.15075657656,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 16,
-  "event": {
-   "type": "request",
-   "time": 360938.2654371162,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "upload",
-   "time": 360974.4110346084,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 6,
-  "event": {
-   "type": "request",
-   "time": 361879.969423241,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 3,
+    "name": "video3",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 1001
    }
   }
  },
@@ -2003,41 +579,55 @@
   "user": 4,
   "event": {
    "type": "request",
-   "time": 362610.7079806473,
+   "time": 195048.34995327814,
    "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
+    "id": 16,
+    "name": "video16",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
    }
   }
  },
  {
-  "user": 6,
+  "user": 2,
   "event": {
    "type": "request",
-   "time": 364104.53214726364,
+   "time": 199603.40889867305,
+   "content": {
+    "id": 7,
+    "name": "video7",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "request",
+   "time": 199649.98816431465,
+   "content": {
+    "id": 5,
+    "name": "video5",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "request",
+   "time": 199663.44293561936,
    "content": {
     "id": 6,
     "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 5,
-  "event": {
-   "type": "request",
-   "time": 366194.9335455133,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 19
    }
   }
  },
@@ -2045,41 +635,97 @@
   "user": 4,
   "event": {
    "type": "request",
-   "time": 367684.70325817756,
+   "time": 199833.27666306263,
    "content": {
-    "id": 7,
-    "name": "video7",
+    "id": 15,
+    "name": "video15",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "request",
+   "time": 203902.7646924872,
+   "content": {
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "request",
+   "time": 203902.7646924872,
+   "content": {
+    "id": 25,
+    "name": "video25",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "request",
+   "time": 204754.46306527674,
+   "content": {
+    "id": 0,
+    "name": "video0",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "request",
+   "time": 207612.26755543426,
+   "content": {
+    "id": 12,
+    "name": "video12",
     "seeder": 5,
     "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
    }
   }
  },
  {
-  "user": 19,
+  "user": 6,
   "event": {
    "type": "request",
-   "time": 369533.65603105177,
+   "time": 209076.43277949208,
    "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 1,
+    "name": "video1",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 68
    }
   }
  },
  {
-  "user": 18,
+  "user": 6,
   "event": {
    "type": "request",
-   "time": 375803.11782011745,
+   "time": 210154.88856388145,
    "content": {
     "id": 6,
     "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 19
    }
   }
  },
@@ -2087,13 +733,13 @@
   "user": 10,
   "event": {
    "type": "request",
-   "time": 378978.3315765145,
+   "time": 210464.04633564688,
    "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
    }
   }
  },
@@ -2101,195 +747,111 @@
   "user": 8,
   "event": {
    "type": "request",
-   "time": 379353.42617599154,
+   "time": 212933.07075718857,
    "content": {
     "id": 7,
     "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 212933.07075718857,
+   "content": {
+    "id": 27,
+    "name": "video27",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 5,
+  "event": {
+   "type": "request",
+   "time": 213401.1081404608,
+   "content": {
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
    }
   }
  },
  {
   "user": 4,
   "event": {
-   "type": "request",
-   "time": 381273.9416496766,
+   "type": "upload",
+   "time": 217600.3812974547,
    "content": {
-    "id": 6,
-    "name": "video6",
+    "id": 10,
+    "name": "video10",
+    "seeder": 4,
+    "seeder_region": "N",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "upload",
+   "time": 218089.4440273196,
+   "content": {
+    "id": 28,
+    "name": "video28",
     "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
+    "seeder_region": "C",
+    "popularity": 736
    }
   }
  },
  {
-  "user": 18,
+  "user": 5,
   "event": {
    "type": "request",
-   "time": 382470.52245624823,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 383017.0322272522,
+   "time": 218844.1954404122,
    "content": {
     "id": 7,
     "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
    }
   }
  },
  {
-  "user": 17,
+  "user": 8,
   "event": {
    "type": "request",
-   "time": 383746.05255162227,
+   "time": 219413.02478038703,
    "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
    }
   }
  },
  {
-  "user": 14,
+  "user": 8,
   "event": {
    "type": "request",
-   "time": 384895.1383909525,
+   "time": 219413.02478038703,
    "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
+    "id": 15,
+    "name": "video15",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "request",
-   "time": 385773.60281340044,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "request",
-   "time": 391718.18302145135,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 394170.2747453913,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 396501.0611090971,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 17,
-  "event": {
-   "type": "request",
-   "time": 396721.5899616523,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 397505.8047058307,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 7,
-  "event": {
-   "type": "request",
-   "time": 399206.6096056484,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 400852.2141147764,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
    }
   }
  },
@@ -2297,55 +859,13 @@
   "user": 2,
   "event": {
    "type": "upload",
-   "time": 400974.08197591535,
+   "time": 229356.5967165176,
    "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
+    "id": 1,
+    "name": "video1",
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 13,
-  "event": {
-   "type": "request",
-   "time": 403132.44120363577,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 404601.14113089896,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 406107.53275271587,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
+    "popularity": 68
    }
   }
  },
@@ -2353,111 +873,41 @@
   "user": 4,
   "event": {
    "type": "request",
-   "time": 406133.26581810275,
+   "time": 229363.84288934057,
    "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
+    "id": 0,
+    "name": "video0",
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 8
+    "popularity": 1
    }
   }
  },
  {
-  "user": 13,
+  "user": 4,
   "event": {
    "type": "request",
-   "time": 410904.3882429298,
+   "time": 229363.84288934057,
    "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 25,
+    "name": "video25",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 1
    }
   }
  },
  {
-  "user": 2,
+  "user": 8,
   "event": {
-   "type": "request",
-   "time": 411115.2342243279,
+   "type": "upload",
+   "time": 235220.2363056735,
    "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 411738.7282281112,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 19,
-  "event": {
-   "type": "request",
-   "time": 413576.55251503625,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 10,
-  "event": {
-   "type": "request",
-   "time": 417739.6420961413,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 2,
-  "event": {
-   "type": "request",
-   "time": 418210.91029712657,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 17,
-  "event": {
-   "type": "request",
-   "time": 418363.94982810237,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
+    "id": 21,
+    "name": "video21",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 27
    }
   }
  },
@@ -2465,167 +915,13 @@
   "user": 5,
   "event": {
    "type": "request",
-   "time": 419825.7278124469,
+   "time": 240503.53860198555,
    "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
+    "id": 0,
+    "name": "video0",
+    "seeder": 2,
     "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "request",
-   "time": 420330.0993160159,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "request",
-   "time": 420769.0566229253,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 426955.3522693103,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 18,
-  "event": {
-   "type": "request",
-   "time": 432401.5953975735,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 433521.72481716133,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 3,
-  "event": {
-   "type": "request",
-   "time": 438636.7444043924,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 20,
-  "event": {
-   "type": "request",
-   "time": 441851.0006815681,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 10,
-  "event": {
-   "type": "request",
-   "time": 443358.9660678149,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 6,
-  "event": {
-   "type": "request",
-   "time": 445111.1149957331,
-   "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
-   }
-  }
- },
- {
-  "user": 14,
-  "event": {
-   "type": "request",
-   "time": 447640.2063802222,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 448968.7207625508,
-   "content": {
-    "id": 7,
-    "name": "video7",
-    "seeder": 5,
-    "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
    }
   }
  },
@@ -2633,55 +929,83 @@
   "user": 2,
   "event": {
    "type": "request",
-   "time": 458043.5410639644,
+   "time": 253722.58642992534,
    "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
+    "id": 13,
+    "name": "video13",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 11,
-  "event": {
-   "type": "request",
-   "time": 463595.4994586343,
-   "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
-    "seeder_region": "N",
-    "popularity": 10000
-   }
-  }
- },
- {
-  "user": 12,
-  "event": {
-   "type": "request",
-   "time": 465019.3962837942,
-   "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
    }
   }
  },
  {
   "user": 2,
   "event": {
-   "type": "request",
-   "time": 468821.6468353004,
+   "type": "upload",
+   "time": 260764.675852994,
    "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
+    "id": 2,
+    "name": "video2",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 63
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "request",
+   "time": 261327.7892294944,
+   "content": {
+    "id": 16,
+    "name": "video16",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "upload",
+   "time": 264336.7284023796,
+   "content": {
+    "id": 22,
+    "name": "video22",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 69
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 268423.2699133948,
+   "content": {
+    "id": 16,
+    "name": "video16",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 268423.2699133948,
+   "content": {
+    "id": 12,
+    "name": "video12",
+    "seeder": 5,
+    "seeder_region": "N",
+    "popularity": 1
    }
   }
  },
@@ -2689,70 +1013,846 @@
   "user": 7,
   "event": {
    "type": "request",
-   "time": 477358.0745803074,
+   "time": 284824.1899148668,
    "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
+    "id": 16,
+    "name": "video16",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
    }
   }
  },
  {
-  "user": 15,
+  "user": 3,
   "event": {
    "type": "request",
-   "time": 500893.42505777057,
+   "time": 288149.2656300218,
    "content": {
-    "id": 9,
-    "name": "video9",
-    "seeder": 0,
-    "seeder_region": "W",
-    "popularity": 8
+    "id": 13,
+    "name": "video13",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
    }
   }
  },
  {
-  "user": 15,
+  "user": 9,
+  "event": {
+   "type": "upload",
+   "time": 291300.26164544164,
+   "content": {
+    "id": 29,
+    "name": "video29",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 7,
   "event": {
    "type": "request",
-   "time": 535441.5944737752,
+   "time": 296502.436309332,
+   "content": {
+    "id": 15,
+    "name": "video15",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "upload",
+   "time": 297379.9330317869,
+   "content": {
+    "id": 30,
+    "name": "video30",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 68
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "request",
+   "time": 298807.7741324755,
    "content": {
     "id": 7,
     "name": "video7",
-    "seeder": 5,
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "request",
+   "time": 298807.7741324755,
+   "content": {
+    "id": 14,
+    "name": "video14",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "request",
+   "time": 311227.0503216113,
+   "content": {
+    "id": 16,
+    "name": "video16",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "request",
+   "time": 319074.1992126927,
+   "content": {
+    "id": 17,
+    "name": "video17",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "upload",
+   "time": 319413.8221976039,
+   "content": {
+    "id": 5,
+    "name": "video5",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "request",
+   "time": 320102.09227765223,
+   "content": {
+    "id": 4,
+    "name": "video4",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "request",
+   "time": 320102.09227765223,
+   "content": {
+    "id": 31,
+    "name": "video31",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "upload",
+   "time": 329530.9095814848,
+   "content": {
+    "id": 31,
+    "name": "video31",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 332207.8686917728,
+   "content": {
+    "id": 14,
+    "name": "video14",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 332488.08519583236,
+   "content": {
+    "id": 6,
+    "name": "video6",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 19
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "request",
+   "time": 343250.64169032034,
+   "content": {
+    "id": 18,
+    "name": "video18",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "upload",
+   "time": 348660.63709108194,
+   "content": {
+    "id": 3,
+    "name": "video3",
+    "seeder": 2,
+    "seeder_region": "W",
+    "popularity": 1001
+   }
+  }
+ },
+ {
+  "user": 10,
+  "event": {
+   "type": "leave",
+   "time": 350348.5185215851,
+   "content": null
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "upload",
+   "time": 350954.418659863,
+   "content": {
+    "id": 6,
+    "name": "video6",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 19
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "request",
+   "time": 353110.2525388589,
+   "content": {
+    "id": 14,
+    "name": "video14",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 357265.851755506,
+   "content": {
+    "id": 30,
+    "name": "video30",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 68
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 363386.9757681368,
+   "content": {
+    "id": 18,
+    "name": "video18",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 363386.9757681368,
+   "content": {
+    "id": 9,
+    "name": "video9",
+    "seeder": 4,
+    "seeder_region": "N",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "request",
+   "time": 366277.94655158295,
+   "content": {
+    "id": 18,
+    "name": "video18",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "request",
+   "time": 366277.94655158295,
+   "content": {
+    "id": 13,
+    "name": "video13",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "request",
+   "time": 375268.4252860712,
+   "content": {
+    "id": 18,
+    "name": "video18",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "upload",
+   "time": 376973.99278682657,
+   "content": {
+    "id": 7,
+    "name": "video7",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "upload",
+   "time": 381517.2700285729,
+   "content": {
+    "id": 32,
+    "name": "video32",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 404
+   }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "upload",
+   "time": 391231.7341407432,
+   "content": {
+    "id": 8,
+    "name": "video8",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "upload",
+   "time": 400134.1700325722,
+   "content": {
+    "id": 23,
+    "name": "video23",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 171
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "upload",
+   "time": 403959.0092316703,
+   "content": {
+    "id": 11,
+    "name": "video11",
+    "seeder": 4,
+    "seeder_region": "N",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "upload",
+   "time": 406354.6798419433,
+   "content": {
+    "id": 24,
+    "name": "video24",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "upload",
+   "time": 416952.8884246864,
+   "content": {
+    "id": 25,
+    "name": "video25",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "upload",
+   "time": 421631.9515825045,
+   "content": {
+    "id": 33,
+    "name": "video33",
+    "seeder": 9,
+    "seeder_region": "C",
+    "popularity": 1851
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 425834.609390878,
+   "content": {
+    "id": 9,
+    "name": "video9",
+    "seeder": 4,
+    "seeder_region": "N",
+    "popularity": 3
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 425834.609390878,
+   "content": {
+    "id": 17,
+    "name": "video17",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "upload",
+   "time": 440986.0725033026,
+   "content": {
+    "id": 19,
+    "name": "video19",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 12
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 445655.4870066347,
+   "content": {
+    "id": 24,
+    "name": "video24",
+    "seeder": 8,
+    "seeder_region": "C",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "leave",
+   "time": 445921.91723131214,
+   "content": null
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 446497.3442273498,
+   "content": {
+    "id": 5,
+    "name": "video5",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "request",
+   "time": 446497.3442273498,
+   "content": {
+    "id": 10,
+    "name": "video10",
+    "seeder": 4,
+    "seeder_region": "N",
+    "popularity": 3
    }
   }
  },
  {
   "user": 5,
   "event": {
+   "type": "leave",
+   "time": 447293.33828566823,
+   "content": null
+  }
+ },
+ {
+  "user": 8,
+  "event": {
    "type": "request",
-   "time": 541485.5050472814,
+   "time": 452458.00708583347,
    "content": {
-    "id": 6,
-    "name": "video6",
-    "seeder": 9,
-    "seeder_region": "N",
-    "popularity": 10000
+    "id": 8,
+    "name": "video8",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 1
    }
   }
  },
  {
-  "user": 15,
+  "user": 8,
   "event": {
    "type": "request",
-   "time": 544769.1237058414,
+   "time": 452458.00708583347,
    "content": {
-    "id": 8,
-    "name": "video8",
-    "seeder": 12,
+    "id": 16,
+    "name": "video16",
+    "seeder": 6,
     "seeder_region": "N",
-    "popularity": 10000
+    "popularity": 1
    }
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "leave",
+   "time": 469880.26132455736,
+   "content": null
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "leave",
+   "time": 471348.0938145941,
+   "content": null
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "leave",
+   "time": 471530.33589824964,
+   "content": null
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "leave",
+   "time": 489211.397640203,
+   "content": null
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 503446.9006059433,
+   "content": {
+    "id": 5,
+    "name": "video5",
+    "seeder": 3,
+    "seeder_region": "W",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "request",
+   "time": 511536.7466212439,
+   "content": {
+    "id": 17,
+    "name": "video17",
+    "seeder": 7,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "leave",
+   "time": 513960.97375300265,
+   "content": null
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "leave",
+   "time": 529342.2455280807,
+   "content": null
+  }
+ },
+ {
+  "user": 10,
+  "event": {
+   "type": "join",
+   "time": 602331.9482129116,
+   "content": null
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "join",
+   "time": 609947.7998029066,
+   "content": null
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "join",
+   "time": 661521.5755490141,
+   "content": null
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "join",
+   "time": 673509.2755485234,
+   "content": null
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "join",
+   "time": 705481.1275807346,
+   "content": null
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "join",
+   "time": 711534.0557375178,
+   "content": null
+  }
+ },
+ {
+  "user": 5,
+  "event": {
+   "type": "join",
+   "time": 721038.391063269,
+   "content": null
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "join",
+   "time": 750706.6830265898,
+   "content": null
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "upload",
+   "time": 762325.8193256475,
+   "content": {
+    "id": 15,
+    "name": "video15",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "upload",
+   "time": 774660.3246144165,
+   "content": {
+    "id": 16,
+    "name": "video16",
+    "seeder": 6,
+    "seeder_region": "N",
+    "popularity": 1
+   }
+  }
+ },
+ {
+  "user": 10,
+  "event": {
+   "type": "leave",
+   "time": 808472.6779221204,
+   "content": null
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "join",
+   "time": 810306.3505379596,
+   "content": null
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "leave",
+   "time": 957394.2243308319,
+   "content": null
+  }
+ },
+ {
+  "user": 8,
+  "event": {
+   "type": "leave",
+   "time": 993797.7977237217,
+   "content": null
+  }
+ },
+ {
+  "user": 3,
+  "event": {
+   "type": "leave",
+   "time": 1010945.9389746988,
+   "content": null
+  }
+ },
+ {
+  "user": 6,
+  "event": {
+   "type": "leave",
+   "time": 1040808.5615827523,
+   "content": null
+  }
+ },
+ {
+  "user": 5,
+  "event": {
+   "type": "leave",
+   "time": 1063019.7143420435,
+   "content": null
+  }
+ },
+ {
+  "user": 9,
+  "event": {
+   "type": "leave",
+   "time": 1129057.1254129056,
+   "content": null
+  }
+ },
+ {
+  "user": 2,
+  "event": {
+   "type": "leave",
+   "time": 1133586.8310519778,
+   "content": null
+  }
+ },
+ {
+  "user": 7,
+  "event": {
+   "type": "leave",
+   "time": 1137588.908941883,
+   "content": null
   }
  }
 ]

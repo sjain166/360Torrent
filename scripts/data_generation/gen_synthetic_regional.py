@@ -10,6 +10,7 @@ import os
 import argparse
 
 from gen_regions import *
+from gen_utils import *
 
 # Usage args gen_synthetic_regional -v -p -t <trial_name>
 # Need to specify <trial_name>
@@ -20,6 +21,9 @@ parser.add_argument("--visualize", "-v", action="store_true")
 parser.add_argument("--dbg_print", "-p", action="store_true")
 args = parser.parse_args()
 
+# print(str(args.dbg_print)) # NOTE: THIS WILL CRASH WHEN YOU DON'T PASS DBG PRINT
+# os.environ["DBG_PRINT"] = str(args.dbg_print)
+
 DATA_DIR = f"../../data/{args.trial_name}_workload/"
 os.makedirs(DATA_DIR, exist_ok=True)
 NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
@@ -28,7 +32,7 @@ USER_FILE = DATA_DIR + "users_per_region.csv"
 FILESIZE_FILE = DATA_DIR + "filesizes.csv"
 TRIAL_FILE = DATA_DIR + "trial_info.txt"
 
-N_CLIENTS = 19
+N_CLIENTS = 9
 
 users = [{
     "id": client_id,
@@ -36,6 +40,7 @@ users = [{
     "events": [],
     "content_roster": [],
     "last_request_index": 0,
+    "upload_times": [],
     "request_times": [],
     "join_times": [],
     "leave_times": [],
@@ -46,7 +51,7 @@ tracker = {
     "region": None
 }
 
-users.insert(0, tracker)
+users.insert(0, tracker) # Add tracker in for the sake of creating appropriate regional delays
 
 ### Generating regions and network conditions ###
 
@@ -83,212 +88,258 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 minute = 60000 # TODO: I think events are being generated outside of the set interval
 EXPERIMENT_T = 10 * minute
 
-# - Generate client arrival/ times from a poisson distribution
+CHURN = True
 
-# These variables roughly correspond to "churn rate"
-STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
-INTERVAL_T = 4 * minute
+N_files_generated = 0
 
-JOIN_INTENSITY = N_CLIENTS/EXPERIMENT_T/4 # Assume all 20 clients join, in the first 4th of the experiment
-INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/4, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
+if CHURN:
 
-for i, user in enumerate(users):
-    if len(user["join_times"]) == 0: user["join_times"].append(INITIAL_JOIN_TIMES[i])
+    # - Generate client arrival/ times from a poisson distribution
 
-    # While the join / leave event is still in the bound of our experiment
-    while user["join_times"][-1] < EXPERIMENT_T or user["leave_times"][-1] < EXPERIMENT_T:
+    # These variables roughly correspond to "churn rate"
+    STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
+    INTERVAL_T = 4 * minute
 
-        if len(user["join_times"]) > len(user["leave_times"]): # Currently "haven't left"
-            current_join_time = user["join_times"][-1]
-            mean_stay_time = STAY_VS_LEAVE_RATIO * INTERVAL_T
-            next_leave_time = current_join_time + np.random.normal(mean_stay_time, INTERVAL_T/4, 1)[0]
-            # Determine how long we stay "in" from a gaussian
-            user["leave_times"].append(next_leave_time)
+    JOIN_INTENSITY = N_CLIENTS/EXPERIMENT_T/4 # Assume all 20 clients join, in the first 4th of the experiment
+    INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/4, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
 
-        elif len(user["join_times"]) == len(user["leave_times"]): # Currently "left" the system
-            current_leave_time = user["leave_times"][-1]
-            mean_leave_time = INTERVAL_T
-            next_join_time = current_leave_time + np.random.normal(mean_leave_time, INTERVAL_T/4, 1)[0]
-            # Determine how long we stay "out" from a gaussian
-            user["join_times"].append(next_join_time)
+    for i, user in enumerate(users):
+        if len(user["join_times"]) == 0: user["join_times"].append(INITIAL_JOIN_TIMES[i])
 
-    if args.dbg_print:
-        print()
-        print(f"User {user['id']}")
-        print(f" Join times: {user['join_times']}")
-        print(f" Leave times: {user['leave_times']}")
+        # While the join / leave event is still in the bound of our experiment
+        while user["join_times"][-1] < EXPERIMENT_T or user["leave_times"][-1] < EXPERIMENT_T:
 
-# exit()
+            if len(user["join_times"]) > len(user["leave_times"]): # Currently "haven't left"
+                current_join_time = user["join_times"][-1]
+                mean_stay_time = STAY_VS_LEAVE_RATIO * INTERVAL_T
+                next_leave_time = current_join_time + np.random.normal(mean_stay_time, INTERVAL_T/4, 1)[0]
+                # Determine how long we stay "in" from a gaussian
+                user["leave_times"].append(next_leave_time)
 
-# Make sure that no client uploads
+            elif len(user["join_times"]) == len(user["leave_times"]): # Currently "left" the system
+                current_leave_time = user["leave_times"][-1]
+                mean_leave_time = INTERVAL_T
+                next_join_time = current_leave_time + np.random.normal(mean_leave_time, INTERVAL_T/4, 1)[0]
+                # Determine how long we stay "out" from a gaussian
+                user["join_times"].append(next_join_time)
 
-# - Generate content arrival times from a poisson distribution
+        if args.dbg_print:
+            print()
+            print(f"User {user['id']}")
+            print(f" Join times: {user['join_times']}")
+            print(f" Leave times: {user['leave_times']}")
 
-# Note: Poisson process will generate ON AVERAGE, TOTAL_UPLOADS per minute
-# but that does not necessarily mean that in each minute interval, you will see 4 uploads
-# what you actually see per minute will vary due to randomness, ex. you may get 1 or 0 events in one minute.
-# 1/UPLOAD_INTENSITY is the mean inter-arrival time
+        # Add join and leave times as events, they don't have to be sorted now, 
+        # they'll get sorted later before file writing anyways
+        for t_join, t_leave in zip(user["join_times"], user["leave_times"]):
+            user["events"].append({
+                "type":"join",
+                "time": t_join,
+                "content": None
+            })
+            user["events"].append({
+                "type":"leave",
+                "time": t_leave,
+                "content": None
+            })
 
-UPLOAD_INTENSITY = 1 / minute
-TOTAL_UPLOADS = UPLOAD_INTENSITY * EXPERIMENT_T
-UPLOAD_TIMES = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(TOTAL_UPLOADS)))
+    # Important NOTE: Here, I generate one Poisson process for reqests and one for uploads, 
+    # for the duration of an interval where a client is IN the system
 
+    UPLOAD_INTENSITY = 1 / minute
+    REQUEST_INTENSITY = 2 / minute
 
-# - Generate request arrival times per user from a poisson distribution
+    ALL_UPLOAD_TIMES = []
 
-MEAN_REQ_INTENSITY = 2 / minute # TODO: Can vary this later to simulate clients with highly varying request rate
-for i, user in enumerate(users):
-    TOTAL_REQ = MEAN_REQ_INTENSITY * EXPERIMENT_T
-    user_request_times = np.cumsum(np.random.exponential(1/MEAN_REQ_INTENSITY, int(TOTAL_REQ)))
-    user["request_times"] = user_request_times
+    for user in users:
+        for t_join, t_leave in zip(user["join_times"], user["leave_times"]):
 
+            total_uploads = UPLOAD_INTENSITY * (t_leave - t_join)
+            uploads_in_interval = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(total_uploads)))
+            user["upload_times"] += list(uploads_in_interval[ (t_join < uploads_in_interval) & (uploads_in_interval < t_leave)])
 
-# Model file uploads and downloads
+            total_requests = REQUEST_INTENSITY * (t_leave - t_join)
+            requests_in_interval = np.cumsum(np.random.exponential(1/REQUEST_INTENSITY, int(total_requests)))
+            user["request_times"] += list(requests_in_interval[ (t_join < requests_in_interval) & (requests_in_interval < t_leave)])
 
-# 'content' json array of form
-# {
-#     "id": 1,
-#     "name": "video1",
-#     "seeder": [client_id],
-#     "seeder_region": [region],
-#     "popularity": 5
-# }
+        ALL_UPLOAD_TIMES += user["upload_times"] # Build this array so that you can easily define an interval between arrival i and arrival i+1
 
-content_arrived = []
-
-ZIPF_ALPHA = 1.01 # skewness param
-ZIPF_SIZE = 1 # draw one element from the distribution at any time
-ZIPF_N = 10**4 # Reasonable cap on zipf distribution draws for simulation experiments
-
-def zipf_rank_to_probability(rank):
-    harmonic_sum = np.sum(1 / np.arange(1, ZIPF_N + 1) ** ZIPF_ALPHA)
-    return (1 / rank**ZIPF_ALPHA) / harmonic_sum
-
-def draw_content_from_roster(user):
-    PRINT_HERE = True
-
-    if len(user["content_roster"]) == 0: return None
-
-    popularities = np.array([c["popularity"] for c in user["content_roster"]])
-
-    probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities] )
-    probabilities /= np.sum(probabilities)
-
-    if args.dbg_print and PRINT_HERE:
-        print()
-        print(f" Entering draw to user {user["id"]}")
-        print(f" User {user["id"]} roster {user["content_roster"]}")
-        print(f" Rank:Probability {list(zip(popularities, probabilities))}")
-
-    drawn = np.random.choice(user["content_roster"], p=(probabilities))
-
-    if args.dbg_print and PRINT_HERE:
-        print(f" User {user["id"]} draws {drawn}")
-
-    user["content_roster"].remove(drawn)
-
-    if len(user["content_roster"]) > 0:
-        new_popularities = np.array([c["popularity"] for c in user["content_roster"]]) # Re-create popularities excluding our drawn object
-        new_popularities = new_popularities * ZIPF_N / new_popularities.sum() # Normalize
-        new_popularities = np.clip([int(p) for p in new_popularities], a_min=1, a_max=None) # Make sure popularity ranks are integers
-        for c, p in enumerate(new_popularities):
-            user["content_roster"][c]["popularity"] = p # Re-assign popularities to each file
-
-    return drawn
-
-def push_content_to_roster(user, new_content):
-    PRINT_HERE = True
-    if len(user["content_roster"]) == 0:
-        user["content_roster"].append(new_content)
-        return
-
-    if args.dbg_print and PRINT_HERE:
-        print()
-        print(f" Entering push to {user["id"]}")
-        print(f" User {user["id"]} roster {user["content_roster"]}")
-        print(f" Content {new_content}")
-
-    roster_sorted_by_popularity = sorted(user["content_roster"], key=lambda c: c["popularity"]) # Sort list s.t. low ranks (more popular) are at the front
-
-    old_popularities = np.array([c["popularity"] for c in roster_sorted_by_popularity])
-    new_content_idx = bisect.bisect_left(old_popularities, new_content["popularity"]) # Index where the new_content's rank belongs in the sorted array
-    popularities = np.insert(old_popularities, new_content_idx, new_content["popularity"])
-
-    popularities = popularities * ZIPF_N / popularities.sum() # Normalize
-    popularities = np.clip([int(p) for p in popularities], a_min=1, a_max=None) # Make sure ranks are ints
-
-    if args.dbg_print and PRINT_HERE:
-        print(f" popularities pre-insert {old_popularities}")
-        print(f" popularities post-insert {popularities}")
-
-    roster_sorted_by_popularity.insert(new_content_idx, new_content) # Place new content at its proper index in the roster
-    for c in range(len(roster_sorted_by_popularity)):
-        roster_sorted_by_popularity[c]["popularity"] = popularities[c] # Map new popularities to content in roster
-
-    user["content_roster"] = roster_sorted_by_popularity # Update content roster with new shifted and sorted roster
-
-
-for i, t_arrive in enumerate(UPLOAD_TIMES):
-
-    file_num = i
-
-    seeder_client_id = int(np.random.uniform(low=0, high=N_CLIENTS))
-    seeder_client_reigon = users[seeder_client_id]["region"]
-    popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
-    popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
-    new_content = {
-        "id": file_num,
-        "name": f"video{file_num}",
-        "seeder": seeder_client_id,
-        "seeder_region": seeder_client_reigon,
-        "popularity": popularity #probability of being selected
-    }
-
-    content_arrived.append(new_content)
-
-    # Add this to the seeder client's list of events
-    seeder = users[seeder_client_id]
-    seeder["events"].append({
-        "type":"upload",
-        "time": t_arrive,
-        "content": new_content
-    })
-
-    # Update each client's content roster
-    # Exclude the seeder, they already have that content, so they won't be downloading it
-    users_excluding_seeder = [user for user in users if user["id"] != seeder_client_id]
-    for user in users_excluding_seeder:
-        push_content_to_roster(user, new_content)
+    ALL_UPLOAD_TIMES = sorted(ALL_UPLOAD_TIMES) # Sort by ascending upload times
+    N_files_generated = len(ALL_UPLOAD_TIMES)
+    content_uploaded = []
     
-    arrivals_interval = [] # Define a window of requests that will run before the next content arrival
-    if i+1 < len(UPLOAD_TIMES):
-        arrivals_interval = [t_arrive, UPLOAD_TIMES[i+1]]
-    else:
-        arrivals_interval = [t_arrive, EXPERIMENT_T]
+    ZIPF_ALPHA = 1.01 # skewness param
+    ZIPF_SIZE = 1 # draw one element from the distribution at any time
+    ZIPF_N = 10**4 # Reasonable cap on zipf distribution draws for simulation experiments
+
+    for user in users:
+
+        for t_upload in user["upload_times"]:
+
+            last_upload_idx = len(content_uploaded)
+            file_num = last_upload_idx
+
+            seeder_client_id = user["id"]
+            seeder_client_reigon = user["region"]
+            popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
+            popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
+            new_content = {
+                "id": file_num,
+                "name": f"video{file_num}",
+                "seeder": seeder_client_id,
+                "seeder_region": seeder_client_reigon,
+                "popularity": popularity #probability of being selected
+            }
+
+            content_uploaded.append(new_content)
+
+            # Add this to the seeder client's list of events
+            user["events"].append({
+                "type":"upload",
+                "time": t_upload,
+                "content": new_content
+            })
+
+            users_excluding_seeder = [u for u in users if u["id"] != seeder_client_id]
+            for r_user in users_excluding_seeder:
+                push_content_to_roster(r_user, new_content)
+
+            INTERVAL = [] # Define a window of requests that will run before the next content arrival
+            if last_upload_idx+1 < len(ALL_UPLOAD_TIMES):
+                INTERVAL = ALL_UPLOAD_TIMES[last_upload_idx : last_upload_idx+2] # Window of time between this, and the next upload
+            else:
+                INTERVAL = [t_upload, EXPERIMENT_T]
+
+            # Now run the next request for each user
+            for r_user in users_excluding_seeder:
+                # print(f"{r_user["request_times"]=}")
+                # Get all of this users request times, that fall between this arrival and the next arrival
+                # These will all select from the same content roster, so we should generate them all at once
+                if r_user["last_request_index"] < len(r_user["request_times"]): # If this user has requests remaining it its schedule
+                    # print(f"{user["request_times"]=}")
+                    requests_to_generate = [ r for r in r_user["request_times"] if (INTERVAL[0] < r) and (r < INTERVAL[1])]
+                    # print(f"User {r_user["id"]} over {INTERVAL=} {requests_to_generate=}")
+
+                    for t_req in requests_to_generate:
+                        req_content = draw_content_from_roster(r_user) # Use 'fetch-at-most-once' behavior to make a request
+                        # req_content can be None when there is no content that the user hasn't downloaded
+                        if req_content != None:
+                            # Add this request to this client's list of events
+                            r_user["events"].append({
+                                "type":"request",
+                                "time": t_req,
+                                "content": req_content
+                            })
+                        r_user["last_request_index"] += 1 # step forward to the next request timestamp
+
+              
+else: # NOTE: NO CHURN present
+
+    # Important NOTE: Here I do not generate a upload poisson process per user. So the amount of uploads does NOT scale with N_CLIENTS here
+
+    # - Generate content arrival times from a poisson distribution
+
+    # Note: Poisson process will generate ON AVERAGE, TOTAL_UPLOADS per minute
+    # but that does not necessarily mean that in each minute interval, you will see 4 uploads
+    # what you actually see per minute will vary due to randomness, ex. you may get 1 or 0 events in one minute.
+    # 1/UPLOAD_INTENSITY is the mean inter-arrival time
+
+    UPLOAD_INTENSITY = 1 / minute
+    TOTAL_UPLOADS = UPLOAD_INTENSITY * EXPERIMENT_T
+    UPLOAD_TIMES = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(TOTAL_UPLOADS)))
+
+    # - Generate request arrival times per user from a poisson distribution
+
+    MEAN_REQ_INTENSITY = 2 / minute # TODO: Can vary this later to simulate clients with highly varying request rate
+    for i, user in enumerate(users):
+        TOTAL_REQ = MEAN_REQ_INTENSITY * EXPERIMENT_T
+        user_request_times = np.cumsum(np.random.exponential(1/MEAN_REQ_INTENSITY, int(TOTAL_REQ)))
+        user["request_times"] = user_request_times
+
+
+    # Model file uploads and downloads
+
+    # 'content' json array of form
+    # {
+    #     "id": 1,
+    #     "name": "video1",
+    #     "seeder": [client_id],
+    #     "seeder_region": [region],
+    #     "popularity": 5
+    # }
+
+    content_arrived = []
+
+    ZIPF_ALPHA = 1.01 # skewness param
+    ZIPF_SIZE = 1 # draw one element from the distribution at any time
+    ZIPF_N = 10**4 # Reasonable cap on zipf distribution draws for simulation experiments
+
+    for i, t_arrive in enumerate(UPLOAD_TIMES): # BAD NAMING, "t_arrive" should really be "t_upload"
+
+        file_num = i
+
+        seeder_client_id = int(np.random.uniform(low=0, high=N_CLIENTS))
+        users["upload_times"].append(t_arrive)
+        seeder_client_reigon = users[seeder_client_id]["region"]
+        popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
+        popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
+        new_content = {
+            "id": file_num,
+            "name": f"video{file_num}",
+            "seeder": seeder_client_id,
+            "seeder_region": seeder_client_reigon,
+            "popularity": popularity #probability of being selected
+        }
+
+        content_arrived.append(new_content)
+
+        # Add this to the seeder client's list of events
+        seeder = users[seeder_client_id]
+        seeder["events"].append({
+            "type":"upload",
+            "time": t_arrive,
+            "content": new_content
+        })
+
+        # Update each client's content roster
+        # Exclude the seeder, they already have that content, so they won't be downloading it
+        users_excluding_seeder = [user for user in users if user["id"] != seeder_client_id]
+        for user in users_excluding_seeder:
+            push_content_to_roster(user, new_content)
+        
+        arrivals_interval = [] # Define a window of requests that will run before the next content arrival
+        if i+1 < len(UPLOAD_TIMES):
+            arrivals_interval = [t_arrive, UPLOAD_TIMES[i+1]]
+        else:
+            arrivals_interval = [t_arrive, EXPERIMENT_T]
+        
+        # Now run the next request for each user
+        for user in users_excluding_seeder:
+
+            if user["last_request_index"] < len(user["request_times"]): # If this user has requests remaining it its schedule
+
+                # Get all of this users request times, that fall between this arrival and the next arrival
+                # These will all select from the same content roster, so we should generate them all at once
+                requests_to_generate = user["request_times"][ (arrivals_interval[0] < user["request_times"]) & (user["request_times"] < arrivals_interval[1])]
+
+                for t_req in requests_to_generate:
+
+                    req_content = draw_content_from_roster(user) # Use 'fetch-at-most-once' behavior to make a request
+                    # req_content can be None when there is no content that the user hasn't downloaded
+
+                    if req_content != None:
+                        # Add this request to this client's list of events
+                        user["events"].append({
+                            "type":"request",
+                            "time": t_req,
+                            "content": req_content
+                        })
+                    
+                    user["last_request_index"] += 1 # step forward to the next request timestamp
     
-    # Now run the next request for each user
-    for user in users_excluding_seeder:
+    N_files_generated = len(content_arrived)
 
-        if user["last_request_index"] < len(user["request_times"]): # If this user has requests remaining it its schedule
 
-            # Get all of this users request times, that fall between this arrival and the next arrival
-            # These will all select from the same content roster, so we should generate them all at once
-            requests_to_generate = user["request_times"][ (arrivals_interval[0] < user["request_times"]) & (user["request_times"] < arrivals_interval[1])]
-
-            for t_req in requests_to_generate:
-
-                req_content = draw_content_from_roster(user) # Use 'fetch-at-most-once' behavior to make a request
-                # req_content can be None when there is no content that the user hasn't downloaded
-
-                if req_content != None:
-                    # Add this request to this client's list of events
-                    user["events"].append({
-                        "type":"request",
-                        "time": t_req,
-                        "content": req_content
-                    })
-                
-                user["last_request_index"] += 1 # step forward to the next request timestamp
 
 
 
@@ -299,18 +350,6 @@ for user in users:
 global_events = sorted(global_events, key=lambda e: e["event"]["time"])
 
 
-# TODO: remove this, just for pilot on 4/1
-for user in users:
-    global_events.insert(0, 
-                        {    
-                            "user": user["id"],
-                            "event":{
-                                "type":"join",
-                                "time": 1000,
-                                "content": None
-                            }
-                        }
-                        )
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -324,7 +363,18 @@ class NumpyEncoder(json.JSONEncoder):
 with open(EVENT_FILE, "w") as fs:
     json.dump(global_events, fs, indent=1, cls=NumpyEncoder)
 
-print(f"N files {len(content_arrived)}")
+# Testing churn. Verify that no user requests or downloads content outside of when they are "in" the system
+
+if args.dbg_print:
+    for user in users:
+        joined_intervals = list(zip(user["join_times"], user["leave_times"]))
+        for event in user["events"]:
+            correct_event = False
+            for t_join, t_leave in joined_intervals:
+                correct_event = (t_join <= event["time"] <= t_leave) or correct_event # an event is correct, if it falls in at least one valid time interval
+            if not correct_event: 
+                print(f" User {user["id"]}, {t_join=}, {t_leave=}, INCORRECT EVENT AT {event["time"]}")
+
 
 # Timeline for debugging
 
@@ -336,10 +386,19 @@ if args.visualize:
     for user in users:
 
         event_times = [event["time"] for event in user["events"]]
-        event_labels = [
-            f" User {user['id']}\n {event['type']}\n [{event["content"]["name"]}\n seeder {event["content"]["seeder"]} \n pop {int(event["content"]["popularity"])}] " 
-            for event in user["events"]
-            ]
+        event_labels = []
+
+        for event in user["events"]:
+            if event["type"] == "join" or event["type"] == "leave":
+                event_labels.append(
+                    f" User {user['id']}\n {event['type']} "
+                    )
+            else:
+                event_labels.append(
+                    f" User {user['id']}\n {event['type']}\n [{event["content"]["name"]}\n seeder {event["content"]["seeder"]} \n pop {int(event["content"]["popularity"])}] "
+                    )
+            
+            
 
         levels = []
         level = 0.3
@@ -351,7 +410,7 @@ if args.visualize:
             "upload": "yellow",
             "request":"blue",
             "join":"green",
-            "exit":"red"
+            "leave":"red"
         }
 
         ax.vlines(event_times, 0, levels, color=[(event_to_color[e["type"]]) for e in user["events"]])
