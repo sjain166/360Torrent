@@ -5,34 +5,39 @@ import math
 import json
 import bisect
 import matplotlib.pyplot as plt
+import pickle
 import sys
 import os
 import argparse
 
+from types import SimpleNamespace
+
 from gen_regions import *
 from gen_utils import *
 
-# Usage args gen_synthetic_regional -v -p -t <trial_name>
-# Need to specify <trial_name>
+# Usage args gen_synthetic_regional -v -p -t <trace_name>
+# Need to specify <trace_name>
 
 parser = argparse.ArgumentParser(description="Workload generator")
-parser.add_argument("--trial_name" , "-t", type=str)
+parser.add_argument("--trace_name" , "-t", type=str)
 parser.add_argument("--visualize", "-v", action="store_true")
 parser.add_argument("--dbg_print", "-p", action="store_true")
 args = parser.parse_args()
 
-# print(str(args.dbg_print)) # NOTE: THIS WILL CRASH WHEN YOU DON'T PASS DBG PRINT
-# os.environ["DBG_PRINT"] = str(args.dbg_print)
+exp = SimpleNamespace() # Track constants used to generate this trace
+exp.trace_name = args.trace_name
 
-DATA_DIR = f"../../data/{args.trial_name}_workload/"
+DATA_DIR = f"../../data/{args.trace_name}_workload/"
 os.makedirs(DATA_DIR, exist_ok=True)
 NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
 EVENT_FILE = DATA_DIR + "events.json"
 USER_FILE = DATA_DIR + "users_per_region.csv"
 FILESIZE_FILE = DATA_DIR + "filesizes.csv"
-TRIAL_FILE = DATA_DIR + "trial_info.txt"
+TRACE_INFO_FILE = DATA_DIR + "trace_info.json"
+TIMELINE_FILE = DATA_DIR + "timeline.pkl"
 
 N_CLIENTS = 9
+exp.n_clients = N_CLIENTS
 
 users = [{
     "id": client_id,
@@ -50,6 +55,9 @@ tracker = {
     "id":1,
     "region": None
 }
+
+exp.tracker_id = tracker["id"]
+exp.tracker_region = tracker["region"]
 
 users.insert(0, tracker) # Add tracker in for the sake of creating appropriate regional delays
 
@@ -87,8 +95,9 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 
 minute = 60000 # TODO: I think events are being generated outside of the set interval
 EXPERIMENT_T = 10 * minute
-
+exp.experiment_t = EXPERIMENT_T
 CHURN = True
+exp.churn = CHURN
 
 N_files_generated = 0
 
@@ -99,8 +108,10 @@ if CHURN:
     # These variables roughly correspond to "churn rate"
     STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
     INTERVAL_T = 4 * minute
+    exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
+    exp.interval_t = INTERVAL_T
 
-    JOIN_INTENSITY = N_CLIENTS/EXPERIMENT_T/4 # Assume all 20 clients join, in the first 4th of the experiment
+    # Assume all 20 clients join, in the first 4th of the experiment
     INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/4, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
 
     for i, user in enumerate(users):
@@ -148,6 +159,8 @@ if CHURN:
 
     UPLOAD_INTENSITY = 1 / minute
     REQUEST_INTENSITY = 2 / minute
+    exp.upload_intensity = UPLOAD_INTENSITY
+    exp.request_intensity = REQUEST_INTENSITY
 
     ALL_UPLOAD_TIMES = []
 
@@ -166,11 +179,15 @@ if CHURN:
 
     ALL_UPLOAD_TIMES = sorted(ALL_UPLOAD_TIMES) # Sort by ascending upload times
     N_files_generated = len(ALL_UPLOAD_TIMES)
+    exp.n_files = N_files_generated
     content_uploaded = []
     
     ZIPF_ALPHA = 1.01 # skewness param
     ZIPF_SIZE = 1 # draw one element from the distribution at any time
     ZIPF_N = 10**4 # Reasonable cap on zipf distribution draws for simulation experiments
+    exp.zipf_a = ZIPF_ALPHA
+    exp.zipf_size = ZIPF_SIZE
+    exp.zipf_n = ZIPF_N
 
     for user in users:
 
@@ -212,14 +229,10 @@ if CHURN:
 
             # Now run the next request for each user
             for r_user in users_excluding_seeder:
-                # print(f"{r_user["request_times"]=}")
                 # Get all of this users request times, that fall between this arrival and the next arrival
                 # These will all select from the same content roster, so we should generate them all at once
                 if r_user["last_request_index"] < len(r_user["request_times"]): # If this user has requests remaining it its schedule
-                    # print(f"{user["request_times"]=}")
                     requests_to_generate = [ r for r in r_user["request_times"] if (INTERVAL[0] < r) and (r < INTERVAL[1])]
-                    # print(f"User {r_user["id"]} over {INTERVAL=} {requests_to_generate=}")
-
                     for t_req in requests_to_generate:
                         req_content = draw_content_from_roster(r_user) # Use 'fetch-at-most-once' behavior to make a request
                         # req_content can be None when there is no content that the user hasn't downloaded
@@ -247,6 +260,7 @@ else: # NOTE: NO CHURN present
     UPLOAD_INTENSITY = 1 / minute
     TOTAL_UPLOADS = UPLOAD_INTENSITY * EXPERIMENT_T
     UPLOAD_TIMES = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(TOTAL_UPLOADS)))
+    exp.upload_intensity = UPLOAD_INTENSITY
 
     # - Generate request arrival times per user from a poisson distribution
 
@@ -255,7 +269,7 @@ else: # NOTE: NO CHURN present
         TOTAL_REQ = MEAN_REQ_INTENSITY * EXPERIMENT_T
         user_request_times = np.cumsum(np.random.exponential(1/MEAN_REQ_INTENSITY, int(TOTAL_REQ)))
         user["request_times"] = user_request_times
-
+    exp.request_intensity = MEAN_REQ_INTENSITY
 
     # Model file uploads and downloads
 
@@ -273,6 +287,9 @@ else: # NOTE: NO CHURN present
     ZIPF_ALPHA = 1.01 # skewness param
     ZIPF_SIZE = 1 # draw one element from the distribution at any time
     ZIPF_N = 10**4 # Reasonable cap on zipf distribution draws for simulation experiments
+    exp.zipf_a = ZIPF_ALPHA
+    exp.zipf_size = ZIPF_SIZE
+    exp.zipf_n = ZIPF_N
 
     for i, t_arrive in enumerate(UPLOAD_TIMES): # BAD NAMING, "t_arrive" should really be "t_upload"
 
@@ -338,9 +355,7 @@ else: # NOTE: NO CHURN present
                     user["last_request_index"] += 1 # step forward to the next request timestamp
     
     N_files_generated = len(content_arrived)
-
-
-
+    exp.n_files = N_files_generated
 
 
 global_events = []
@@ -438,4 +453,8 @@ if args.visualize:
     ax.set_xlabel('Time')
     ax.set_title(f'User Timeline')
 
-plt.show()
+    with open(TIMELINE_FILE, 'wb') as fs: pickle.dump(fig,fs)
+    plt.show()
+
+with open(TRACE_INFO_FILE, 'w') as fs:
+    json.dump(vars(exp), fs, indent=1)
