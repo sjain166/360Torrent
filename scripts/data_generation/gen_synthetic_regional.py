@@ -107,7 +107,7 @@ if CHURN:
 
     # These variables roughly correspond to "churn rate"
     # STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
-    STAY_VS_LEAVE_RATIO = 1 / 1
+    STAY_VS_LEAVE_RATIO = 1.5 / 1
     INTERVAL_T = 4 * minute
     # INTERVAL_T = EXPERIMENT_T # Want nodes to stay in for well over the duration of the experiment.
     exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
