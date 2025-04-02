@@ -267,11 +267,20 @@ async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
         ]
         await asyncio.gather(*download_tasks)
 
-        end_time = time.time()  # End timer
-        total_time = end_time - start_time
-
+        # Default assumption: download was successful
+        file_download_status = True
+        
         for c in metadata.chunks:
             print(f"[DEBUG] {c.chunk_name}: Tried={c.peers_tried}, Failed={c.peers_failed}")
+            if c.status != "COMPLETED":
+                file_download_status = False
+        
+        if not file_download_status:
+            total_time = -1
+            print("[WARNING] Some chunks failed. Marking download as failed.")
+        else:
+            end_time = time.time()
+            total_time = end_time - start_time
         
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
