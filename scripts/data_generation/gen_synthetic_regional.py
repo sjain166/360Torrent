@@ -6,21 +6,29 @@ import json
 import bisect
 import matplotlib.pyplot as plt
 import sys
+import os
 import argparse
 
 from gen_regions import *
 
-
-DATA_DIR = "../../data/"
-NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
-EVENT_FILE = DATA_DIR + "events.json"
+# Usage args gen_synthetic_regional -v -p -t <trial_name>
+# Need to specify <trial_name>
 
 parser = argparse.ArgumentParser(description="Workload generator")
+parser.add_argument("--trial_name" , "-t", type=str)
 parser.add_argument("--visualize", "-v", action="store_true")
 parser.add_argument("--dbg_print", "-p", action="store_true")
 args = parser.parse_args()
 
-N_CLIENTS = 10
+DATA_DIR = f"../../data/{args.trial_name}_workload/"
+os.makedirs(DATA_DIR, exist_ok=True)
+NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
+EVENT_FILE = DATA_DIR + "events.json"
+USER_FILE = DATA_DIR + "users_per_region.csv"
+FILESIZE_FILE = DATA_DIR + "filesizes.csv"
+TRIAL_FILE = DATA_DIR + "trial_info.txt"
+
+N_CLIENTS = 19
 
 users = [{
     "id": client_id,
@@ -31,13 +39,19 @@ users = [{
     "request_times": [],
     "join_times": [],
     "leave_times": [],
-} for client_id in range(N_CLIENTS)]
+} for client_id in range(2, 2+N_CLIENTS)] # Reserve client_id 1 for tracker
 
+tracker = {
+    "id":1,
+    "region": None
+}
+
+users.insert(0, tracker)
 
 ### Generating regions and network conditions ###
 
 # Define regions and their share of the userbase < 1
-regions = [["W", 0.3, []], ["N", 0.4, []], ["C", 0.2, []], ["F", 0.1, []]] # This should probably be a map...
+regions = [["W", 0.3, [tracker]], ["N", 0.4, []], ["C", 0.2, []], ["F", 0.1, []]] # This should probably be a map...
 
 # Define delays between regions
 net = nx.Graph(data=True)
@@ -51,7 +65,15 @@ net.add_edge("C", "F", weight=100)
 # 1. Map userids to regions (for simplicity, contiguous id users will be assigned the same region)
 # 2. Mutates 'regions' and 'users' accordingly
 # 3. Dumps computed regional delays to 'NET_FILE' - we can later read these to set up net_delay.py
-define_regional_userbase_and_delay(regions, N_CLIENTS, net, NET_FILE, users)
+define_regional_userbase_and_delay(regions, N_CLIENTS+1, net, NET_FILE, users)
+
+# Write user regions to file
+with open(USER_FILE, 'w') as fs:
+    for user in users:
+        fs.write(f"{user['id']}, {user['region']}\n")
+
+
+users.pop(0) # Remove tracker after you're done writing user files and regional delay files
 
 
 ### Generating workload per user ###
@@ -96,7 +118,9 @@ for i, user in enumerate(users):
         print(f" Join times: {user['join_times']}")
         print(f" Leave times: {user['leave_times']}")
 
-exit()
+# exit()
+
+# Make sure that no client uploads
 
 # - Generate content arrival times from a poisson distribution
 
@@ -116,7 +140,6 @@ MEAN_REQ_INTENSITY = 2 / minute # TODO: Can vary this later to simulate clients 
 for i, user in enumerate(users):
     TOTAL_REQ = MEAN_REQ_INTENSITY * EXPERIMENT_T
     user_request_times = np.cumsum(np.random.exponential(1/MEAN_REQ_INTENSITY, int(TOTAL_REQ)))
-    # TODO: WHy are these request times still capped off at around 60k?
     user["request_times"] = user_request_times
 
 
@@ -151,11 +174,11 @@ def draw_content_from_roster(user):
     probabilities = np.array([ zipf_rank_to_probability(p) for p in popularities] )
     probabilities /= np.sum(probabilities)
 
-    # if args.dbg_print and PRINT_HERE:
-    print()
-    print(f" Entering draw to user {user["id"]}")
-    print(f" User {user["id"]} roster {user["content_roster"]}")
-    print(f" Rank:Probability {list(zip(popularities, probabilities))}")
+    if args.dbg_print and PRINT_HERE:
+        print()
+        print(f" Entering draw to user {user["id"]}")
+        print(f" User {user["id"]} roster {user["content_roster"]}")
+        print(f" Rank:Probability {list(zip(popularities, probabilities))}")
 
     drawn = np.random.choice(user["content_roster"], p=(probabilities))
 
@@ -274,6 +297,21 @@ for user in users:
     for event in user["events"]:
         global_events.append({"user":user["id"], "event":event})
 global_events = sorted(global_events, key=lambda e: e["event"]["time"])
+
+
+# TODO: remove this, just for pilot on 4/1
+for user in users:
+    global_events.insert(0, 
+                        {    
+                            "user": user["id"],
+                            "event":{
+                                "type":"join",
+                                "time": 1000,
+                                "content": None
+                            }
+                        }
+                        )
+
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):  # Handles int32, int64, etc.
@@ -285,6 +323,8 @@ class NumpyEncoder(json.JSONEncoder):
         return super().default(obj)
 with open(EVENT_FILE, "w") as fs:
     json.dump(global_events, fs, indent=1, cls=NumpyEncoder)
+
+print(f"N files {len(content_arrived)}")
 
 # Timeline for debugging
 
