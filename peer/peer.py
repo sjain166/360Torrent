@@ -15,6 +15,7 @@ from scripts.utils import TRACKER_URL
 import builtins
 from rich import print as rich_print
 builtins.print = rich_print
+import shutil
 
 # Rather a Fixed Hosted Files, Scrap the Data Folder to update teh Hosted Files before TRacker Registration
 # HOSTED_FILE = ["test_data_send.txt"]
@@ -25,10 +26,6 @@ async def register_peer(peer_id, ip, port):
     """
     Registers the peer to the tracker.
     """
-    VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
-    VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
-
-    print(type(VM_NAME))
 
     hosted_files = [
         {
@@ -98,12 +95,40 @@ async def get_file_metadata(file_name):
         return None
 
 
+async def handle_user_upload(folder_name):
+    global PEER_FILE_REGISTRY 
+
+    WAREHOUSE_PATH = "/home/sj99/360Torrent/tests/data_warehouse"
+    TARGET_DATA_PATH = "/home/sj99/360Torrent/tests/data"
+
+    source_path = os.path.join(WAREHOUSE_PATH, folder_name)
+    destination_path = os.path.join(TARGET_DATA_PATH, folder_name)
+
+    if not os.path.exists(source_path):
+        print(f"[ERROR] Folder not found in warehouse: {source_path}")
+        return
+
+    try:
+        if os.path.exists(destination_path):
+            shutil.rmtree(destination_path)  # Clean if folder already exists
+        shutil.copytree(source_path, destination_path)
+        print(f"[INFO] Copied '{folder_name}' from warehouse to data folder.")
+        PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+        await register_peer(VM_NAME, IP, PORT)
+        
+    except Exception as e:
+        print(f"[ERROR] Failed to copy folder: {e}")
+        return
+    return
+
+
 async def prompt_user_action():
     while True:
         print("\n[OPTIONS] Select an action:")
         print("1. Get available files")
         print("2. Download a file")
-        print("3. Exit")
+        print("3. Upload a folder to share")
+        print("4. Exit")
         choice = (await asyncio.to_thread(input, ">> ")).strip()
         if choice == "1":
             summary = await get_tracker_registry_summary()
@@ -117,6 +142,9 @@ async def prompt_user_action():
             else:
                 print("[WARN] No file name entered.")
         elif choice == "3":
+            folder_name= (await asyncio.to_thread(input, "Enter full folder path to upload: >> ")).strip()
+            await handle_user_upload(folder_name)
+        elif choice == "4":
             print("[INFO] Exiting download prompt loop.")
             break
         else:
@@ -126,6 +154,9 @@ async def prompt_user_action():
 async def main():
 
     global PEER_FILE_REGISTRY
+    global VM_NAME, VM_REGION
+    global IP, PORT
+
     VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
     VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
 
@@ -137,9 +168,9 @@ async def main():
     # PEER_FILE_REGISTRY = []
     peer_id = VM_NAME
     try:
-        ip = get_private_ip()  # Automatically fetch the VM's IP
-        port = 6881
-        await register_peer(peer_id, ip, port)
+        IP = get_private_ip()  # Automatically fetch the VM's IP
+        PORT = 6881
+        await register_peer(peer_id, IP, PORT)
         await file_server.start_file_server()
         await prompt_user_action()  # Begin prompting user to download files repeatedly
     except Exception as e:

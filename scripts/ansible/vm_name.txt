@@ -5,7 +5,25 @@ ssh-copy-id  sj99@sp25-cs525-1206.cs.illinois.edu
 
 
 # Migrate Data
-ansible % rsync -avz ../../tests/data sj99@sp25-cs525-1202.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1202.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1203.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1204.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1205.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1206.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1207.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1208.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1209.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1210.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1211.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1212.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1213.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1214.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1215.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1216.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1217.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1218.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1219.cs.illinois.edu:/home/sj99/360Torrent/tests/
+rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1220.cs.illinois.edu:/home/sj99/360Torrent/tests/
 
 
 ## Testing Command Sequence 

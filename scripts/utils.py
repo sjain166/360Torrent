@@ -24,7 +24,7 @@ builtins.print = rich_print
 ####################################################################################################
 
 TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
-# TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
+#TRACKER_URL = "http://10.192.123.83:8080"  # Replace with actual tracker IP
 
 FILE_PATH = "tests/data"
 JSON_LOG_FILE_PATH = "tests/summary.json"
