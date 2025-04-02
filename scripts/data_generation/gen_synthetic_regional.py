@@ -159,8 +159,8 @@ if CHURN:
     # Important NOTE: Here, I generate one Poisson process for reqests and one for uploads, 
     # for the duration of an interval where a client is IN the system
 
-    UPLOAD_INTENSITY = 1/4 / minute
-    REQUEST_INTENSITY = 2 / minute
+    UPLOAD_INTENSITY = 1/2 / minute
+    REQUEST_INTENSITY = 2.5 / minute
     exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
     exp.request_intensity_per_min = REQUEST_INTENSITY * minute
 
@@ -196,14 +196,12 @@ if CHURN:
     # We're looping over users
     # BUT WE GO THROUGH ALL UPLOAD TIMES NONCHRONOLOGICALLY
 
-
     for upload_time in ALL_UPLOAD_TIMES:
 
         user = None
         t_upload = upload_time
         for u in users:
             if upload_time in u["upload_times"]:
-                print(upload_time)
                 user = u 
 
         last_upload_idx = len(content_uploaded)
