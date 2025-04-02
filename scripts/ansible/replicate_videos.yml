@@ -1,0 +1,12 @@
+---
+- name: Replicate video0 to video1...video14
+  hosts: peers  # or any group you want
+  gather_facts: no
+
+  vars:
+    base_dir: /home/sj99/360Torrent/tests/data_warehouse
+
+  tasks:
+    - name: Copy video0 to video{{ item }}
+      ansible.builtin.command: cp -r {{ base_dir }}/video0 {{ base_dir }}/video{{ item }}
+      loop: "{{ range(1, 15) | list }}"

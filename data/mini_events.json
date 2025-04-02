@@ -1,0 +1,30 @@
+[
+ {
+  "user": 9,
+  "event": {
+   "type": "join",
+   "time": 42959.26602062188,
+   "content": {
+    "id": 0,
+    "name": "video0",
+    "seeder": 9,
+    "seeder_region": "F",
+    "popularity": 1683
+   }
+  }
+ },
+ {
+  "user": 4,
+  "event": {
+   "type": "leave",
+   "time": 46207.247758286896,
+   "content": {
+    "id": 0,
+    "name": "video0",
+    "seeder": 9,
+    "seeder_region": "F",
+    "popularity": 1683
+   }
+  }
+ }
+]

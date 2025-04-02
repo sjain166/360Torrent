@@ -9,7 +9,7 @@
 
 ---
 - name: Delete project directories from /home/sj99
-  hosts: test_peers  # Change to 'peers', 'WA', etc. as needed
+  hosts: peers  # Change to 'peers', 'WA', etc. as needed
   gather_facts: no
 
   tasks:
