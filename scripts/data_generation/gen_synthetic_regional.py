@@ -61,7 +61,8 @@ users.insert(0, tracker) # Add tracker in for the sake of creating appropriate r
 ### Generating regions and network conditions ###
 
 # Define regions and their share of the userbase < 1
-regions = [["W", 0.3, [tracker]], ["N", 0.4, []], ["C", 0.2, []], ["F", 0.1, []]] # This should probably be a map...
+# regions = [["W", 0.3, [tracker]], ["N", 0.4, []], ["C", 0.2, []], ["F", 0.1, []]] # This should probably be a map...
+regions = [["W", 0.25, [tracker]], ["N", 0.25, []], ["C", 0.25, []], ["F", 0.25, []]] # This should probably be a map...
 
 # Define delays between regions
 net = nx.Graph(data=True)

@@ -12,7 +12,7 @@ def create_network_delay(TARGET_VMs, net, regions):
     for vm in TARGET_VMs:
         c = vm["connection"]
         print(vm)
-        c.sudo(f"tc qdisc add dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
+        c.sudo(f"tc qdisc replace dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
 
 
     # Need to make sure this doesn't run the delay command bidirectional
@@ -38,11 +38,17 @@ def create_network_delay_from_generated_workload(TARGET_VMs, user_to_user_delays
     for vm in TARGET_VMs:
         c = vm["connection"]
         print(vm)
-        c.sudo(f"tc qdisc add dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
+        # c.sudo("tc qdisc del dev ens33 root", password=PASS) # Clear whatever qdisc is already present
+        # c.sudo(f"tc qdisc add dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS) # Generate a new one
+        c.sudo(f"tc qdisc replace dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS) # Generate a new one
 
     for delay_id, (src, dst, delay) in enumerate(user_to_user_delays, start = BASE_TC_BANDS+1):
         c = TARGET_VMs[src]["connection"]
         dst_ip = TARGET_VMs[dst]["ip"]
+
+        print(c)
+        print(delay_id)
+
         # Set up the traffic band that corresponds to this delay
         c.sudo(f"tc qdisc add dev ens33 parent 1:{delay_id} handle {2+delay_id}: netem delay {delay}ms", password=PASS)
         c.sudo(f"tc filter add dev ens33 parent 1:0  prio 1 u32 match ip dst {dst_ip} flowid 1:{delay_id}", password=PASS)
