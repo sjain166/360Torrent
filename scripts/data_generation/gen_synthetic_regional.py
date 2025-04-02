@@ -36,7 +36,7 @@ FILESIZE_FILE = DATA_DIR + "filesizes.csv"
 TRACE_INFO_FILE = DATA_DIR + "trace_info.json"
 TIMELINE_FILE = DATA_DIR + "timeline.pkl"
 
-N_CLIENTS = 9
+N_CLIENTS = 19
 exp.n_clients = N_CLIENTS
 
 users = [{
@@ -55,9 +55,6 @@ tracker = {
     "id":1,
     "region": None
 }
-
-exp.tracker_id = tracker["id"]
-exp.tracker_region = tracker["region"]
 
 users.insert(0, tracker) # Add tracker in for the sake of creating appropriate regional delays
 
@@ -79,6 +76,8 @@ net.add_edge("C", "F", weight=100)
 # 2. Mutates 'regions' and 'users' accordingly
 # 3. Dumps computed regional delays to 'NET_FILE' - we can later read these to set up net_delay.py
 define_regional_userbase_and_delay(regions, N_CLIENTS+1, net, NET_FILE, users)
+exp.tracker_id = tracker["id"]
+exp.tracker_region = tracker["region"]
 
 # Write user regions to file
 with open(USER_FILE, 'w') as fs:
@@ -95,7 +94,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 
 minute = 60000 # TODO: I think events are being generated outside of the set interval
 EXPERIMENT_T = 10 * minute
-exp.experiment_t = EXPERIMENT_T
+exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
 
@@ -109,7 +108,7 @@ if CHURN:
     STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
     INTERVAL_T = 4 * minute
     exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
-    exp.interval_t = INTERVAL_T
+    exp.interval_t = INTERVAL_T / minute
 
     # Assume all 20 clients join, in the first 4th of the experiment
     INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/4, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
@@ -157,10 +156,10 @@ if CHURN:
     # Important NOTE: Here, I generate one Poisson process for reqests and one for uploads, 
     # for the duration of an interval where a client is IN the system
 
-    UPLOAD_INTENSITY = 1 / minute
+    UPLOAD_INTENSITY = 1/4 / minute
     REQUEST_INTENSITY = 2 / minute
-    exp.upload_intensity = UPLOAD_INTENSITY
-    exp.request_intensity = REQUEST_INTENSITY
+    exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
+    exp.request_intensity_per_min = REQUEST_INTENSITY * minute
 
     ALL_UPLOAD_TIMES = []
 
@@ -260,7 +259,7 @@ else: # NOTE: NO CHURN present
     UPLOAD_INTENSITY = 1 / minute
     TOTAL_UPLOADS = UPLOAD_INTENSITY * EXPERIMENT_T
     UPLOAD_TIMES = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(TOTAL_UPLOADS)))
-    exp.upload_intensity = UPLOAD_INTENSITY
+    exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
 
     # - Generate request arrival times per user from a poisson distribution
 
@@ -269,7 +268,7 @@ else: # NOTE: NO CHURN present
         TOTAL_REQ = MEAN_REQ_INTENSITY * EXPERIMENT_T
         user_request_times = np.cumsum(np.random.exponential(1/MEAN_REQ_INTENSITY, int(TOTAL_REQ)))
         user["request_times"] = user_request_times
-    exp.request_intensity = MEAN_REQ_INTENSITY
+    exp.request_intensity_per_min = MEAN_REQ_INTENSITY * minute
 
     # Model file uploads and downloads
 
