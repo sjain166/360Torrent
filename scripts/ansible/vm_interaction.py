@@ -104,16 +104,26 @@ SESSION_NAME = "peer_session"
 USERNAME = "sj99"
 
 USER_TO_VM = {
-    0: "sp25-cs525-1202.cs.illinois.edu",
-    1: "sp25-cs525-1203.cs.illinois.edu",
-    2: "sp25-cs525-1204.cs.illinois.edu",
-    3: "sp25-cs525-1205.cs.illinois.edu",
-    4: "sp25-cs525-1206.cs.illinois.edu",
-    5: "sp25-cs525-1207.cs.illinois.edu",
-    6: "sp25-cs525-1208.cs.illinois.edu",
-    7: "sp25-cs525-1209.cs.illinois.edu",
-    8: "sp25-cs525-1210.cs.illinois.edu",
-    9: "sp25-cs525-1211.cs.illinois.edu",
+    1: "sp25-cs525-1201.cs.illinois.edu",
+    2: "sp25-cs525-1202.cs.illinois.edu",
+    3: "sp25-cs525-1203.cs.illinois.edu",
+    4: "sp25-cs525-1204.cs.illinois.edu",
+    5: "sp25-cs525-1205.cs.illinois.edu",
+    6: "sp25-cs525-1206.cs.illinois.edu",
+    7: "sp25-cs525-1207.cs.illinois.edu",
+    8: "sp25-cs525-1208.cs.illinois.edu",
+    9: "sp25-cs525-1209.cs.illinois.edu",
+    10: "sp25-cs525-1210.cs.illinois.edu",
+    11: "sp25-cs525-1211.cs.illinois.edu",
+    12: "sp25-cs525-1212.cs.illinois.edu",
+    13: "sp25-cs525-1213.cs.illinois.edu",
+    14: "sp25-cs525-1214.cs.illinois.edu",
+    15: "sp25-cs525-1215.cs.illinois.edu",
+    16: "sp25-cs525-1216.cs.illinois.edu",
+    17: "sp25-cs525-1217.cs.illinois.edu",
+    18: "sp25-cs525-1218.cs.illinois.edu",
+    19: "sp25-cs525-1219.cs.illinois.edu",
+    20: "sp25-cs525-1220.cs.illinois.edu",
 }
 
 # ---- UTILITIES ----
@@ -130,7 +140,7 @@ def event_to_commands(event_type, file_name):
         return ["2", file_name]
     elif event_type == "leave":
         return ["4"]
-    elif event_type == "start":
+    elif event_type == "join":
         return ["__START__"]
     return []
 
@@ -138,12 +148,12 @@ def event_to_commands(event_type, file_name):
 # Start the Respective VMs
 def start_peer_on_vm(host):
     print(f"[BOOT] Starting peer on {host}")
-    cmd = f"""ssh {USERNAME}@{host} "tmux kill-session -t {SESSION_NAME} || true && tmux new-session -d -s {SESSION_NAME} 'cd /home/sj99/360Torrent && source myenv/bin/activate && python3 -m peer.peer RND >> /home/sj99/360Torrent/tests/peer.log 2>&1'" """
+    cmd = f"""ssh {USERNAME}@{host} "tmux kill-session -t {SESSION_NAME} || true && tmux new-session -d -s {SESSION_NAME} 'cd /home/sj99/360Torrent && source myenv/bin/activate && python3 -m peer.peer SEQ >> /home/sj99/360Torrent/tests/peer.log 2>&1'" """
     subprocess.run(cmd, shell=True)
 
 # ---- MAIN SIMULATION DRIVER ----
 def run_event_schedule():
-    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/events.json"
+    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/churn1_workload/events.json"
     with open(EVENT_FILE) as f:
         events = json.load(f)
 
@@ -151,10 +161,14 @@ def run_event_schedule():
         event = events[i]
         user_id = event["user"]
         event_data = event["event"]
+        event_type = event_data["type"]
 
         vm_host = USER_TO_VM[user_id]
-        event_type = event_data["type"]
-        file_name = event_data["content"]["name"]
+        file_name = ''
+       
+        if event_type != 'join' and event_type != 'leave':
+            file_name = event_data["content"]["name"]
+
         commands = event_to_commands(event_type, file_name)
 
         for cmd in commands:

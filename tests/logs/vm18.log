@@ -1,23 +1,9 @@
 [INFO] Max threads available for downloading: 1
-[INFO] Peer Selection Criteria Method : RND
-[INFO] Registration Response: {'status': 'registered', 'peers': {'vm03': {'id': 
-'vm03', 'ip': '172.22.155.28', 'port': 6881, 'region': 'WA'}, 'vm05': {'id': 
-'vm05', 'ip': '172.22.153.49', 'port': 6881, 'region': 'WA'}, 'vm02': {'id': 
-'vm02', 'ip': '172.22.153.48', 'port': 6881, 'region': 'WA'}, 'vm04': {'id': 
-'vm04', 'ip': '172.22.151.8', 'port': 6881, 'region': 'WA'}, 'vm06': {'id': 
-'vm06', 'ip': '172.22.155.29', 'port': 6881, 'region': 'NY'}, 'vm09': {'id': 
-'vm09', 'ip': '172.22.155.30', 'port': 6881, 'region': 'NY'}, 'vm10': {'id': 
-'vm10', 'ip': '172.22.151.10', 'port': 6881, 'region': 'NY'}, 'vm08': {'id': 
-'vm08', 'ip': '172.22.153.50', 'port': 6881, 'region': 'NY'}, 'vm11': {'id': 
-'vm11', 'ip': '172.22.153.51', 'port': 6881, 'region': 'CA'}, 'vm07': {'id': 
-'vm07', 'ip': '172.22.151.9', 'port': 6881, 'region': 'NY'}, 'vm12': {'id': 
-'vm12', 'ip': '172.22.155.31', 'port': 6881, 'region': 'CA'}, 'vm14': {'id': 
-'vm14', 'ip': '172.22.153.52', 'port': 6881, 'region': 'CA'}, 'vm15': {'id': 
-'vm15', 'ip': '172.22.155.32', 'port': 6881, 'region': 'CA'}, 'vm13': {'id': 
-'vm13', 'ip': '172.22.151.11', 'port': 6881, 'region': 'CA'}, 'vm16': {'id': 
-'vm16', 'ip': '172.22.151.12', 'port': 6881, 'region': 'FL'}, 'vm17': {'id': 
-'vm17', 'ip': '172.22.153.53', 'port': 6881, 'region': 'FL'}, 'vm19': {'id': 
-'vm19', 'ip': '172.22.151.13', 'port': 6881, 'region': 'FL'}, 'vm18': {'id': 
+[INFO] Peer Selection Criteria Method : SEQ
+[INFO] Registration Response: {'status': 'registered', 'peers': {'vm07': {'id': 
+'vm07', 'ip': '172.22.151.9', 'port': 6881, 'region': 'NY'}, 'vm06': {'id': 
+'vm06', 'ip': '172.22.155.29', 'port': 6881, 'region': 'NY'}, 'vm15': {'id': 
+'vm15', 'ip': '172.22.155.32', 'port': 6881, 'region': 'CA'}, 'vm18': {'id': 
 'vm18', 'ip': '172.22.155.33', 'port': 6881, 'region': 'FL'}}}
 [INFO] File Server Started on 172.22.155.33:6881
 
@@ -26,4 +12,661 @@
 2. Download a file
 3. Upload a folder to share
 4. Exit
->> 
+>> Enter file name: >> [INFO] You selected to download: video0
+[INFO] Preparing to download file: video0
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+| File Name   | File Size (Bytes)   | Chunk Name   |   Chunk Size (Bytes) | 
+Download Status   | Peers_Tried   | Peers_Failed   |   Download_Time |
++=============+=====================+==============+======================+=====
+==============+===============+================+=================+
+| video0      | 1363089768          | chunk10.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk11.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk12.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk01.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk02.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk04.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk05.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk06.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk07.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk08.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk09.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk03.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+[INFO] List of Peers Hosting Chunk: chunk10.webm : vm02
+[INFO] SR :  0
+[INFO] OR :  1
+[INFO] List of Peers Hosting Chunk: chunk01.webm : vm15, vm02
+[INFO] SR :  0
+[INFO] OR :  2
+[INFO] List of Peers Hosting Chunk: chunk02.webm : vm15, vm02
+[INFO] SR :  0
+[INFO] OR :  2
+[INFO] List of Peers Hosting Chunk: chunk04.webm : vm15, vm02
+[INFO] SR :  0
+[INFO] OR :  2
+[INFO] List of Peers Hosting Chunk: chunk11.webm : vm02
+[INFO] SR :  0
+[INFO] OR :  1
+[INFO] List of Peers Hosting Chunk: chunk05.webm : vm15, vm02
+[INFO] SR :  0
+[INFO] OR :  2
+[INFO] List of Peers Hosting Chunk: chunk12.webm : vm02
+[INFO] SR :  0
+[INFO] OR :  1
+[INFO] List of Peers Hosting Chunk: chunk06.webm : vm04, vm02
+[INFO] SR :  0
+[INFO] OR :  2
+[INFO] List of Peers Hosting Chunk: chunk07.webm : vm15, vm04, vm02
+[INFO] SR :  0
+[INFO] OR :  3
+[INFO] List of Peers Hosting Chunk: chunk08.webm : vm04, vm02
+[INFO] SR :  0
+[INFO] OR :  2
+[INFO] List of Peers Hosting Chunk: chunk09.webm : vm04, vm02
+[INFO] SR :  0
+[INFO] OR :  2
+[INFO] List of Peers Hosting Chunk: chunk03.webm : vm04, vm15, vm07, vm02
+[INFO] SR :  0
+[INFO] OR :  4
+[INFO] Requested chunk: tests/data/video0/chunk06.webm
+[INFO] Serving chunk: tests/data/video0/chunk06.webm
+[INFO] Requested chunk: tests/data/video0/chunk11.webm
+[INFO] Serving chunk: tests/data/video0/chunk11.webm
+[INFO] Requested chunk: tests/data/video0/chunk02.webm
+[INFO] Serving chunk: tests/data/video0/chunk02.webm
+[INFO] Requested chunk: tests/data/video0/chunk04.webm
+[INFO] Serving chunk: tests/data/video0/chunk04.webm
+[INFO] Requested chunk: tests/data/video0/chunk08.webm
+[INFO] Serving chunk: tests/data/video0/chunk08.webm
+[INFO] Requested chunk: tests/data/video0/chunk07.webm
+[INFO] Serving chunk: tests/data/video0/chunk07.webm
+[INFO] Requested chunk: tests/data/video0/chunk12.webm
+[INFO] Serving chunk: tests/data/video0/chunk12.webm
+[DEBUG] chunk10.webm: Tried=['vm02'], Failed=[]
+[DEBUG] chunk11.webm: Tried=['vm02'], Failed=[]
+[DEBUG] chunk12.webm: Tried=['vm02'], Failed=[]
+[DEBUG] chunk01.webm: Tried=['vm15'], Failed=[]
+[DEBUG] chunk02.webm: Tried=['vm15'], Failed=[]
+[DEBUG] chunk04.webm: Tried=['vm15'], Failed=[]
+[DEBUG] chunk05.webm: Tried=['vm15'], Failed=[]
+[DEBUG] chunk06.webm: Tried=['vm04'], Failed=[]
+[DEBUG] chunk07.webm: Tried=['vm15'], Failed=[]
+[DEBUG] chunk08.webm: Tried=['vm04'], Failed=[]
+[DEBUG] chunk09.webm: Tried=['vm04'], Failed=[]
+[DEBUG] chunk03.webm: Tried=['vm04'], Failed=[]
+
+[INFO] Download Summary:
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+| File Name   | File Size (Bytes)   | Chunk Name   |   Chunk Size (Bytes) | 
+Download Status   | Peers_Tried   | Peers_Failed   |   Download_Time |
++=============+=====================+==============+======================+=====
+==============+===============+================+=================+
+| video0      | 1363089768          | chunk10.webm |            113590814 | 
+Downloaded        | vm02          |                |         8.61699 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk11.webm |            113590814 | 
+Downloaded        | vm02          |                |        40.9381  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk12.webm |            113590814 | 
+Downloaded        | vm02          |                |        60.2865  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk01.webm |            113590814 | 
+Downloaded        | vm15          |                |        17.9868  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk02.webm |            113590814 | 
+Downloaded        | vm15          |                |        25.1049  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk04.webm |            113590814 | 
+Downloaded        | vm15          |                |        32.3147  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk05.webm |            113590814 | 
+Downloaded        | vm15          |                |        51.7499  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk06.webm |            113590814 | 
+Downloaded        | vm04          |                |        68.9329  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk07.webm |            113590814 | 
+Downloaded        | vm15          |                |        79.2916  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk08.webm |            113590814 | 
+Downloaded        | vm04          |                |        87.7779  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk09.webm |            113590814 | 
+Downloaded        | vm04          |                |        96.352   |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk03.webm |            113590814 | 
+Downloaded        | vm04          |                |       104.891   |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+
+🕒 [INFO] Total download time: 105.02 seconds
+
+📦 [JSON] Download Summary Result:
+{
+    "file_name": "video0",
+    "file_size": 1363089768,
+    "total_download_time_sec": 105.02,
+    "chunks": [
+        {
+            "chunk_name": "chunk10.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm02",
+            "peers_failed": "",
+            "download_time": 8.616992950439453
+        },
+        {
+            "chunk_name": "chunk11.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm02",
+            "peers_failed": "",
+            "download_time": 40.9380943775177
+        },
+        {
+            "chunk_name": "chunk12.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm02",
+            "peers_failed": "",
+            "download_time": 60.28645324707031
+        },
+        {
+            "chunk_name": "chunk01.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm15",
+            "peers_failed": "",
+            "download_time": 17.986753225326538
+        },
+        {
+            "chunk_name": "chunk02.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm15",
+            "peers_failed": "",
+            "download_time": 25.10494112968445
+        },
+        {
+            "chunk_name": "chunk04.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm15",
+            "peers_failed": "",
+            "download_time": 32.31466221809387
+        },
+        {
+            "chunk_name": "chunk05.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm15",
+            "peers_failed": "",
+            "download_time": 51.74989676475525
+        },
+        {
+            "chunk_name": "chunk06.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm04",
+            "peers_failed": "",
+            "download_time": 68.93292474746704
+        },
+        {
+            "chunk_name": "chunk07.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm15",
+            "peers_failed": "",
+            "download_time": 79.29158353805542
+        },
+        {
+            "chunk_name": "chunk08.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm04",
+            "peers_failed": "",
+            "download_time": 87.77785778045654
+        },
+        {
+            "chunk_name": "chunk09.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm04",
+            "peers_failed": "",
+            "download_time": 96.35202097892761
+        },
+        {
+            "chunk_name": "chunk03.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm04",
+            "peers_failed": "",
+            "download_time": 104.89063501358032
+        }
+    ]
+}
+
+[OPTIONS] Select an action:
+1. Get available files
+2. Download a file
+3. Upload a folder to share
+4. Exit
+>> Enter file name: >> [INFO] You selected to download: video3
+[INFO] Preparing to download file: video3
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+| File Name   | File Size (Bytes)   | Chunk Name   |   Chunk Size (Bytes) | 
+Download Status   | Peers_Tried   | Peers_Failed   |   Download_Time |
++=============+=====================+==============+======================+=====
+==============+===============+================+=================+
+| video3      | 1363089768          | chunk08.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk09.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk10.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk11.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk01.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk02.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk03.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk04.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk05.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk06.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk12.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk07.webm |            113590814 | 
+Pending           |               |                |              -1 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+[INFO] List of Peers Hosting Chunk: chunk09.webm : vm05, vm14, vm12, vm15, vm04
+[INFO] SR :  0
+[INFO] OR :  5
+[INFO] List of Peers Hosting Chunk: chunk03.webm : vm05, vm14, vm15, vm12, vm06,
+vm04
+[INFO] SR :  0
+[INFO] OR :  6
+[INFO] List of Peers Hosting Chunk: chunk04.webm : vm05, vm14, vm06, vm12, vm15,
+vm04
+[INFO] SR :  0
+[INFO] OR :  6
+[INFO] List of Peers Hosting Chunk: chunk02.webm : vm05, vm12, vm14, vm06, vm15,
+vm04
+[INFO] SR :  0
+[INFO] OR :  6
+[INFO] List of Peers Hosting Chunk: chunk05.webm : vm06, vm05, vm14, vm15, vm12,
+vm04
+[INFO] SR :  0
+[INFO] OR :  6
+[INFO] List of Peers Hosting Chunk: chunk01.webm : vm05, vm14, vm12, vm15, vm06,
+vm04
+[INFO] SR :  0
+[INFO] OR :  6
+[INFO] List of Peers Hosting Chunk: chunk11.webm : vm05, vm14, vm12, vm15, vm04
+[INFO] SR :  0
+[INFO] OR :  5
+[INFO] List of Peers Hosting Chunk: chunk10.webm : vm05, vm14, vm15, vm12, vm04
+[INFO] SR :  0
+[INFO] OR :  5
+[INFO] List of Peers Hosting Chunk: chunk08.webm : vm05, vm12, vm15, vm14, vm04
+[INFO] SR :  0
+[INFO] OR :  5
+[INFO] List of Peers Hosting Chunk: chunk12.webm : vm07, vm05, vm12, vm15, vm14,
+vm04
+[INFO] SR :  0
+[INFO] OR :  6
+[INFO] List of Peers Hosting Chunk: chunk06.webm : vm05, vm14, vm06, vm15, vm12,
+vm04
+[INFO] SR :  0
+[INFO] OR :  6
+[INFO] List of Peers Hosting Chunk: chunk07.webm : vm05, vm06, vm07, vm15, vm14,
+vm12, vm04
+[INFO] SR :  0
+[INFO] OR :  7
+[INFO] Requested chunk: tests/data/video0/chunk09.webm
+[INFO] Serving chunk: tests/data/video0/chunk09.webm
+[INFO] Requested chunk: tests/data/video0/chunk10.webm
+[INFO] Serving chunk: tests/data/video0/chunk10.webm
+[INFO] Requested chunk: tests/data/video3/chunk03.webm
+[INFO] Serving chunk: tests/data/video3/chunk03.webm
+[INFO] Requested chunk: tests/data/video3/chunk03.webm
+[INFO] Serving chunk: tests/data/video3/chunk03.webm
+[INFO] Requested chunk: tests/data/video3/chunk04.webm
+[INFO] Serving chunk: tests/data/video3/chunk04.webm
+[INFO] Requested chunk: tests/data/video3/chunk09.webm
+[INFO] Serving chunk: tests/data/video3/chunk09.webm
+[INFO] Requested chunk: tests/data/video0/chunk03.webm
+[INFO] Serving chunk: tests/data/video0/chunk03.webm
+[DEBUG] chunk08.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk09.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk10.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk11.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk01.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk02.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk03.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk04.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk05.webm: Tried=['vm06'], Failed=[]
+[DEBUG] chunk06.webm: Tried=['vm05'], Failed=[]
+[DEBUG] chunk12.webm: Tried=['vm07'], Failed=[]
+[DEBUG] chunk07.webm: Tried=['vm05'], Failed=[]
+
+[INFO] Download Summary:
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+| File Name   | File Size (Bytes)   | Chunk Name   |   Chunk Size (Bytes) | 
+Download Status   | Peers_Tried   | Peers_Failed   |   Download_Time |
++=============+=====================+==============+======================+=====
+==============+===============+================+=================+
+| video3      | 1363089768          | chunk08.webm |            113590814 | 
+Downloaded        | vm05          |                |         71.7203 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk09.webm |            113590814 | 
+Downloaded        | vm05          |                |          8.4881 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk10.webm |            113590814 | 
+Downloaded        | vm05          |                |         63.1536 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk11.webm |            113590814 | 
+Downloaded        | vm05          |                |         54.4842 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk01.webm |            113590814 | 
+Downloaded        | vm05          |                |         45.8256 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk02.webm |            113590814 | 
+Downloaded        | vm05          |                |         34.625  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk03.webm |            113590814 | 
+Downloaded        | vm05          |                |         17.071  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk04.webm |            113590814 | 
+Downloaded        | vm05          |                |         25.9974 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk05.webm |            113590814 | 
+Downloaded        | vm06          |                |         37.227  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk06.webm |            113590814 | 
+Downloaded        | vm05          |                |         82.8355 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk12.webm |            113590814 | 
+Downloaded        | vm07          |                |         74.344  |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+|             |                     | chunk07.webm |            113590814 | 
+Downloaded        | vm05          |                |         91.4385 |
++-------------+---------------------+--------------+----------------------+-----
+--------------+---------------+----------------+-----------------+
+
+🕒 [INFO] Total download time: 91.54 seconds
+
+📦 [JSON] Download Summary Result:
+{
+    "file_name": "video3",
+    "file_size": 1363089768,
+    "total_download_time_sec": 91.54,
+    "chunks": [
+        {
+            "chunk_name": "chunk08.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 71.72031736373901
+        },
+        {
+            "chunk_name": "chunk09.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 8.488102197647095
+        },
+        {
+            "chunk_name": "chunk10.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 63.153568267822266
+        },
+        {
+            "chunk_name": "chunk11.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 54.484233379364014
+        },
+        {
+            "chunk_name": "chunk01.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 45.82555961608887
+        },
+        {
+            "chunk_name": "chunk02.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 34.625043630599976
+        },
+        {
+            "chunk_name": "chunk03.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 17.070959091186523
+        },
+        {
+            "chunk_name": "chunk04.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 25.99737024307251
+        },
+        {
+            "chunk_name": "chunk05.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm06",
+            "peers_failed": "",
+            "download_time": 37.22701859474182
+        },
+        {
+            "chunk_name": "chunk06.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 82.83547449111938
+        },
+        {
+            "chunk_name": "chunk12.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm07",
+            "peers_failed": "",
+            "download_time": 74.34404993057251
+        },
+        {
+            "chunk_name": "chunk07.webm",
+            "chunk_size": 113590814,
+            "downloaded": true,
+            "peers_tried": "vm05",
+            "peers_failed": "",
+            "download_time": 91.43847799301147
+        }
+    ]
+}
+
+[OPTIONS] Select an action:
+1. Get available files
+2. Download a file
+3. Upload a folder to share
+4. Exit
+>> Enter file name: >> [INFO] You selected to download: video2
+[ERROR] File metadata fetch failed: 404
+[ERROR] Peer Execution Failed: 'NoneType' object has no attribute 'file_name'
+
+[OPTIONS] Select an action:
+1. Get available files
+2. Download a file
+3. Upload a folder to share
+4. Exit
+>> Enter file name: >> [INFO] You selected to download: video1
+[ERROR] File metadata fetch failed: 404
+[ERROR] Peer Execution Failed: 'NoneType' object has no attribute 'file_name'
+
+[OPTIONS] Select an action:
+1. Get available files
+2. Download a file
+3. Upload a folder to share
+4. Exit
+>> Enter full folder path to upload: >> [INFO] Copied 'video14' from warehouse to data folder.
+[INFO] Registration Response: {'status': 'registered', 'peers': {'vm07': {'id': 
+'vm07', 'ip': '172.22.151.9', 'port': 6881, 'region': 'NY'}, 'vm06': {'id': 
+'vm06', 'ip': '172.22.155.29', 'port': 6881, 'region': 'NY'}, 'vm15': {'id': 
+'vm15', 'ip': '172.22.155.32', 'port': 6881, 'region': 'CA'}, 'vm18': {'id': 
+'vm18', 'ip': '172.22.155.33', 'port': 6881, 'region': 'FL'}, 'vm02': {'id': 
+'vm02', 'ip': '172.22.153.48', 'port': 6881, 'region': 'WA'}, 'vm14': {'id': 
+'vm14', 'ip': '172.22.153.52', 'port': 6881, 'region': 'CA'}, 'vm04': {'id': 
+'vm04', 'ip': '172.22.151.8', 'port': 6881, 'region': 'WA'}, 'vm17': {'id': 
+'vm17', 'ip': '172.22.153.53', 'port': 6881, 'region': 'FL'}, 'vm12': {'id': 
+'vm12', 'ip': '172.22.155.31', 'port': 6881, 'region': 'CA'}, 'vm05': {'id': 
+'vm05', 'ip': '172.22.153.49', 'port': 6881, 'region': 'WA'}, 'vm16': {'id': 
+'vm16', 'ip': '172.22.151.12', 'port': 6881, 'region': 'FL'}, 'vm11': {'id': 
+'vm11', 'ip': '172.22.153.51', 'port': 6881, 'region': 'CA'}, 'vm09': {'id': 
+'vm09', 'ip': '172.22.155.30', 'port': 6881, 'region': 'NY'}, 'vm08': {'id': 
+'vm08', 'ip': '172.22.153.50', 'port': 6881, 'region': 'NY'}, 'vm10': {'id': 
+'vm10', 'ip': '172.22.151.10', 'port': 6881, 'region': 'NY'}, 'vm19': {'id': 
+'vm19', 'ip': '172.22.151.13', 'port': 6881, 'region': 'FL'}, 'vm03': {'id': 
+'vm03', 'ip': '172.22.155.28', 'port': 6881, 'region': 'WA'}, 'vm13': {'id': 
+'vm13', 'ip': '172.22.151.11', 'port': 6881, 'region': 'CA'}, 'vm20': {'id': 
+'vm20', 'ip': '172.22.153.54', 'port': 6881, 'region': 'FL'}}}
+
+[OPTIONS] Select an action:
+1. Get available files
+2. Download a file
+3. Upload a folder to share
+4. Exit
+>> [INFO] Exiting download prompt loop.
+[INFO] Max threads available for downloading: 1
+[INFO] Peer Selection Criteria Method : SEQ
+[INFO] Registration Response: {'status': 'registered', 'peers': {'vm07': {'id': 
+'vm07', 'ip': '172.22.151.9', 'port': 6881, 'region': 'NY'}, 'vm06': {'id': 
+'vm06', 'ip': '172.22.155.29', 'port': 6881, 'region': 'NY'}, 'vm15': {'id': 
+'vm15', 'ip': '172.22.155.32', 'port': 6881, 'region': 'CA'}, 'vm18': {'id': 
+'vm18', 'ip': '172.22.155.33', 'port': 6881, 'region': 'FL'}, 'vm02': {'id': 
+'vm02', 'ip': '172.22.153.48', 'port': 6881, 'region': 'WA'}, 'vm14': {'id': 
+'vm14', 'ip': '172.22.153.52', 'port': 6881, 'region': 'CA'}, 'vm04': {'id': 
+'vm04', 'ip': '172.22.151.8', 'port': 6881, 'region': 'WA'}, 'vm17': {'id': 
+'vm17', 'ip': '172.22.153.53', 'port': 6881, 'region': 'FL'}, 'vm12': {'id': 
+'vm12', 'ip': '172.22.155.31', 'port': 6881, 'region': 'CA'}, 'vm05': {'id': 
+'vm05', 'ip': '172.22.153.49', 'port': 6881, 'region': 'WA'}, 'vm16': {'id': 
+'vm16', 'ip': '172.22.151.12', 'port': 6881, 'region': 'FL'}, 'vm11': {'id': 
+'vm11', 'ip': '172.22.153.51', 'port': 6881, 'region': 'CA'}, 'vm09': {'id': 
+'vm09', 'ip': '172.22.155.30', 'port': 6881, 'region': 'NY'}, 'vm08': {'id': 
+'vm08', 'ip': '172.22.153.50', 'port': 6881, 'region': 'NY'}, 'vm10': {'id': 
+'vm10', 'ip': '172.22.151.10', 'port': 6881, 'region': 'NY'}, 'vm19': {'id': 
+'vm19', 'ip': '172.22.151.13', 'port': 6881, 'region': 'FL'}, 'vm03': {'id': 
+'vm03', 'ip': '172.22.155.28', 'port': 6881, 'region': 'WA'}, 'vm13': {'id': 
+'vm13', 'ip': '172.22.151.11', 'port': 6881, 'region': 'CA'}, 'vm20': {'id': 
+'vm20', 'ip': '172.22.153.54', 'port': 6881, 'region': 'FL'}}}
+[INFO] File Server Started on 172.22.155.33:6881
+
+[OPTIONS] Select an action:
+1. Get available files
+2. Download a file
+3. Upload a folder to share
+4. Exit
+>> [INFO] Exiting download prompt loop.

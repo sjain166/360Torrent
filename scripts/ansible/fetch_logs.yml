@@ -22,7 +22,6 @@
         dest: "../../tests/json/{{ vm_log_name.stdout }}.json"
         flat: yes
 
-
 - name: Download tracker.log from tracker
   hosts: tracker
   gather_facts: no
