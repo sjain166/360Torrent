@@ -94,7 +94,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 # All timing units in ms
 
 minute = 60000 # TODO: I think events are being generated outside of the set interval
-EXPERIMENT_T = 10 * minute
+EXPERIMENT_T = 5 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
@@ -107,9 +107,9 @@ if CHURN:
 
     # These variables roughly correspond to "churn rate"
     # STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
-    STAY_VS_LEAVE_RATIO = 1.5 / 1
-    INTERVAL_T = 4 * minute
-    # INTERVAL_T = EXPERIMENT_T # Want nodes to stay in for well over the duration of the experiment.
+    STAY_VS_LEAVE_RATIO = 1.0 / 1
+    # INTERVAL_T = 4 * minute
+    INTERVAL_T = EXPERIMENT_T # Want nodes to stay in for well over the duration of the experiment.
     exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
     exp.interval_t = INTERVAL_T / minute
 
@@ -159,8 +159,8 @@ if CHURN:
     # Important NOTE: Here, I generate one Poisson process for reqests and one for uploads, 
     # for the duration of an interval where a client is IN the system
 
-    UPLOAD_INTENSITY = 1/4 / minute
-    REQUEST_INTENSITY = 2 / minute
+    UPLOAD_INTENSITY = 1/2 / minute
+    REQUEST_INTENSITY = 2.5 / minute
     exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
     exp.request_intensity_per_min = REQUEST_INTENSITY * minute
 
@@ -422,6 +422,9 @@ if args.dbg_print:
                 print(f" User {user["id"]}, {t_join=}, {t_leave=}, INCORRECT EVENT AT {event["time"]}")
 
 
+with open(TRACE_INFO_FILE, 'w') as fs:
+    json.dump(vars(exp), fs, indent=1)
+
 # Timeline for debugging
 
 if args.visualize:
@@ -484,6 +487,3 @@ if args.visualize:
 
     with open(TIMELINE_FILE, 'wb') as fs: pickle.dump(fig,fs)
     plt.show()
-
-with open(TRACE_INFO_FILE, 'w') as fs:
-    json.dump(vars(exp), fs, indent=1)
