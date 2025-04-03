@@ -9,4 +9,4 @@
   tasks:
     - name: Copy video0 to video{{ item }}
       ansible.builtin.command: cp -r {{ base_dir }}/video0 {{ base_dir }}/video{{ item }}
-      loop: "{{ range(1, 15) | list }}"
+      loop: "{{ range(15, 51) | list }}"
