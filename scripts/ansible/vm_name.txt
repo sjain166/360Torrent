@@ -34,4 +34,4 @@ ansible-playbook -i hosts.ini start_tracker.yml
 ansible-playbook -i hosts.ini start_peer.yml
 python vm_interaction.py 
 ansible-playbook -i hosts.ini fetch_logs.yml
-
+ansible-playbook -i hosts.ini fetch_logs.yml

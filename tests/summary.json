@@ -410,5 +410,11 @@
                 "download_time": 51.419710874557495
             }
         ]
+    },
+    {
+        "file_name": "video1",
+        "file_size": -1,
+        "total_download_time_sec": -1,
+        "chunks": []
     }
 ]

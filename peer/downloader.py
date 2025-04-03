@@ -270,6 +270,10 @@ async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
         # Default assumption: download was successful
         file_download_status = True
         
+        if len(metadata.chunks) == 0 or metadata.chunks == None :
+            file_download_status = False
+        
+
         for c in metadata.chunks:
             print(f"[DEBUG] {c.chunk_name}: Tried={c.peers_tried}, Failed={c.peers_failed}")
             if c.download_time == -1:

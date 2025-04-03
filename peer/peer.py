@@ -89,7 +89,11 @@ async def get_file_metadata(file_name):
                     )
                 else:
                     print(f"[ERROR] File metadata fetch failed: {response.status}")
-                    return None
+                    return FileMetadata (
+                        file_name=file_name,
+                        file_size= -1,
+                        chunks = [],
+                    )
     except Exception as e:
         print(f"[ERROR] Exception during file metadata fetch: {e}")
         return None

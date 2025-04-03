@@ -127,10 +127,10 @@ USER_TO_VM = {
 }
 
 # ---- UTILITIES ----
-def send_command_to_vm(host, command):
+def send_command_to_vm(host, command, i, total):
     tmux_cmd = f'tmux send-keys -t {SESSION_NAME} "{command}" C-m'
     ssh_cmd = f'ssh {USERNAME}@{host} "{tmux_cmd}"'
-    print(f"[INFO] Sending to {host}: {command}")
+    print(f"[{i}/{total} - INFO] Sending to {host}: {command}")
     subprocess.run(ssh_cmd, shell=True)
 
 def event_to_commands(event_type, file_name):
@@ -146,16 +146,18 @@ def event_to_commands(event_type, file_name):
 
 
 # Start the Respective VMs
-def start_peer_on_vm(host):
-    print(f"[BOOT] Starting peer on {host}")
-    cmd = f"""ssh {USERNAME}@{host} "tmux kill-session -t {SESSION_NAME} || true && tmux new-session -d -s {SESSION_NAME} 'cd /home/sj99/360Torrent && source myenv/bin/activate && python3 -m peer.peer SEQ >> /home/sj99/360Torrent/tests/peer.log 2>&1'" """
+def start_peer_on_vm(host, i, total):
+    print(f"[{i}/{total} - BOOT] Starting peer on {host}")
+    cmd = f"""ssh {USERNAME}@{host} "tmux kill-session -t {SESSION_NAME} || true && tmux new-session -d -s {SESSION_NAME} 'cd /home/sj99/360Torrent && source myenv/bin/activate && python3 -m peer.peer RND >> /home/sj99/360Torrent/tests/peer.log 2>&1'" """
     subprocess.run(cmd, shell=True)
 
 # ---- MAIN SIMULATION DRIVER ----
 def run_event_schedule():
-    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/mini_events.json"
+    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/light1_workload/events.json"
     with open(EVENT_FILE) as f:
         events = json.load(f)
+
+    print("Total Events : " , len(events))
 
     for i in range(len(events)):
         event = events[i]
@@ -173,9 +175,9 @@ def run_event_schedule():
 
         for cmd in commands:
             if cmd == "__START__":
-                start_peer_on_vm(vm_host)
+                start_peer_on_vm(vm_host, i, len(events))
             else :
-                send_command_to_vm(vm_host, cmd)
+                send_command_to_vm(vm_host, cmd, i, len(events))
                 
         if event_type == "upload":
             time.sleep(5)
