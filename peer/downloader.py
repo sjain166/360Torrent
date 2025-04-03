@@ -272,7 +272,7 @@ async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
         
         for c in metadata.chunks:
             print(f"[DEBUG] {c.chunk_name}: Tried={c.peers_tried}, Failed={c.peers_failed}")
-            if c.download_status == False:
+            if c.download_time == -1:
                 file_download_status = False
         
         if not file_download_status:

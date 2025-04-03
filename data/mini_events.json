@@ -1,12 +1,4 @@
 [
-    {
-        "user": 11,
-        "event": {
-         "type": "join",
-         "time": 1938.8985849403296,
-         "content": null
-        }
-    },
 
     {
         "user": 3,
@@ -16,27 +8,11 @@
         "content": null
         }
     },
-
-    {
-        "user": 11,
-        "event": {
-         "type": "upload",
-         "time": 50126.21718415379,
-         "content": {
-          "id": 0,
-          "name": "video0",
-          "seeder": 2,
-          "seeder_region": "W",
-          "popularity": 105
-         }
-        }
-    },
-
     {
         "user": 3,
         "event": {
          "type": "request",
-         "time": 59969.99017777419,
+         "time": 63000.99017777419,
          "content": {
           "id": 1,
           "name": "video0",
@@ -46,14 +22,12 @@
          }
         }
     },
-
     {
         "user": 3,
         "event": {
          "type": "leave",
-         "time": 100000.68367164594,
+         "time": 70000.68367164594,
          "content": null
         }
     }
-
 ]

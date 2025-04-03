@@ -52,7 +52,7 @@ def get_private_ip():
 
 def get_max_threads():
     try:
-        max_threads = max(1, multiprocessing.cpu_count() - 2)
+        max_threads = max(1, multiprocessing.cpu_count()-1)
         print(f"[INFO] Max threads available for downloading: {max_threads}")
         return max_threads
     except Exception as e:
