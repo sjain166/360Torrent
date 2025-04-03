@@ -2,3 +2,4 @@ venv/
 tests/data
 tests/data_warehouse
 tests/
+scripts/visualization/vm_plots
