@@ -211,6 +211,11 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
                 if len(peers) == 0:
                     break
                 peer_index = (peer_index + 1) % len(peers)
+                
+                if is_peer_same_region:
+                    same_region_count -= 1
+                else :
+                    other_region_count -= 1
                 continue
 
             # ✅ Peer is responsive → try download

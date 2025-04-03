@@ -119,8 +119,8 @@ def check_server_status(host, port, path="/health_check", connect_timeout=4, get
             latencies.append(latency)
 
             if response.status_code != 200:
-                return "UNREACHABLE"
-
+                return "BUSY"
+            
         max_latency = max(latencies)
         return "RESPONSIVE" if max_latency <= 1 else "BUSY"
 
