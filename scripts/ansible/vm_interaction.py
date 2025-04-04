@@ -153,7 +153,7 @@ def start_peer_on_vm(host, i, total):
 
 # ---- MAIN SIMULATION DRIVER ----
 def run_event_schedule():
-    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/heavy1_workload/events.json"
+    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/light1_workload/events.json"
     with open(EVENT_FILE) as f:
         events = json.load(f)
 
@@ -164,6 +164,9 @@ def run_event_schedule():
         user_id = event["user"]
         event_data = event["event"]
         event_type = event_data["type"]
+
+        if event_type == "upload":
+            continue
 
         vm_host = USER_TO_VM[user_id]
         file_name = ''
@@ -179,8 +182,8 @@ def run_event_schedule():
             else :
                 send_command_to_vm(vm_host, cmd, i, len(events))
                 
-        if event_type == "upload":
-            time.sleep(5)
+        if event_type == "join":
+            time.sleep(2)
 
         # Sleep before next event
         if i + 1 < len(events):

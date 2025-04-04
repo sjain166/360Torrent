@@ -138,6 +138,7 @@ def append_file_download_summary_to_json(metadata, total_time):
         "file_name": metadata.file_name,
         "file_size": metadata.file_size,
         "total_download_time_sec": round(total_time, 2),
+        "download_finished_time" : time.time(),
         "chunks": [
             {
                 "chunk_name": chunk.chunk_name,

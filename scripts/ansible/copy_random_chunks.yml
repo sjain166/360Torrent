@@ -1,0 +1,21 @@
+---
+- name: Copy 4 random video folders from [video0–video23] to data/
+  hosts: peers
+  gather_facts: no
+
+  vars:
+    src_base: /home/sj99/360Torrent/tests/data_warehouse
+    dst_base: /home/sj99/360Torrent/tests/data
+    total_files_to_copy: 4
+
+  tasks:
+    - name: Select 4 random video folders and copy them
+      ansible.builtin.shell: |
+        mkdir -p {{ dst_base }}
+        for v in $(shuf -i 0-23 -n {{ total_files_to_copy }}); do
+          cp -r {{ src_base }}/video${v} {{ dst_base }}/
+        done
+      args:
+        executable: /bin/bash
+
+# ansible-playbook -i hosts.ini copy_random_chunks.yml 
