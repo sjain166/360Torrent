@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import os
 import json
 
-DATA_DIR_BASELINE = "C:\\Users\\soula\\OneDrive\\Desktop\\light_1_baseline\\1.0\\json\\"
-DATA_DIR_SOL = "C:\\Users\\soula\\OneDrive\\Desktop\\light_1_optimized\\json\\"
+DATA_DIR_BASELINE = "C:\\Users\\soula\\OneDrive\\Desktop\\3.0 (RF + RND)\\json\\"
+DATA_DIR_SOL = "C:\\Users\\soula\\OneDrive\\Desktop\\4.0\\json\\"
+
+
 
 # PLot number of download failures per client
 # Latency per download per client
@@ -127,15 +129,4 @@ for fb, fo in zip(files, files2):
     # ax.legend()
 
 
-# Show plot
-# plt.show()
-
-
-
-    # rect1 = ax.bar(x-1/2 , download_latency[0], width)
-    # rect2 = ax.bar(x+1/2, download_latency[1], width)
-
-    # ax.bar_label(rect1, padding)
-
-    # fig, ax = plt.figure()
-
+# for fb, fo in zip(files, files2):
