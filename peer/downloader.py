@@ -301,7 +301,7 @@ async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
 
 
 if __name__ == "__main__":
-    print(
-        "[INFO] Downloader script expected to be invoked with metadata passed externally."
-    )
+    print("[INFO] Downloader script expected to be invoked with metadata passed externally.")
     get_max_threads()
+
+

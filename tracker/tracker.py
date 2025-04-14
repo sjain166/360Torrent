@@ -164,7 +164,7 @@ def get_best_peers(chunk_obj, requester_region):
     Currently returns all peers hosting the chunk.
     """
     if PEER_SELECTION_CRITERIA == "LF":
-        peers_list = [{"ip": peer.ip, "port": peer.port, "id": peer.id} for peer in reversed(chunk_obj.peers)]
+        peers_list = [{"ip": peer.ip, "port": peer.port, "id": peer.id} for peer in (chunk_obj.peers)]
         return peers_list, 0, len(peers_list)
      
     else :

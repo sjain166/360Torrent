@@ -1,0 +1,31 @@
+---
+- name: Start dstat logging on all hosts
+  hosts: all
+  become: yes
+  vars:
+    dstat_log_dir: "/home/sj99/360Torrent/tests/sys_logs"
+    timestamp: "{{ lookup('pipe', 'date +%Y%m%d_%H%M%S') }}"
+    dstat_file: "dstat_{{ timestamp }}.csv"
+
+  tasks:
+    - name: Ensure previous logs are deleted
+      file:
+        path: "{{ dstat_log_dir }}"
+        state: absent
+
+    - name: Recreate clean log directory
+      file:
+        path: "{{ dstat_log_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Kill existing dstat tmux session if running
+      shell: "tmux kill-session -t dstat_logger || true"
+      ignore_errors: true
+
+    - name: Start dstat in new tmux session
+      shell: |
+        tmux new-session -d -s dstat_logger \
+        "dstat -cdnm --output {{ dstat_log_dir }}/{{ dstat_file }} 30 900"
+      args:
+        executable: /bin/bash

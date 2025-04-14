@@ -114,8 +114,8 @@ def extract_vm_data(zip_path, vm_name):
 
     return video_times, video_peers
 
-baseline_zip = "/Users/sidpro/Downloads/light/rf-rnd-3.0.zip"
-sol_zip = "/Users/sidpro/Downloads/light/rf-rnd-pdf-1.0.zip"
+baseline_zip = "/Users/sidpro/Downloads/lockman/baseline.zip"
+sol_zip = "/Users/sidpro/Downloads/lockman/optimized.zip"
 
 os.makedirs("vm_plots", exist_ok=True)
 
@@ -137,9 +137,9 @@ for i in range(2, 21):
     height = 0.35
 
     fig, ax = plt.subplots(figsize=(10, max(6, len(videos) * 0.5)))  # auto height
-    ax.barh(y - height/2, baseline_times, height, label='rf-rnd',
+    ax.barh(y - height/2, baseline_times, height, label='baseline-rf-seq',
             color=['red' if t == -1 else 'C0' for t in baseline_times])
-    ax.barh(y + height/2, sol_times, height, label='rf-rnd-pdf',
+    ax.barh(y + height/2, sol_times, height, label='optimized-gf-rnd',
             color=['red' if t == -1 else 'C1' for t in sol_times])
 
     # Annotate missing

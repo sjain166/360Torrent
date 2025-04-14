@@ -21,6 +21,12 @@
         src: /home/sj99/360Torrent/tests/summary.json
         dest: "../../tests/json/{{ vm_log_name.stdout }}.json"
         flat: yes
+    
+    - name: Fetch entire sys_logs directory from each peer
+      ansible.posix.synchronize:
+        src: "/home/sj99/360Torrent/tests/sys_logs/"
+        dest: "../../tests/sys_logs/{{ vm_log_name.stdout }}/"
+        mode: pull
 
 - name: Download tracker.log from tracker
   hosts: tracker
@@ -32,4 +38,10 @@
         src: /home/sj99/360Torrent/tests/tracker.log
         dest: "../../tests/logs/tracker.log"
         flat: yes
+  
+    - name: Fetch entire sys_logs directory from each peer
+      ansible.posix.synchronize:
+        src: "/home/sj99/360Torrent/tests/sys_logs/"
+        dest: "../../tests/sys_logs/tracker/"
+        mode: pull
     

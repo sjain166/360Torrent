@@ -25,31 +25,11 @@
 # ]
 
 
-# VM_HOSTS_EXCEPT_11 = [
-#     "sp25-cs525-1203.cs.illinois.edu",
-#     "sp25-cs525-1216.cs.illinois.edu",
-#     "sp25-cs525-1217.cs.illinois.edu",
-#     "sp25-cs525-1206.cs.illinois.edu",
-#     "sp25-cs525-1207.cs.illinois.edu",
-#     "sp25-cs525-1214.cs.illinois.edu",
-#     "sp25-cs525-1215.cs.illinois.edu",
-#     "sp25-cs525-1212.cs.illinois.edu",
-#     "sp25-cs525-1213.cs.illinois.edu",
-#     "sp25-cs525-1204.cs.illinois.edu",
-#     "sp25-cs525-1205.cs.illinois.edu",
-#     "sp25-cs525-1208.cs.illinois.edu",
-#     "sp25-cs525-1209.cs.illinois.edu",
-#     "sp25-cs525-1210.cs.illinois.edu",
-#     "sp25-cs525-1218.cs.illinois.edu",
-#     "sp25-cs525-1219.cs.illinois.edu",
-#     "sp25-cs525-1220.cs.illinois.edu",
-# ]
-
-# VM_HOSTS_11 = ["sp25-cs525-1211.cs.illinois.edu"]
+# # VM_HOSTS_11 = ["sp25-cs525-1211.cs.illinois.edu"]
 
 # COMMANDS = [
 #     "2",
-#     "Pacific_Rim"
+#     "video0"
 # ]
 
 
@@ -80,13 +60,6 @@
 #             ensure_tmux_session_exists(host)
 #             send_command_to_vm(host, command)
 #             time.sleep(2)
-
-#         # time.sleep(150)
-
-#         # for host in VM_HOSTS_11:
-#         #     ensure_tmux_session_exists(host)
-#         #     send_command_to_vm(host, command)
-#         #     time.sleep(2)
         
 #         print("\n✅ Command sent to all VMs in tmux session:", SESSION_NAME)
 
@@ -148,7 +121,7 @@ def event_to_commands(event_type, file_name):
 # Start the Respective VMs
 def start_peer_on_vm(host, i, total):
     print(f"[{i}/{total} - BOOT] Starting peer on {host}")
-    cmd = f"""ssh {USERNAME}@{host} "tmux kill-session -t {SESSION_NAME} || true && tmux new-session -d -s {SESSION_NAME} 'cd /home/sj99/360Torrent && source myenv/bin/activate && python3 -m peer.peer RND >> /home/sj99/360Torrent/tests/peer.log 2>&1'" """
+    cmd = f"""ssh {USERNAME}@{host} "tmux kill-session -t {SESSION_NAME} || true && tmux new-session -d -s {SESSION_NAME} 'cd /home/sj99/360Torrent && source myenv/bin/activate && python3 -m peer.peer SEQ >> /home/sj99/360Torrent/tests/peer.log 2>&1'" """
     subprocess.run(cmd, shell=True)
 
 # ---- MAIN SIMULATION DRIVER ----
@@ -165,9 +138,6 @@ def run_event_schedule():
         event_data = event["event"]
         event_type = event_data["type"]
 
-        if event_type == "upload":
-            continue
-
         vm_host = USER_TO_VM[user_id]
         file_name = ''
        
@@ -182,7 +152,7 @@ def run_event_schedule():
             else :
                 send_command_to_vm(vm_host, cmd, i, len(events))
                 
-        if event_type == "join":
+        if event_type == "join" or event_type == "upload":
             time.sleep(2)
 
         # Sleep before next event

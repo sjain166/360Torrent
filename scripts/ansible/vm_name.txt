@@ -28,10 +28,11 @@ rsync -avz ../../tests/data_warehouse sj99@sp25-cs525-1220.cs.illinois.edu:/home
 
 ## Testing Command Sequence 
 ansible-playbook -i hosts.ini export_data.yml
-
-ansible-playbook -i hosts.ini start_peer.yml
 ansible-playbook -i hosts.ini pull_repo.yml 
 ansible-playbook -i hosts.ini start_tracker.yml 
+ansible-playbook -i hosts.ini start_peer.yml
+ansible-playbook -i hosts.ini run_dstat.yml --ask-become-pass
+
 python vm_interaction.py 
 ansible-playbook -i hosts.ini fetch_logs.yml
 ansible-playbook -i hosts.ini fetch_logs.yml
