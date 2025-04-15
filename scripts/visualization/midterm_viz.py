@@ -6,19 +6,25 @@ from matplotlib.lines import Line2D
 import os
 import json
 
-# DATA_DIR_BASELINE = "C:\\Users\\soula\\OneDrive\\Desktop\\light1_plot\\3.0 (RF + RND)\\json\\"
-# DATA_DIR_SOL = "C:\\Users\\soula\\OneDrive\\Desktop\\light1_plot\\4.0\\json\\"
-# EVENTS_FILE = "C:\\Users\\soula\\OneDrive\\Desktop\\Programming\\CS525\\360Torrent\\data\\light1_workload\\events.json"
-# events_fs = open(EVENTS_FILE, 'r')
-# events_data = json.load(events_fs)
-
-
-DATA_DIR_BASELINE = "C:\\Users\\soula\\OneDrive\\Desktop\\heavy2_plot\\1.0 (RF + RND)\\json\\"
-DATA_DIR_SOL = "C:\\Users\\soula\\OneDrive\\Desktop\\heavy2_plot\\1.0\\json\\"
-EVENTS_FILE = "C:\\Users\\soula\\OneDrive\\Desktop\\Programming\\CS525\\360Torrent\\data\\heavy2_workload\\events.json"
+DATA_DIR_BASELINE = "C:\\Users\\soula\\OneDrive\\Desktop\\light1_plot\\3.0 (RF + RND)\\json\\"
+DATA_DIR_SOL = "C:\\Users\\soula\\OneDrive\\Desktop\\light1_plot\\4.0\\json\\"
+EVENTS_FILE = "C:\\Users\\soula\\OneDrive\\Desktop\\Programming\\CS525\\360Torrent\\data\\light1_workload\\events.json"
 events_fs = open(EVENTS_FILE, 'r')
 events_data = json.load(events_fs)
 
+
+# DATA_DIR_BASELINE = "C:\\Users\\soula\\OneDrive\\Desktop\\heavy2_plot\\1.0 (RF + RND)\\json\\"
+# DATA_DIR_SOL = "C:\\Users\\soula\\OneDrive\\Desktop\\heavy2_plot\\1.0\\json\\"
+# EVENTS_FILE = "C:\\Users\\soula\\OneDrive\\Desktop\\Programming\\CS525\\360Torrent\\data\\heavy2_workload\\events.json"
+# events_fs = open(EVENTS_FILE, 'r')
+# events_data = json.load(events_fs)
+
+TRACE = "light1"
+OUT_DIR = f"C:\\Users\\soula\\OneDrive\\Desktop\\525_midterm_report_plots\\{TRACE}\\"
+
+SUBPLOT_X_SPACE = 0.3
+B_NAME = "BitTorrent"
+S_NAME = "360Torrent"
 
 # PLot number of download failures per client
 # Latency per download per client
@@ -37,16 +43,18 @@ def vm_to_region(vm):
     res = [ r for r, arr in regions_to_vms.items() if vm in arr]
     return res[0]
 
-axes = []
+# axes = []
+fig, ax = plt.subplots(1,4, figsize=(25, 5))
+plt.subplots_adjust(wspace=SUBPLOT_X_SPACE)
 
 for i, (region, _ ) in enumerate(regions_to_vms.items()):
-    fig, ax = plt.subplots(1, 1)
-    ax.set_title(f"Download (s) of Each Video in Region {region} Over Successive Requests")
-    ax.set_xlabel(f"Download Count in {region}")
-    ax.set_ylabel("Download Latency (s)")
-    ax.set_ylim(0,200)
-    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-    axes.append(ax)
+    # fig, ax = plt.subplots(1, 1)
+    ax[i].set_title(f"Download of Each Video \n in Region {region} Over Time")
+    ax[i].set_xlabel(f"Download Count in {region}")
+    ax[i].set_ylabel("Download Latency (s)")
+    ax[i].set_ylim(0,200)
+    ax[i].xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+    # axes.append(ax)
 
 
 def recover_timestamp(vmname, video):
@@ -67,7 +75,7 @@ show_video_range = range(0,12)
 
 diff_latencies_per_region = []
 
-for system, dir, dirfiles in [("Baseline", DATA_DIR_BASELINE, files), ("Solution", DATA_DIR_SOL, files2)]:
+for system, dir, dirfiles in [(B_NAME, DATA_DIR_BASELINE, files), (S_NAME, DATA_DIR_SOL, files2)]:
     # Each element will be a map of videoN: [] latencies in that region
     latencies_per_region = {"W": {}, "F": {}, "C":{}, "N":{}}
 
@@ -114,70 +122,69 @@ for system, dir, dirfiles in [("Baseline", DATA_DIR_BASELINE, files), ("Solution
                 if vidnum in show_video_range:
                     color = colors[vidnum]
 
-                    if system == "Baseline":
-                        axes[ax_i].scatter(nth_download, latencys, color=color)
-                        axes[ax_i].plot(nth_download, latencys, color=color, linestyle="-", label=name)
+                    if system == B_NAME:
+                        ax[ax_i].scatter(nth_download, latencys, color=color)
+                        ax[ax_i].plot(nth_download, latencys, color=color, linestyle="-", label=name)
                     else:
-                        axes[ax_i].scatter(nth_download, latencys, color=color)
-                        axes[ax_i].plot(nth_download, latencys, color=color, linestyle="--", label='__nolegend__')
+                        ax[ax_i].scatter(nth_download, latencys, color=color)
+                        ax[ax_i].plot(nth_download, latencys, color=color, linestyle="--", label='__nolegend__')
 
     diff_latencies_per_region.append(latencies_per_region)
 
-for ax in axes:
-    handles, labels = ax.get_legend_handles_labels()
+for i in range(len(ax)):
+    handles, labels = ax[i].get_legend_handles_labels()
     # Sort legend items alphabetically (or however you like)
     sorted_items = sorted(zip(labels, handles), key=lambda x: int(x[0][5:]))  # sort by label
     labels, handles = zip(*sorted_items)
     
-    video_legend = ax.legend(handles, labels, loc="upper right")
+    video_legend = ax[i].legend(handles, labels, loc="upper right", ncol=2)
 
     style_legend = [
-        Line2D([0], [0], color='black', linestyle='-', label='Baseline'),
-        Line2D([0], [0], color='black', linestyle='--', label='Solution')
+        Line2D([0], [0], color='black', linestyle='-', label=B_NAME),
+        Line2D([0], [0], color='black', linestyle='--', label=S_NAME)
     ]
-    ax.legend(handles=style_legend, loc="upper left")
-    ax.add_artist(video_legend)
-
-plt.show()
+    ax[i].legend(handles=style_legend, loc="upper left")
+    ax[i].add_artist(video_legend)
 
 
+fig.savefig(OUT_DIR+"video_download_latencies_over_time.png")
 
-axes = []
 
+
+fig, ax = plt.subplots(1,4, figsize=(25, 5))
+plt.subplots_adjust(wspace=SUBPLOT_X_SPACE)
 for i, (region, _ ) in enumerate(regions_to_vms.items()):
-    fig, ax = plt.subplots(1, 1)
-    ax.set_title(f"Improvement of Solution over Baseline in Region {region} Over Successive Requests")
-    ax.set_xlabel(f"Download Count in {region}")
-    ax.set_ylabel("Latency Improvement (s)")
-    ax.set_ylim(-100,100)
-    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-    axes.append(ax)
+    ax[i].set_title(f"Improvement over {B_NAME} \n in Region {region} Over Time")
+    ax[i].set_xlabel(f"Download Count in {region}")
+    ax[i].set_ylabel(f"Latency Improvement over {B_NAME} (s)")
+    ax[i].set_ylim(-100,100)
+    ax[i].xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
-show_video_range = range(0,20)
+show_video_range = range(0,12)
 for ax_i, (region, _) in enumerate(regions_to_vms.items()):
         
-        for (bname, bvid_data), (sname, svid_data) in zip(diff_latencies_per_region[0][region].items(), diff_latencies_per_region[1][region].items()):
+    for (bname, bvid_data), (sname, svid_data) in zip(diff_latencies_per_region[0][region].items(), diff_latencies_per_region[1][region].items()):
 
-            vid_outlier = False
+        vid_outlier = False
 
-            nth_download = []
-            diffs = []
+        nth_download = []
+        diffs = []
 
-            for (i, (_ , blatency, _)), (j, (_, slatency, _)) in zip(enumerate(bvid_data), enumerate(svid_data)):
-                # if blatency or slatency > 150: vid_outlier = True
-                diffs.append(blatency - slatency) # So more positive is better
-                nth_download.append(i)
+        for (i, (_ , blatency, _)), (j, (_, slatency, _)) in zip(enumerate(bvid_data), enumerate(svid_data)):
+            # if blatency or slatency > 150: vid_outlier = True
+            diffs.append(blatency - slatency) # So more positive is better
+            nth_download.append(i)
 
-            print(diffs)
-            # if not vid_outlier:
-            vidnum = int(bname[5:])
-            if vidnum in show_video_range:
-                color = colors[vidnum]
+        print(diffs)
+        # if not vid_outlier:
+        vidnum = int(bname[5:])
+        if vidnum in show_video_range:
+            color = colors[vidnum]
+            ax[ax_i].scatter(nth_download, diffs, color=color)
+            ax[ax_i].plot(nth_download, diffs, color=color, linestyle="-", label=bname)
 
-                axes[ax_i].scatter(nth_download, diffs, color=color)
-                axes[ax_i].plot(nth_download, diffs, color=color, linestyle="-", label=bname)
+    ax[ax_i].legend(ncol=2)
 
-for ax in axes:
-    ax.legend()
+fig.savefig(OUT_DIR+"improvement_over_baseline.png")
 
 plt.show()
