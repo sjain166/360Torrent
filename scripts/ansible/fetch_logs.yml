@@ -28,6 +28,12 @@
         dest: "../../tests/sys_logs/{{ vm_log_name.stdout }}/"
         mode: pull
 
+    - name: Rename the pulled CSV file to sys_logs.csv
+      ansible.builtin.shell: |
+        FILE=$(find "../../tests/sys_logs/{{ vm_log_name.stdout }}/" -type f -name "*.csv" | head -n1)
+        mv "$FILE" "../../tests/sys_logs/{{ vm_log_name.stdout }}/sys_logs.csv"
+      delegate_to: localhost
+
 - name: Download tracker.log from tracker
   hosts: tracker
   gather_facts: no
@@ -44,4 +50,10 @@
         src: "/home/sj99/360Torrent/tests/sys_logs/"
         dest: "../../tests/sys_logs/tracker/"
         mode: pull
+    
+    - name: Rename the pulled CSV file to sys_logs.csv
+      ansible.builtin.shell: |
+        FILE=$(find "../../tests/sys_logs/tracker/" -type f -name "*.csv" | head -n1)
+        mv "$FILE" "../../tests/sys_logs/tracker/sys_logs.csv"
+      delegate_to: localhost
     
