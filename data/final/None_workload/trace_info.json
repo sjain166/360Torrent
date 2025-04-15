@@ -1,0 +1,16 @@
+{
+ "trace_name": null,
+ "n_clients": 19,
+ "tracker_id": 1,
+ "tracker_region": "W",
+ "experiment_t_min": 5.0,
+ "churn": true,
+ "stay_v_leave_ratio": 1.0,
+ "interval_t": 5.0,
+ "upload_intensity_per_min": 0.5,
+ "request_intensity_per_min": 2.5,
+ "n_files": 30,
+ "zipf_a": 1.01,
+ "zipf_size": 1,
+ "zipf_n": 10000
+}

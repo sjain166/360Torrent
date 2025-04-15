@@ -110,23 +110,25 @@ if __name__ == "__main__":
     # For easy mapping
     def get_VMs_by_id(ids): return [vm for vm in TARGET_VMS if vm['id'] in ids]
     # # Map VMs to their region
-    regions = { "W": get_VMs_by_id([1,2,3,4,5]),
-                "N": get_VMs_by_id([6,7,8,9,10]) ,
-                "C": get_VMs_by_id([11,12,13,14,15]),
-                "F": get_VMs_by_id([16,17,18,19,20])}
 
-    # # Define delays between regions
+
+    ## Just paste this in from the trace paste.txt
+    # Super janky but headache-free solution for setting up network delays
+    # from a pre-generated trace
+    regions = { "W": get_VMs_by_id([0, 1, 2, 3, 4]),
+                "N": get_VMs_by_id([5, 6, 7, 8, 9]),
+                "C": get_VMs_by_id([10, 11, 12, 13, 14]),
+                "F": get_VMs_by_id([15, 16, 17, 18, 19]) }
+
+    # Define delays between regions
     net = nx.Graph(data=True)
-    net.add_edge("W","N", weight=100)
-    net.add_edge("W","C", weight=35)
-    net.add_edge("W", "F", weight=120)
-    net.add_edge("N", "C", weight=120)
-    net.add_edge("N", "F", weight = 35)
-    net.add_edge("C", "F", weight=100)
-
-    ## Reading from workload generator output example
-    DELAY_FILE = "../../data/None_workload/synthetic_regional_delay.csv"
-
+    net.add_edge("W","N", weight=65)
+    net.add_edge("W","C", weight=31)
+    net.add_edge("W","F", weight=79)
+    net.add_edge("N","C", weight=62)
+    net.add_edge("N","F", weight=34)
+    net.add_edge("C","F", weight=63)
+            
     create_network_delay(TARGET_VMS, net, regions)
     # net = nx.Graph(data=True)
     # with open(DELAY_FILE, 'r', newline="") as fs:

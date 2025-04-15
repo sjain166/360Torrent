@@ -1,0 +1,44 @@
+# TODO: Convert python worker.py to an ansible script
+
+# ---
+# - name: Configure traffic control on all hosts
+#   hosts: all
+#   become: true
+#   vars:
+#     interface: ens33
+#     n_tc_bands: 3             # Set this to your desired number of bands
+#     remote_csv_path: /tmp/delays.csv # Ensure this exists on the target host
+#     local_csv_path: "../../data/None_workload/synthetic_regional_delay.csv"
+
+#   tasks:
+
+#     - name: Upload delays file
+#       ansible.builtin.copy:
+#         src: "{{ local_csv_path }}"
+#         dest: "{{ remote_csv_path }}"
+#         mode: '0644'
+
+#     - name: Load sch_netem
+#       ansible.builtin.shell: >
+#         modprobe sch_netem
+
+#     - name: Set up root qdisc with prio
+#       ansible.builtin.shell: >
+#         tc qdisc replace dev {{ interface }} root handle 1: prio bands {{ n_tc_bands }}
+
+#     - name: Read delay CSV into lines
+#       ansible.builtin.slurp:
+#         src: "{{ remote_csv_path }}"
+#       register: csv_file
+
+#     - name: Parse CSV and apply netem delays
+#       ansible.builtin.set_fact:
+#         delay_entries: "{{ csv_file.content | b64decode | splitlines }}"
+
+#     - name: Apply netem delays and filters
+#       ansible.builtin.shell: >
+#         tc qdisc add dev {{ interface }} parent 1:{{ item.0 }} handle {{ 2 + (item.0 | int) }}: netem delay {{ item.2 }}ms &&
+#         tc filter add dev {{ interface }} parent 1:0 prio 1 u32 match ip dst {{ item.1 }} flowid 1:{{ item.0 }}
+#       loop: "{{ delay_entries | map('split', ',') | list }}"
+#       loop_control:
+#         label: "{{ item }}"
