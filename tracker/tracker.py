@@ -2,6 +2,7 @@ from scripts.prints import print_tracker_file_registry
 from aiohttp import web
 from scripts.class_object import Peer, Chunk, File, FileMetadata
 from scripts.utils import get_private_ip
+import aiohttp
 
 
 # Rich Print
