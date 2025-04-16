@@ -250,7 +250,7 @@ async def get_file_metadata(request):
         metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
         ############################### PURELY TO TEST THE TRACKER COMMANDS TO PREFETCH PEER ###############################
         for peer in REGION_PEER_MAP.get(region,[]):
-            await command_peer_to_prefetch(peer, file_obj, len(file_obj) // 3)
+            await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
         ####################################################################################################################
         return web.json_response(metadata.to_dict())
     except Exception as e:
