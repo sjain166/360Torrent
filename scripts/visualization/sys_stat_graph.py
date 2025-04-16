@@ -48,7 +48,7 @@ import os
 plt.figure(figsize=(16, 8))
 
 # Iterate over vm02 to vm19
-for vm_id in range(7, 8):
+for vm_id in range(2, 20):
     vm_name = f"vm{vm_id:02d}"
     file_path = f"../../tests/sys_logs/{vm_name}/sys_logs.csv"
 
@@ -73,17 +73,17 @@ for vm_id in range(7, 8):
 
     try:
         # CPU
-        plt.plot(df["total usage:usr"], label=f"{label_prefix} CPU usr")
-        plt.plot(df["total usage:sys"], label=f"{label_prefix} CPU sys")
-        plt.plot(df["total usage:idl"], label=f"{label_prefix} CPU idl")
+        # plt.plot(df["total usage:usr"], label=f"{label_prefix} CPU usr")
+        # plt.plot(df["total usage:sys"], label=f"{label_prefix} CPU sys")
+        # plt.plot(df["total usage:idl"], label=f"{label_prefix} CPU idl")
 
         # Network
-        plt.plot(df["net/total:recv"], label=f"{label_prefix} Net recv")
+        # plt.plot(df["net/total:recv"], label=f"{label_prefix} Net recv")
         plt.plot(df["net/total:send"], label=f"{label_prefix} Net send")
 
         # Disk
-        plt.plot(df["dsk/total:read"], label=f"{label_prefix} Disk read")
-        plt.plot(df["dsk/total:writ"], label=f"{label_prefix} Disk write")
+        #plt.plot(df["dsk/total:read"], label=f"{label_prefix} Disk read")
+        #plt.plot(df["dsk/total:writ"], label=f"{label_prefix} Disk write")
     except KeyError as e:
         print(f"Missing column in {vm_name}: {e}")
         continue

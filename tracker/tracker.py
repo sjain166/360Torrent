@@ -15,6 +15,7 @@ PEERS = {}  # Dictionary to store registered peers {peer_id: (ip, port)}
 TRACKER_FILE_REGISTRY = (
     []
 )  # Dictionary to store file locations {file_name: [list_of_peers_hosting_it]}
+REGION_PEER_MAP = {}  # Dictionary to track peers per region: {region: [Peer]}
 
 
 def summarize_available_files():
@@ -46,8 +47,17 @@ async def register_peer(request):
         hosted_files = data.get("files", [])  # List of files the peer hosts
         if not peer_id or not ip or not port:
             return web.json_response({"error": "Invalid peer data"}, status=400)
+        
+        
+
         new_peer = Peer(peer_id, ip, port, region)
         PEERS[peer_id] = new_peer
+
+        if region:
+            if region not in REGION_PEER_MAP:
+                REGION_PEER_MAP[region] = []
+            REGION_PEER_MAP[region].append(new_peer)
+
         # Process files sent by the peer
         for file_data in hosted_files:
             file_name = file_data.get("file_name")

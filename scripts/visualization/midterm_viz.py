@@ -6,9 +6,9 @@ from matplotlib.lines import Line2D
 import os
 import json
 
-DATA_DIR_BASELINE = "C:\\Users\\soula\\OneDrive\\Desktop\\light1_plot\\3.0 (RF + RND)\\json\\"
-DATA_DIR_SOL = "C:\\Users\\soula\\OneDrive\\Desktop\\light1_plot\\4.0\\json\\"
-EVENTS_FILE = "C:\\Users\\soula\\OneDrive\\Desktop\\Programming\\CS525\\360Torrent\\data\\light1_workload\\events.json"
+DATA_DIR_BASELINE = "/Users/sidpro/Downloads/Tests/RF + SEQ (1.0)/json/"
+DATA_DIR_SOL = "/Users/sidpro/Downloads/Tests/GF + RND (1.0)/json/"
+EVENTS_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/light1_workload/events.json"
 events_fs = open(EVENTS_FILE, 'r')
 events_data = json.load(events_fs)
 
