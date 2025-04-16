@@ -48,8 +48,6 @@ async def register_peer(request):
         if not peer_id or not ip or not port:
             return web.json_response({"error": "Invalid peer data"}, status=400)
         
-        
-
         new_peer = Peer(peer_id, ip, port, region)
         PEERS[peer_id] = new_peer
 
@@ -228,6 +226,8 @@ async def get_chunk_peers(request):
 async def get_file_metadata(request):
     try:
         file_name = request.query.get("file_name")
+        region = request.query.get("region")
+
         if not file_name:
             return web.json_response(
                 {"error": "Missing file_name parameter"}, status=400
@@ -248,11 +248,45 @@ async def get_file_metadata(request):
         ]
 
         metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
+        ############################### PURELY TO TEST THE TRACKER COMMANDS TO PREFETCH PEER ###############################
+        for peer in REGION_PEER_MAP.get(region,[]):
+            await command_peer_to_prefetch(peer, file_obj, len(file_obj) // 3)
+        ####################################################################################################################
         return web.json_response(metadata.to_dict())
     except Exception as e:
         print(f"[ERROR] Fetching file metadata failed: {e}")
         return web.json_response({"error": "Internal Server Error"}, status=500)
 
+
+async def command_peer_to_prefetch(peer: Peer, file_obj: File, num_chunks: int):
+    """
+    Command a peer to prefetch a few chunks of a file.
+    """
+    if not file_obj or not peer:
+        print(f"[WARN] Invalid file or peer object for prefetch.")
+        return
+
+    # Select random chunks
+    import random
+    selected_chunks = random.sample(file_obj.chunks, min(num_chunks, len(file_obj.chunks)))
+
+    # Prepare metadata for sending
+    chunk_dicts = [
+        {"chunk_name": chunk.chunk_name, "chunk_size": chunk.chunk_size}
+        for chunk in selected_chunks
+    ]
+    metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
+
+    try:
+        url = f"http://{peer.ip}:{peer.port}/prefetch_chunks"
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=metadata.to_dict()) as response:
+                if response.status == 200:
+                    print(f"[INFO] Prefetch command sent to {peer.id}")
+                else:
+                    print(f"[WARN] Prefetch failed for {peer.id}, status: {response.status}")
+    except Exception as e:
+        print(f"[ERROR] Exception while sending prefetch to {peer.id}: {e}")
 
 app = web.Application()
 app.router.add_post("/register", register_peer)

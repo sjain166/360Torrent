@@ -37,6 +37,11 @@ async def serve_file(request):
     return web.FileResponse(chunk_path)
 
 
+async def handle_prefetch_chunck_request(request):
+    print(request)
+    return web.Response(status=200, text="OK")
+
+
 async def start_file_server():
     """
     Starts the file server.
@@ -47,6 +52,7 @@ async def start_file_server():
         app = web.Application()
         app.router.add_get("/file", serve_file)
         app.router.add_get("/health_check", health_check)
+        app.router.add_get("/prefetch_chunks", handle_prefetch_chunck_request)  # Accept the Download Request from the Peer
         print(f"[INFO] File Server Started on {ip}:{port}")
 
         runner = web.AppRunner(app)
