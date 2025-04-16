@@ -57,6 +57,8 @@ async def register_peer(request):
             if region not in REGION_PEER_MAP:
                 REGION_PEER_MAP[region] = []
             REGION_PEER_MAP[region].append(new_peer)
+        
+        print(REGION_PEER_MAP)
 
         # Process files sent by the peer
         for file_data in hosted_files:
