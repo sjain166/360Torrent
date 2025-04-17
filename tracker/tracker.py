@@ -54,7 +54,7 @@ async def register_peer(request):
 
         if region:
             if region not in REGION_PEER_MAP:
-                REGION_PEER_MAP[region] = []
+                REGION_PEER_MAP[region] = set()
             REGION_PEER_MAP[region].append(new_peer)
         
         print(REGION_PEER_MAP)
@@ -228,6 +228,7 @@ async def get_file_metadata(request):
     try:
         file_name = request.query.get("file_name")
         region = request.query.get("region")
+        peer_id = request.query.get("peer_id")
 
         if not file_name:
             return web.json_response(
@@ -251,7 +252,8 @@ async def get_file_metadata(request):
         metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
         ############################### PURELY TO TEST THE TRACKER COMMANDS TO PREFETCH PEER ###############################
         for peer in REGION_PEER_MAP.get(region,[]):
-            await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
+            if peer.id != peer_id:
+                await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
         ####################################################################################################################
         return web.json_response(metadata.to_dict())
     except Exception as e:

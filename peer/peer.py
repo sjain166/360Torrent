@@ -45,7 +45,7 @@ async def get_file_metadata(file_name):
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"{TRACKER_URL}/file_metadata", params={"file_name": file_name, "region" : VM_REGION}
+                f"{TRACKER_URL}/file_metadata", params={"file_name": file_name, "region" : VM_REGION, "peer_id" : VM_NAME}
             ) as response:
                 if response.status == 200:
                     data = await response.json()
