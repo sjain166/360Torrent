@@ -240,6 +240,10 @@ async def handle_prefetch_chunks(file_metadata_json):
     dest_folder = os.path.join(TARGET_DATA_PATH, file_name)
 
     # Ensure destination folder exists
+    if os.path.exists(dest_folder):
+        print(f"[INFO] Prefetch Failed - Folder already exists: {dest_folder}")
+        return
+    
     os.makedirs(dest_folder, exist_ok=True)
 
     # Copy only the specified chunks
