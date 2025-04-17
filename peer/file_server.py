@@ -3,7 +3,7 @@ import os
 
 from scripts.utils import get_private_ip
 from scripts.utils import FILE_PATH
-from peer.peer import handle_prefetch_chunks
+from scripts.utils import handle_prefetch_chunks 
 
 # Rich Print
 import builtins
@@ -36,6 +36,7 @@ async def serve_file(request):
 
     print(f"[INFO] Serving chunk: {chunk_path}")
     return web.FileResponse(chunk_path)
+
 
 
 async def handle_prefetch_chunk_request(request):

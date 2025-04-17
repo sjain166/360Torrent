@@ -10,6 +10,7 @@ from scripts.utils import get_private_ip, scrape_data_folder
 from peer.downloader import main as downloader
 from scripts.prints import print_registry_summary
 from scripts.utils import TRACKER_URL
+from scripts.utils import register_peer
 
 # Rich Print
 import builtins
@@ -22,43 +23,6 @@ import json
 # HOSTED_FILE = ["test_data_send.txt"]
 PEER_FILE_REGISTRY = []
 
-
-async def register_peer(peer_id, ip, port):
-    """
-    Registers the peer to the tracker.
-    """
-
-    hosted_files = [
-        {
-            "file_name": f.file_name,
-            "file_size": f.file_size,
-            "chunks": [
-                {
-                    "chunk_name": c.chunk_name,
-                    "chunk_size": c.chunk_size,
-                    "peers": [{"ip": p.ip, "port": p.port} for p in c.peers],
-                }
-                for c in f.chunks
-            ],
-        }
-        for f in PEER_FILE_REGISTRY
-    ]
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"{TRACKER_URL}/register",
-                json={
-                    "peer_id": VM_NAME,
-                    "ip": ip,
-                    "port": port,
-                    "files": hosted_files,
-                    "vm_region" : VM_REGION
-                },
-            ) as response:
-                result = await response.json()
-                print(f"[INFO] Registration Response: {result}")  # Debugging Output
-    except Exception as e:
-        print(f"[ERROR] Failed to register peer: {e}")
 
 
 async def get_tracker_registry_summary():
@@ -121,7 +85,7 @@ async def handle_user_upload(folder_name):
         shutil.copytree(source_path, destination_path)
         print(f"[INFO] Copied '{folder_name}' from warehouse to data folder.")
         PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
-        await register_peer(VM_NAME, IP, PORT)
+        await register_peer(VM_NAME, IP, PORT, PEER_FILE_REGISTRY)
         
     except Exception as e:
         print(f"[ERROR] Failed to copy folder: {e}")
@@ -157,59 +121,6 @@ async def prompt_user_action():
         else:
             print("[ERROR] Invalid choice. Please select 1, 2, or 3.")
 
-
-
-async def handle_prefetch_chunks(file_metadata_json):
-    """
-    Given a FileMetadata JSON, copy only the specified chunks from warehouse to data folder.
-    """
-    global PEER_FILE_REGISTRY
-
-    WAREHOUSE_PATH = "/home/sj99/360Torrent/tests/data_warehouse"
-    TARGET_DATA_PATH = "/home/sj99/360Torrent/tests/data"
-
-    # Parse the FileMetadata JSON
-    try:
-        if isinstance(file_metadata_json, str):
-            file_metadata = json.loads(file_metadata_json)
-        else:
-            file_metadata = file_metadata_json
-
-        file_name = file_metadata['file_name']
-        chunks = file_metadata['chunks']
-    except Exception as e:
-        print(f"[ERROR] Failed to parse FileMetadata JSON: {e}")
-        return
-
-    source_folder = os.path.join(WAREHOUSE_PATH, file_name)
-    dest_folder = os.path.join(TARGET_DATA_PATH, file_name)
-
-    # Ensure destination folder exists
-    os.makedirs(dest_folder, exist_ok=True)
-
-    # Copy only the specified chunks
-    copied_chunks = []
-    for chunk in chunks:
-        chunk_name = chunk['chunk_name']
-        src_chunk_path = os.path.join(source_folder, chunk_name)
-        dest_chunk_path = os.path.join(dest_folder, chunk_name)
-        if os.path.exists(src_chunk_path):
-            try:
-                shutil.copy2(src_chunk_path, dest_chunk_path)
-                copied_chunks.append(chunk_name)
-                print(f"[INFO] Copied chunk '{chunk_name}' to data folder.")
-            except Exception as e:
-                print(f"[ERROR] Failed to copy chunk '{chunk_name}': {e}")
-        else:
-            print(f"[ERROR] Chunk not found in warehouse: {src_chunk_path}")
-
-    # Update local registry and re-register peer
-    PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
-    await register_peer(VM_NAME, IP, PORT)
-
-    print(f"[INFO] Prefetch complete. Copied chunks: {copied_chunks}")
-    return copied_chunks
-
 async def main():
 
     global PEER_FILE_REGISTRY
@@ -229,7 +140,7 @@ async def main():
     try:
         IP = get_private_ip()  # Automatically fetch the VM's IP
         PORT = 6881
-        await register_peer(peer_id, IP, PORT)
+        await register_peer(peer_id, IP, PORT, PEER_FILE_REGISTRY)
         await file_server.start_file_server()
         await prompt_user_action()  # Begin prompting user to download files repeatedly
     except Exception as e:

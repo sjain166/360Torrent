@@ -5,6 +5,8 @@ import socket
 import requests
 import time
 import json
+import aiohttp
+import shutil
 
 from scripts.class_object import Peer, Chunk, File
 
@@ -167,4 +169,99 @@ def append_file_download_summary_to_json(metadata, total_time):
 
     with open(JSON_LOG_FILE_PATH, "w") as f:
         json.dump(data, f, indent=4)
+
+async def register_peer(peer_id, ip, port, PEER_FILE_REGISTRY):
+    """
+    Registers the peer to the tracker.
+    """
+    VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
+    VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
+
+    hosted_files = [
+        {
+            "file_name": f.file_name,
+            "file_size": f.file_size,
+            "chunks": [
+                {
+                    "chunk_name": c.chunk_name,
+                    "chunk_size": c.chunk_size,
+                    "peers": [{"ip": p.ip, "port": p.port} for p in c.peers],
+                }
+                for c in f.chunks
+            ],
+        }
+        for f in PEER_FILE_REGISTRY
+    ]
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                f"{TRACKER_URL}/register",
+                json={
+                    "peer_id": VM_NAME,
+                    "ip": ip,
+                    "port": port,
+                    "files": hosted_files,
+                    "vm_region" : VM_REGION
+                },
+            ) as response:
+                result = await response.json()
+                print(f"[INFO] Registration Response: {result}")  # Debugging Output
+    except Exception as e:
+        print(f"[ERROR] Failed to register peer: {e}")
+
+
+async def handle_prefetch_chunks(file_metadata_json):
+    """
+    Given a FileMetadata JSON, copy only the specified chunks from warehouse to data folder.
+    """
+    global PEER_FILE_REGISTRY
+
+    WAREHOUSE_PATH = "/home/sj99/360Torrent/tests/data_warehouse"
+    TARGET_DATA_PATH = "/home/sj99/360Torrent/tests/data"
+    VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
+    VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
+    IP = get_private_ip()  # Automatically fetch the VM's IP
+    PORT = 6881
+
+    # Parse the FileMetadata JSON
+    try:
+        if isinstance(file_metadata_json, str):
+            file_metadata = json.loads(file_metadata_json)
+        else:
+            file_metadata = file_metadata_json
+
+        file_name = file_metadata['file_name']
+        chunks = file_metadata['chunks']
+    except Exception as e:
+        print(f"[ERROR] Failed to parse FileMetadata JSON: {e}")
+        return
+
+    source_folder = os.path.join(WAREHOUSE_PATH, file_name)
+    dest_folder = os.path.join(TARGET_DATA_PATH, file_name)
+
+    # Ensure destination folder exists
+    os.makedirs(dest_folder, exist_ok=True)
+
+    # Copy only the specified chunks
+    copied_chunks = []
+    for chunk in chunks:
+        chunk_name = chunk['chunk_name']
+        src_chunk_path = os.path.join(source_folder, chunk_name)
+        dest_chunk_path = os.path.join(dest_folder, chunk_name)
+        if os.path.exists(src_chunk_path):
+            try:
+                shutil.copy2(src_chunk_path, dest_chunk_path)
+                copied_chunks.append(chunk_name)
+                print(f"[INFO] Copied chunk '{chunk_name}' to data folder.")
+            except Exception as e:
+                print(f"[ERROR] Failed to copy chunk '{chunk_name}': {e}")
+        else:
+            print(f"[ERROR] Chunk not found in warehouse: {src_chunk_path}")
+
+    # Update local registry and re-register peer
+    PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+    await register_peer(VM_NAME, IP, PORT, PEER_FILE_REGISTRY)
+
+    print(f"[INFO] Prefetch complete. Copied chunks: {copied_chunks}")
+    return copied_chunks
 
