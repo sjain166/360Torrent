@@ -37,9 +37,14 @@ async def serve_file(request):
     return web.FileResponse(chunk_path)
 
 
-async def handle_prefetch_chunck_request(request):
-    print(request)
-    return web.Response(status=200, text="OK")
+async def handle_prefetch_chunk_request(request):
+    try:
+        data = await request.json()  # or .post() if form-data
+        print(f"[INFO] Received prefetch chunk request: {data}")
+        return web.json_response({"status": "received"}, status=200)
+    except Exception as e:
+        print(f"[ERROR] Invalid prefetch request: {e}")
+        return web.json_response({"error": "Invalid request format"}, status=400)
 
 
 async def start_file_server():
@@ -52,7 +57,7 @@ async def start_file_server():
         app = web.Application()
         app.router.add_get("/file", serve_file)
         app.router.add_get("/health_check", health_check)
-        app.router.add_get("/prefetch_chunks", handle_prefetch_chunck_request)  # Accept the Download Request from the Peer
+        app.router.add_post("/prefetch_chunks", handle_prefetch_chunk_request)  # Accept the Download Request from the Peer
         print(f"[INFO] File Server Started on {ip}:{port}")
 
         runner = web.AppRunner(app)
