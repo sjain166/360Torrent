@@ -55,7 +55,7 @@ async def register_peer(request):
         if region:
             if region not in REGION_PEER_MAP:
                 REGION_PEER_MAP[region] = set()
-            REGION_PEER_MAP[region].append(new_peer)
+            REGION_PEER_MAP[region].add(new_peer)
         
         print(REGION_PEER_MAP)
 
