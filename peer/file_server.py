@@ -3,6 +3,7 @@ import os
 
 from scripts.utils import get_private_ip
 from scripts.utils import FILE_PATH
+from peer.peer import handle_prefetch_chunks
 
 # Rich Print
 import builtins
@@ -41,6 +42,7 @@ async def handle_prefetch_chunk_request(request):
     try:
         data = await request.json()  # or .post() if form-data
         print(f"[INFO] Received prefetch chunk request: {data}")
+        handle_prefetch_chunks(data)
         return web.json_response({"status": "received"}, status=200)
     except Exception as e:
         print(f"[ERROR] Invalid prefetch request: {e}")

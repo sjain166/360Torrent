@@ -16,6 +16,7 @@ import builtins
 from rich import print as rich_print
 builtins.print = rich_print
 import shutil
+import json
 
 # Rather a Fixed Hosted Files, Scrap the Data Folder to update teh Hosted Files before TRacker Registration
 # HOSTED_FILE = ["test_data_send.txt"]
@@ -156,6 +157,58 @@ async def prompt_user_action():
         else:
             print("[ERROR] Invalid choice. Please select 1, 2, or 3.")
 
+
+
+async def handle_prefetch_chunks(file_metadata_json):
+    """
+    Given a FileMetadata JSON, copy only the specified chunks from warehouse to data folder.
+    """
+    global PEER_FILE_REGISTRY
+
+    WAREHOUSE_PATH = "/home/sj99/360Torrent/tests/data_warehouse"
+    TARGET_DATA_PATH = "/home/sj99/360Torrent/tests/data"
+
+    # Parse the FileMetadata JSON
+    try:
+        if isinstance(file_metadata_json, str):
+            file_metadata = json.loads(file_metadata_json)
+        else:
+            file_metadata = file_metadata_json
+
+        file_name = file_metadata['file_name']
+        chunks = file_metadata['chunks']
+    except Exception as e:
+        print(f"[ERROR] Failed to parse FileMetadata JSON: {e}")
+        return
+
+    source_folder = os.path.join(WAREHOUSE_PATH, file_name)
+    dest_folder = os.path.join(TARGET_DATA_PATH, file_name)
+
+    # Ensure destination folder exists
+    os.makedirs(dest_folder, exist_ok=True)
+
+    # Copy only the specified chunks
+    copied_chunks = []
+    for chunk in chunks:
+        chunk_name = chunk['chunk_name']
+        src_chunk_path = os.path.join(source_folder, chunk_name)
+        dest_chunk_path = os.path.join(dest_folder, chunk_name)
+        if os.path.exists(src_chunk_path):
+            try:
+                shutil.copy2(src_chunk_path, dest_chunk_path)
+                copied_chunks.append(chunk_name)
+                print(f"[INFO] Copied chunk '{chunk_name}' to data folder.")
+            except Exception as e:
+                print(f"[ERROR] Failed to copy chunk '{chunk_name}': {e}")
+        else:
+            print(f"[ERROR] Chunk not found in warehouse: {src_chunk_path}")
+
+    # Update local registry and re-register peer
+    PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+    await register_peer(VM_NAME, IP, PORT)
+
+    print(f"[INFO] Prefetch complete. Copied chunks: {copied_chunks}")
+    return copied_chunks
 
 async def main():
 
