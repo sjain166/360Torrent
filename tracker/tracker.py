@@ -1,8 +1,12 @@
 from scripts.prints import print_tracker_file_registry
 from aiohttp import web
 from scripts.class_object import Peer, Chunk, File, FileMetadata
-from scripts.utils import get_private_ip
+from scripts.utils import get_private_ip, OBSERVE_INTERVAL, HOT_THRESHOLD
 import aiohttp
+from collections import defaultdict
+import asyncio
+import datetime
+import numpy as np
 
 
 # Rich Print
@@ -17,6 +21,7 @@ TRACKER_FILE_REGISTRY = (
     []
 )  # Dictionary to store file locations {file_name: [list_of_peers_hosting_it]}
 REGION_PEER_MAP = {}  # Dictionary to track peers per region: {region: [Peer]}
+FILE_REQUEST_PER_REGION = defaultdict(lambda: defaultdict(list))
 
 
 def summarize_available_files():
@@ -104,7 +109,7 @@ async def register_peer(request):
                         new_chunk.add_peer(new_peer)
                         existing_file.chunks.append(new_chunk)
         print(f"[INFO] Registered peer {peer_id} at {ip}:{port}")  # Debugging output
-        print_tracker_file_registry(TRACKER_FILE_REGISTRY)
+        # print_tracker_file_registry(TRACKER_FILE_REGISTRY)
         return web.json_response({
             "status": "registered",
             "peers": {peer_id: peer_obj.to_dict() for peer_id, peer_obj in PEERS.items()}
@@ -153,7 +158,7 @@ async def update_chunk_host(request):
                 if not (p.ip == dead["ip"] and p.port == dead["port"])
             ]
 
-        print_tracker_file_registry(TRACKER_FILE_REGISTRY)
+        # print_tracker_file_registry(TRACKER_FILE_REGISTRY)
 
         print(f"[INFO] Updated chunk {chunk_name} of {file_name} with peer {ip}:{port}")
         return web.json_response({"status": "updated"})
@@ -248,6 +253,20 @@ async def get_file_metadata(request):
         )
         if not file_obj:
             return web.json_response({"error": "File not found"}, status=404)
+        
+        # Track the file request per region
+        if region:
+            if region not in FILE_REQUEST_PER_REGION:
+                FILE_REQUEST_PER_REGION[region] = {}
+
+            if file_name not in FILE_REQUEST_PER_REGION[region]:
+                FILE_REQUEST_PER_REGION[region][file_name] = []
+                FILE_REQUEST_PER_REGION[region][file_name].append(0)  # Initialize with 0 requests
+
+            FILE_REQUEST_PER_REGION[region][file_name][-1] += 1
+            print(f"[INFO] Request tracked: {region} -> {file_name} <- {peer_id}")
+
+        print(FILE_REQUEST_PER_REGION)
 
         ################ Using Rarest First Policy ################
         sorted_chunks = sorted(file_obj.chunks, key=lambda c: len(c.peers))
@@ -258,11 +277,11 @@ async def get_file_metadata(request):
         ]
 
         metadata = FileMetadata(file_obj.file_name, file_obj.file_size, chunk_dicts)
-        ############################### PURELY TO TEST THE TRACKER COMMANDS TO PREFETCH PEER ###############################
-        for peer in list(REGION_PEER_MAP.get(region, [])):
-            if peer.id != peer_id:
-                await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
-        ####################################################################################################################
+        # ############################### PURELY TO TEST THE TRACKER COMMANDS TO PREFETCH PEER ###############################
+        # for peer in list(REGION_PEER_MAP.get(region, [])):
+        #     if peer.id != peer_id:
+        #         await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
+        # ####################################################################################################################
         return web.json_response(metadata.to_dict())
     except Exception as e:
         print(f"[ERROR] Fetching file metadata failed: {e}")
@@ -299,6 +318,30 @@ async def command_peer_to_prefetch(peer: Peer, file_obj: File, num_chunks: int):
     except Exception as e:
         print(f"[ERROR] Exception while sending prefetch to {peer.id}: {e}")
 
+async def observe_timer():
+    """
+    Background task that logs time every 10 seconds.
+    """
+    while True:
+        
+        for region, files in FILE_REQUEST_PER_REGION.items():
+            for file_name in files:
+                FILE_REQUEST_PER_REGION[region][file_name].append(0)
+        
+        for region, files in FILE_REQUEST_PER_REGION.items():
+            for file_name, requests in files.items():
+                derivative_request_counts = np.gradient(requests)
+                print(f"[INFO] Derivative requests {requests} counts for {file_name} in region {region}: {derivative_request_counts}")
+                hot = derivative_request_counts[-1] > HOT_THRESHOLD
+                if hot:
+                    print(f"[INFO] Hot file detected: {file_name} in region {region}")
+                    for peer in REGION_PEER_MAP.get(region, []):
+                        file_obj = TRACKER_FILE_REGISTRY.get(file_name)
+                        await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
+
+
+        await asyncio.sleep(OBSERVE_INTERVAL)
+
 app = web.Application()
 app.router.add_post("/register", register_peer)
 app.router.add_get("/file_registry", get_tracker_registry_summary)
@@ -309,16 +352,26 @@ app.router.add_post("/update_chunk_host", update_chunk_host)
 
 if __name__ == "__main__":
     try:
-        # if sys.argv != 2 :
-        #     print("[ERROR] Invalid Argument Count" + len(sys.argv))
-            
         global PEER_SELECTION_CRITERIA
         PEER_SELECTION_CRITERIA = sys.argv[1]
         print("[INFO] Peer Selection Criteria Activated : " + PEER_SELECTION_CRITERIA)
-        
-        print_tracker_file_registry(TRACKER_FILE_REGISTRY)
+
+        # print_tracker_file_registry(TRACKER_FILE_REGISTRY)
         my_ip = get_private_ip()
-        print("[INFO] Tracker Server Started on {}:8080".format(my_ip))
-        web.run_app(app, host=my_ip, port=8080)
+        print(f"[INFO] Tracker Server Started on {my_ip}:8080")
+
+        async def run_tracker():
+            asyncio.create_task(observe_timer())  # Background timer
+            runner = web.AppRunner(app)
+            await runner.setup()
+            site = web.TCPSite(runner, my_ip, 8080)
+            await site.start()
+
+            # Keep running forever
+            while True:
+                await asyncio.sleep(3600)
+
+        asyncio.run(run_tracker())
+
     except Exception as e:
         print(f"[ERROR] Tracker failed to start: {e}")

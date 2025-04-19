@@ -25,8 +25,10 @@ builtins.print = rich_print
 
 ####################################################################################################
 
-TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
-#TRACKER_URL = "http://10.192.123.83:8080"  # Replace with actual tracker IP
+#TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
+TRACKER_URL = "http://10.251.161.205:8080"  # Replace with actual tracker IP
+OBSERVE_INTERVAL = 15
+HOT_THRESHOLD = 1 # To be decided by the user
 
 FILE_PATH = "tests/data"
 JSON_LOG_FILE_PATH = "tests/summary.json"
@@ -176,6 +178,7 @@ async def register_peer(peer_id, ip, port, PEER_FILE_REGISTRY):
     """
     VM_NAME = os.getenv("PEER_VM_NAME", "UNKNOWN")
     VM_REGION = os.getenv("REGION_NAME", "UNKNOWN")
+    
 
     hosted_files = [
         {
