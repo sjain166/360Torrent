@@ -4,12 +4,16 @@ import os
 from scripts.utils import get_private_ip
 from scripts.utils import FILE_PATH, DATA_WAREHOUSE
 from scripts.utils import handle_prefetch_chunks 
+from peer.downloader import main
+from scripts.class_object import FileMetadata
 
 # Rich Print
 import builtins
 from rich import print as rich_print
 builtins.print = rich_print
+import json
 
+PEER_SELECTION_METHOD = "random"  # Default peer selection method
 
 async def health_check(request):
     return web.Response(status=200, text="OK")
@@ -42,19 +46,27 @@ async def serve_file(request):
 async def handle_prefetch_chunk_request(request):
     try:
         data = await request.json()  # or .post() if form-data
-        print(f"[INFO] Received prefetch chunk request: {data}")
-        await handle_prefetch_chunks(data)
+        
+        file_metadata = FileMetadata(
+                        file_name=data["file_name"],
+                        file_size=data["file_size"],
+                        chunks=data["chunks"],
+                    )
+        print(f"[INFO] Received prefetch chunk request: {request}")
+        await main(file_metadata, PEER_SELECTION_METHOD)
+        # await handle_prefetch_chunks(data)
         return web.json_response({"status": "received"}, status=200)
     except Exception as e:
         print(f"[ERROR] Invalid prefetch request: {e}")
         return web.json_response({"error": "Invalid request format"}, status=400)
 
 
-async def start_file_server():
+async def start_file_server(selection_method):
     """
     Starts the file server.
     """
-    try:
+    PEER_SELECTION_METHOD = selection_method
+    try :
         ip = get_private_ip()  # Automatically fetch the VM's IP
         port = 6881
         app = web.Application()

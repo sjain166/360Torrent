@@ -32,6 +32,7 @@ TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
 OBSERVE_INTERVAL = 5
 HOT_THRESHOLD = 1 # To be decided by the user
 
+
 FILE_PATH = "tests/data"
 DATA_WAREHOUSE = "tests/data_warehouse"
 JSON_LOG_FILE_PATH = "tests/summary.json"

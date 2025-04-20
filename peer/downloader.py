@@ -258,7 +258,7 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
 
 async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
     try:
-        print(f"[INFO] Preparing to download file: {metadata.file_name}")
+        print(f"[INFO] Preparing to download file: {metadata.file_name} with {PEER_SELECTION_METHOD} method")
         print_file_metadata(metadata)
 
         start_time = time.time()
