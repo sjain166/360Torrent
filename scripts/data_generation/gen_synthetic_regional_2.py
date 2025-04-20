@@ -94,7 +94,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 
 # All timing units in ms
 
-minute = 60000 # TODO: I think events are being generated outside of the set interval
+minute = 60000
 EXPERIMENT_T = 15 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
@@ -244,7 +244,6 @@ for upload_time in ALL_UPLOAD_TIMES:
         # User will select content from its roster solely based off of the popularity in THEIR region.
         # Roster content is what will be the json that appears in the users events.
         # i.e. each request stored at a user, will only display the local popularity of that video
-
         push_content_to_roster(r_user, roster_content)
 
     INTERVAL = [] # Define a window of requests that will run before the next content arrival
@@ -332,7 +331,7 @@ test_files = ["video5", "video10", "video25"]
 
 
 if args.dbg_print:
-    print()
+    print("\n Eyeballing regional popularity trends... ")
     for file in test_files:
 
         file_upload = []
@@ -363,8 +362,6 @@ if args.dbg_print:
 
 # Timeline for debugging
 if args.visualize:
-
-    #TODO: Need to change this because now popularity field is a LIST of regional popularities
 
     fig, ax = plt.subplots(figsize=(10,2))
 
