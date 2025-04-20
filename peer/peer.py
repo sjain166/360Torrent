@@ -154,7 +154,7 @@ async def main():
         IP = get_private_ip()  # Automatically fetch the VM's IP
         PORT = 6881
         await register_peer(peer_id, IP, PORT, PEER_FILE_REGISTRY)
-        await file_server.start_file_server()
+        await file_server.start_file_server(PEER_SELECTION_METHOD)
         await prompt_user_action()  # Begin prompting user to download files repeatedly
     except Exception as e:
         print(f"[ERROR] Peer execution failed: {e}")
