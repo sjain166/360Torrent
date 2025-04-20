@@ -95,7 +95,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 # All timing units in ms
 
 minute = 60000 # TODO: I think events are being generated outside of the set interval
-EXPERIMENT_T = 5 * minute
+EXPERIMENT_T = 15 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
@@ -111,6 +111,11 @@ STAY_VS_LEAVE_RATIO = 1.0 / 1
 INTERVAL_T = EXPERIMENT_T # Want nodes to stay in for well over the duration of the experiment.
 exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
 exp.interval_t = INTERVAL_T / minute
+
+
+PARETO_ALPHA = 1.5
+PARETO_K = 1.0 # min inter-arrival time
+
 
 # Assume all 20 clients join, in the first 4th of the experiment
 INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/4, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
@@ -169,6 +174,7 @@ exp.request_intensity_per_min = REQUEST_INTENSITY * minute
 ALL_UPLOAD_TIMES = []
 
 for user in users:
+
     for t_join, t_leave in zip(user["join_times"], user["leave_times"]):
 
         total_uploads = UPLOAD_INTENSITY * (t_leave - t_join)
@@ -195,8 +201,6 @@ exp.zipf_a = ZIPF_ALPHA
 exp.zipf_size = ZIPF_SIZE
 exp.zipf_n = ZIPF_N
 
-# We're looping over users
-# BUT WE GO THROUGH ALL UPLOAD TIMES NONCHRONOLOGICALLY
 
 for upload_time in ALL_UPLOAD_TIMES:
 
@@ -210,15 +214,16 @@ for upload_time in ALL_UPLOAD_TIMES:
     file_num = ALL_UPLOAD_TIMES_idx
 
     seeder_client_id = user["id"]
-    seeder_client_reigon = user["region"]
-    popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
-    popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
+    seeder_client_region = user["region"]
+    # popularity = np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0] # Generate 1 sample from a zipf(1) distribution
+    # popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
     new_content = {
         "id": file_num,
         "name": f"video{file_num}",
         "seeder": seeder_client_id,
-        "seeder_region": seeder_client_reigon,
-        "popularity": popularity #probability of being selected
+        "seeder_region": seeder_client_region,
+        "popularity": {region[0]: np.clip(np.random.zipf(ZIPF_ALPHA, ZIPF_SIZE)[0], 1, ZIPF_N) 
+                       for region in regions} #Generate a unique popularity rank of this video, PER REGION
     }
 
     content_uploaded.append(new_content)
@@ -233,13 +238,17 @@ for upload_time in ALL_UPLOAD_TIMES:
 
     users_excluding_seeder = [u for u in users if u["id"] != seeder_client_id]
     for r_user in users_excluding_seeder:
-        push_content_to_roster(r_user, new_content)
+        # Maybe here, tweak the new_content passed in to only include the popularity for this user's region.
+        roster_content = new_content.copy()
+        roster_content["popularity"] = new_content["popularity"][r_user["region"]] 
+        # User will select content from its roster solely based off of the popularity in THEIR region.
+        # Roster content is what will be the json that appears in the users events.
+        # i.e. each request stored at a user, will only display the local popularity of that video
 
-        # Each time an upload happens, you want to increment the index towards the next upload
+        push_content_to_roster(r_user, roster_content)
 
     INTERVAL = [] # Define a window of requests that will run before the next content arrival
 
-    # How could I get a request for content, before I have called push on it?
 
     # print(f"{ALL_UPLOAD_TIMES=}")
     # print(f"{t_upload=}")
@@ -248,11 +257,9 @@ for upload_time in ALL_UPLOAD_TIMES:
         if t_upload < ut: # The first upload time that is <= to our t_upload
             next_upload_time = ut
             break
-    # print(f"{next_upload_time=}")
 
     if next_upload_time < EXPERIMENT_T:
         INTERVAL = [t_upload, next_upload_time] # Window of time between this, and the next upload
-        # arrival index is not getting incremented properly
     else:
         INTERVAL = [t_upload, EXPERIMENT_T]
 
@@ -287,7 +294,7 @@ for user in users:
             global_events.append({"user":user["id"], "event":event})
         else: time_outlier_events += 1
 global_events = sorted(global_events, key=lambda e: e["event"]["time"])
-print(f" Cropped {time_outlier_events} out of { len(global_events) + time_outlier_events} total global events. ")
+print(f" \nCropped {time_outlier_events} out of { len(global_events) + time_outlier_events} total global events. ")
 
 
 
@@ -305,7 +312,6 @@ with open(EVENT_FILE, "w") as fs:
     json.dump(global_events, fs, indent=1, cls=NumpyEncoder)
 
 # Testing churn. Verify that no user requests or downloads content outside of when they are "in" the system
-
 if args.dbg_print:
     for user in users:
         joined_intervals = list(zip(user["join_times"], user["leave_times"]))
@@ -320,9 +326,45 @@ if args.dbg_print:
 with open(TRACE_INFO_FILE, 'w') as fs:
     json.dump(vars(exp), fs, indent=1)
 
-# Timeline for debugging
+# Plotting regional request patterns to verify users are requesting videos according to regional popularities
 
+test_files = ["video5", "video10", "video25"]
+
+
+if args.dbg_print:
+    print()
+    for file in test_files:
+
+        file_upload = []
+        file_requests = []
+
+        for event_ in global_events:
+            event = event_["event"]
+            if event['type'] == 'upload':
+                if event['content']['name'] == file:
+                    file_upload.append(event_)
+            elif event['type'] == 'request':
+                if event['content']['name'] == file:
+                    file_requests.append(event_)
+
+
+        for region, _, region_users in regions:
+            regional_popularity = file_upload[0]["event"]["content"]["popularity"][region] # should only be of size 1
+            upload_time = file_upload[0]["event"]["time"]
+            print(f"File {file} seeded at t={int(upload_time)} with p={regional_popularity} in region {region}")
+
+            # print all requests for this file that happened within this region
+            for req in file_requests:
+                # get region requested originated in by looking up that user's region.
+                if req["user"] in region_users:
+                    print(f"User {req['user']} request, at t={int(req['event']['time'])}, at p={req['event']['content']['popularity']}")
+
+        print()
+
+# Timeline for debugging
 if args.visualize:
+
+    #TODO: Need to change this because now popularity field is a LIST of regional popularities
 
     fig, ax = plt.subplots(figsize=(10,2))
 
@@ -337,9 +379,15 @@ if args.visualize:
                 event_labels.append(
                     f" User {user['id']}\n {event['type']} "
                     )
-            else:
+            elif event["type"] == "upload":
+                # If seeding the content, future popularity is recorded as a global list
                 event_labels.append(
-                    f" User {user['id']}\n {event['type']}\n [{event["content"]["name"]}\n seeder {event["content"]["seeder"]} \n pop {int(event["content"]["popularity"])}] "
+                    f" User {user['id']}\n {event['type']}\n [{event['content']['name']}\n seeder {event['content']['seeder']} \n pop {event['content']['popularity']}] "
+                    )
+            else:
+                # If requesting content popularity is a single value local to the user's region
+                event_labels.append(
+                    f" User {user['id']}\n {event['type']}\n [{event['content']['name']}\n seeder {event['content']['seeder']} \n pop {int(event['content']['popularity'])}] "
                     )
             
         levels = []
