@@ -2,7 +2,7 @@ from aiohttp import web
 import os
 
 from scripts.utils import get_private_ip
-from scripts.utils import FILE_PATH
+from scripts.utils import FILE_PATH, DATA_WAREHOUSE
 from scripts.utils import handle_prefetch_chunks 
 
 # Rich Print
@@ -19,24 +19,24 @@ async def serve_file(request):
     Serves a specific chunk file to requesting peers.
     URL should be in format: /file?file_name=<file>&chunk_name=<chunk>
     """
-    file_name = request.query.get("file_name")
-    chunk_name = request.query.get("chunk_name")
+    # file_name = request.query.get("file_name")
+    # chunk_name = request.query.get("chunk_name")
 
-    if not file_name or not chunk_name:
-        return web.json_response(
-            {"error": "file_name and chunk_name must be provided"}, status=400
-        )
+    # if not file_name or not chunk_name:
+    #     return web.json_response(
+    #         {"error": "file_name and chunk_name must be provided"}, status=400
+    #     )
 
-    chunk_path = os.path.join(FILE_PATH, file_name, chunk_name)
-    print(f"[INFO] Requested chunk: {chunk_path}")
+    # chunk_path = os.path.join(FILE_PATH, file_name, chunk_name)
+    # print(f"[INFO] Requested chunk: {chunk_path}")
 
-    if not os.path.exists(chunk_path):
-        print(f"[ERROR] Chunk not found: {chunk_name} in {file_name}")
-        return web.json_response({"error": "Chunk not found"}, status=404)
+    # if not os.path.exists(chunk_path):
+    #     print(f"[ERROR] Chunk not found: {chunk_name} in {file_name}")
+    #     return web.json_response({"error": "Chunk not found"}, status=404)
 
+    chunk_path = os.path.join(DATA_WAREHOUSE, "chunk.webm")
     print(f"[INFO] Serving chunk: {chunk_path}")
     return web.FileResponse(chunk_path)
-
 
 
 async def handle_prefetch_chunk_request(request):

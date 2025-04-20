@@ -15,6 +15,8 @@ import builtins
 from rich import print as rich_print
 builtins.print = rich_print
 
+import networkx as nx
+
 
 ####################################################################################################
 
@@ -26,12 +28,28 @@ builtins.print = rich_print
 ####################################################################################################
 
 #TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
-TRACKER_URL = "http://10.251.161.205:8080"  # Replace with actual tracker IP
+TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
 OBSERVE_INTERVAL = 15
 HOT_THRESHOLD = 1 # To be decided by the user
 
 FILE_PATH = "tests/data"
+DATA_WAREHOUSE = "tests/data_warehouse"
 JSON_LOG_FILE_PATH = "tests/summary.json"
+TOTAL_FILE_SIZE = 1363089768
+EACH_CHUNK_SIZE = 113590814
+TOTAL_CHUNK_COUNT = 12
+
+
+LATENCY_GRAPH = nx.Graph()
+LATENCY_GRAPH.add_edge("WA", "NY", weight=65)
+LATENCY_GRAPH.add_edge("WA", "CA", weight=31)
+LATENCY_GRAPH.add_edge("WA", "FL", weight=79)
+LATENCY_GRAPH.add_edge("NY", "CA", weight=62)
+LATENCY_GRAPH.add_edge("NY", "FL", weight=34)
+LATENCY_GRAPH.add_edge("CA", "FL", weight=63)
+
+
+
 
 
 def get_private_ip():

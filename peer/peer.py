@@ -4,8 +4,8 @@ import os
 import sys
 import peer.file_server as file_server
 
-from scripts.class_object import FileMetadata
-from scripts.utils import get_private_ip, scrape_data_folder
+from scripts.class_object import FileMetadata, File, Chunk
+from scripts.utils import get_private_ip, scrape_data_folder, TOTAL_FILE_SIZE, EACH_CHUNK_SIZE, TOTAL_CHUNK_COUNT
 
 from peer.downloader import main as downloader
 from scripts.prints import print_registry_summary
@@ -69,22 +69,32 @@ async def get_file_metadata(file_name):
 async def handle_user_upload(folder_name):
     global PEER_FILE_REGISTRY 
 
-    WAREHOUSE_PATH = "/home/sj99/360Torrent/tests/data_warehouse"
-    TARGET_DATA_PATH = "/home/sj99/360Torrent/tests/data"
+    # WAREHOUSE_PATH = "/home/sj99/360Torrent/tests/data_warehouse"
+    # TARGET_DATA_PATH = "/home/sj99/360Torrent/tests/data"
 
-    source_path = os.path.join(WAREHOUSE_PATH, folder_name)
-    destination_path = os.path.join(TARGET_DATA_PATH, folder_name)
+    # source_path = os.path.join(WAREHOUSE_PATH, folder_name)
+    # destination_path = os.path.join(TARGET_DATA_PATH, folder_name)
 
-    if not os.path.exists(source_path):
-        print(f"[ERROR] Folder not found in warehouse: {source_path}")
-        return
+    # if not os.path.exists(source_path):
+    #     print(f"[ERROR] Folder not found in warehouse: {source_path}")
+    #     return
 
     try:
-        if os.path.exists(destination_path):
-            shutil.rmtree(destination_path)  # Clean if folder already exists
-        shutil.copytree(source_path, destination_path)
-        print(f"[INFO] Copied '{folder_name}' from warehouse to data folder.")
-        PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+        # if os.path.exists(destination_path):
+        #     shutil.rmtree(destination_path)  # Clean if folder already exists
+        # shutil.copytree(source_path, destination_path)
+        # print(f"[INFO] Copied '{folder_name}' from warehouse to data folder.")
+        # PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+
+        ############ NEW TESTING IMPLEMENTATION ############
+        file_name = folder_name
+        newFile = File(file_name, TOTAL_FILE_SIZE)
+        for i in range(0, TOTAL_CHUNK_COUNT + 1) :
+            chunk_name = f"chunk_{i}"
+            chunk_size = EACH_CHUNK_SIZE
+            newChunk = Chunk(chunk_name, chunk_size, download_status=False)
+            newFile.add_chunk(newChunk)
+        PEER_FILE_REGISTRY.append(newFile)
         await register_peer(VM_NAME, IP, PORT, PEER_FILE_REGISTRY)
         
     except Exception as e:
@@ -134,7 +144,10 @@ async def main():
     PEER_SELECTION_METHOD = sys.argv[1]
     print("[INFO] Peer Selection Criteria Method : " + PEER_SELECTION_METHOD)
 
-    PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+    ##################### SCRAPING TURNED OFF #####################
+    # PEER_FILE_REGISTRY = scrape_data_folder(VM_NAME, VM_REGION)
+    ###############################################################
+
     # PEER_FILE_REGISTRY = []
     peer_id = VM_NAME
     try:
