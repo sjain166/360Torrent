@@ -5,11 +5,11 @@
  "tracker_region": "W",
  "experiment_t_min": 15.0,
  "churn": true,
- "stay_v_leave_ratio": 1.0,
+ "stay_v_leave_ratio": 5.0,
  "interval_t": 15.0,
  "upload_intensity_per_min": 0.5,
  "request_intensity_per_min": 2.5,
- "n_files": 107,
+ "n_files": 9,
  "zipf_a": 1.01,
  "zipf_size": 1,
  "zipf_n": 10000

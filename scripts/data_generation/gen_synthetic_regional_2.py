@@ -106,19 +106,31 @@ N_files_generated = 0
 
 # These variables roughly correspond to "churn rate"
 # STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
-STAY_VS_LEAVE_RATIO = 1.0 / 1
+STAY_VS_LEAVE_RATIO = 5.0 / 1
 # INTERVAL_T = 4 * minute
 INTERVAL_T = EXPERIMENT_T # Want nodes to stay in for well over the duration of the experiment.
 exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
 exp.interval_t = INTERVAL_T / minute
 
 
-PARETO_ALPHA = 1.5
-PARETO_K = 1.0 # min inter-arrival time
+
+
+MIN_STAY_TIME = 1 * minute
+MEAN_STAY_TIME = EXPERIMENT_T/3
+MAX_STAY_TIME = EXPERIMENT_T
+MEAN_LEAVE_TIME = MEAN_STAY_TIME / STAY_VS_LEAVE_RATIO
+
+# PARETO_ALPHA = MEAN_STAY_TIME / (MEAN_STAY_TIME - MIN_STAY_TIME)
+# PARETO_K = MIN_STAY_TIME # min inter-arrival time
+
+#PARETO_ALPHA = 2.5 # 2.5 is very heavy tailed, i.e. a lot of sessions will fall far less than the mean
+PARETO_ALPHA = 5
+# PARETO_ALPHA = 50 # 50 is very tight, most sessions will fall at the mean
+PARETO_K = MEAN_STAY_TIME * (PARETO_ALPHA - 1) / PARETO_ALPHA
 
 
 # Assume all 20 clients join, in the first 4th of the experiment
-INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/4, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
+INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/1.25, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
 
 for i, user in enumerate(users):
     if len(user["join_times"]) == 0: user["join_times"].append(INITIAL_JOIN_TIMES[i])
@@ -128,9 +140,13 @@ for i, user in enumerate(users):
 
         if len(user["join_times"]) > len(user["leave_times"]): # Currently "haven't left"
             current_join_time = user["join_times"][-1]
-            mean_stay_time = STAY_VS_LEAVE_RATIO * INTERVAL_T
-            next_leave_time = current_join_time + np.random.normal(mean_stay_time, INTERVAL_T/4, 1)[0]
-            # Determine how long we stay "in" from a gaussian
+            # mean_stay_time = STAY_VS_LEAVE_RATIO * INTERVAL_T
+            # next_leave_time = current_join_time + np.random.normal(mean_stay_time, INTERVAL_T/4, 1)[0]
+            # # Determine how long we stay "in" from a gaussian
+
+            # This makes file uploads not happen :o
+            next_leave_time = current_join_time + np.clip((np.random.pareto(PARETO_ALPHA)+1) * PARETO_K, MIN_STAY_TIME, MAX_STAY_TIME)
+            # Determine how long we stay "in" from a pareto distribution
             user["leave_times"].append(next_leave_time)
 
         elif len(user["join_times"]) == len(user["leave_times"]): # Currently "left" the system
@@ -159,6 +175,19 @@ for i, user in enumerate(users):
             "time": t_leave,
             "content": None
         })
+
+
+if args.dbg_print:
+    print("\n Checking if Pareto session durations fall around the expected value ")
+
+    for user in users:
+        N_sessions_recorded = 0
+        session_durations_sum = 0
+        for t_join, t_leave in zip(user["join_times"], user["leave_times"]):
+            N_sessions_recorded +=1
+            session_durations_sum += t_leave - t_join
+
+        print(f" User {user["id"]}, mean session duration = {session_durations_sum/N_sessions_recorded/minute} | specified mean: {MEAN_STAY_TIME/minute}, min: {MIN_STAY_TIME/minute}")
 
 
 
@@ -327,7 +356,7 @@ with open(TRACE_INFO_FILE, 'w') as fs:
 
 # Plotting regional request patterns to verify users are requesting videos according to regional popularities
 
-test_files = ["video5", "video10", "video25"]
+test_files = ["video5", "video10"]
 
 
 if args.dbg_print:
@@ -346,7 +375,7 @@ if args.dbg_print:
                 if event['content']['name'] == file:
                     file_requests.append(event_)
 
-
+        print(file)
         for region, _, region_users in regions:
             regional_popularity = file_upload[0]["event"]["content"]["popularity"][region] # should only be of size 1
             upload_time = file_upload[0]["event"]["time"]
@@ -359,6 +388,7 @@ if args.dbg_print:
                     print(f"User {req['user']} request, at t={int(req['event']['time'])}, at p={req['event']['content']['popularity']}")
 
         print()
+
 
 # Timeline for debugging
 if args.visualize:
