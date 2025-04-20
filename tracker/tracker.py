@@ -238,6 +238,7 @@ async def get_chunk_peers(request):
 
 
 async def get_file_metadata(request):
+    global FILE_REQUEST_PER_REGION
     try:
         file_name = request.query.get("file_name")
         region = request.query.get("region")
@@ -264,6 +265,8 @@ async def get_file_metadata(request):
                 FILE_REQUEST_PER_REGION[region][file_name].append(0)  # Initialize with 0 requests
 
             FILE_REQUEST_PER_REGION[region][file_name][-1] += 1
+            if len(FILE_REQUEST_PER_REGION[region][file_name]) == 4:
+                FILE_REQUEST_PER_REGION[region][file_name].pop(0)
             print(f"[INFO] Request tracked: {region} -> {file_name} <- {peer_id}")
 
         print(FILE_REQUEST_PER_REGION)
@@ -318,28 +321,43 @@ async def command_peer_to_prefetch(peer: Peer, file_obj: File, num_chunks: int):
     except Exception as e:
         print(f"[ERROR] Exception while sending prefetch to {peer.id}: {e}")
 
+
+def get_request_derivative(requests):
+    if len(requests) < 3 :
+        return False
+    
+    for i in range(1, len(requests)):
+        derivative = requests[i] - requests[i - 1]
+        if derivative <= 0:
+            return False
+        
+    return True
+
+
 async def observe_timer():
     """
     Background task that logs time every 10 seconds.
     """
     while True:
+        for region, files in FILE_REQUEST_PER_REGION.items():
+            for file_name, requests in files.items():
+                print (f"[INFO] {region} -> {file_name} <- {requests}")
+                hot = get_request_derivative(requests)
+                if hot:
+                    print(f"[INFO] Hot file detected: {file_name} in region {region}")
+                    for peer in REGION_PEER_MAP.get(region, []):
+                        file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
+                        if file_obj:
+                            # Send prefetch command to the peer
+                            await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
+                        else :
+                            print(f"[ERROR] File {file_name} not found in registry.")
         
         for region, files in FILE_REQUEST_PER_REGION.items():
             for file_name in files:
                 FILE_REQUEST_PER_REGION[region][file_name].append(0)
-        
-        for region, files in FILE_REQUEST_PER_REGION.items():
-            for file_name, requests in files.items():
-                derivative_request_counts = np.gradient(requests)
-                print(f"[INFO] Derivative requests {requests} counts for {file_name} in region {region}: {derivative_request_counts}")
-                hot = derivative_request_counts[-1] > HOT_THRESHOLD
-                if hot:
-                    print(f"[INFO] Hot file detected: {file_name} in region {region}")
-                    for peer in REGION_PEER_MAP.get(region, []):
-                        file_obj = TRACKER_FILE_REGISTRY.get(file_name)
-                        await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
-
-
+            if len(FILE_REQUEST_PER_REGION[region][file_name]) == 4:
+                FILE_REQUEST_PER_REGION[region][file_name].pop(0)
         await asyncio.sleep(OBSERVE_INTERVAL)
 
 app = web.Application()
@@ -353,6 +371,7 @@ app.router.add_post("/update_chunk_host", update_chunk_host)
 if __name__ == "__main__":
     try:
         global PEER_SELECTION_CRITERIA
+        
         PEER_SELECTION_CRITERIA = sys.argv[1]
         print("[INFO] Peer Selection Criteria Activated : " + PEER_SELECTION_CRITERIA)
 
