@@ -41,13 +41,6 @@ EACH_CHUNK_SIZE = 113590814
 TOTAL_CHUNK_COUNT = 12
 
 
-LATENCY_GRAPH = nx.Graph()
-LATENCY_GRAPH.add_edge("WA", "NY", weight=65)
-LATENCY_GRAPH.add_edge("WA", "CA", weight=31)
-LATENCY_GRAPH.add_edge("WA", "FL", weight=79)
-LATENCY_GRAPH.add_edge("NY", "CA", weight=62)
-LATENCY_GRAPH.add_edge("NY", "FL", weight=34)
-LATENCY_GRAPH.add_edge("CA", "FL", weight=63)
 
 
 
