@@ -380,7 +380,8 @@ if __name__ == "__main__":
         print(f"[INFO] Tracker Server Started on {my_ip}:8080")
 
         async def run_tracker():
-            asyncio.create_task(observe_timer())  # Background timer
+            if PEER_SELECTION_CRITERIA == "GF" :
+                asyncio.create_task(observe_timer())  # Background timer
             runner = web.AppRunner(app)
             await runner.setup()
             site = web.TCPSite(runner, my_ip, 8080)
