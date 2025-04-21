@@ -23,6 +23,21 @@
         path: /home/sj99/360Torrent/tests/data/
         state: directory
         mode: '0755'
+    
+    # - name: Remove all video folders except video0
+    #   ansible.builtin.shell: |
+    #     find /home/sj99/360Torrent/tests/data_warehouse -mindepth 1 -maxdepth 1 -type d ! -name "video0" -exec rm -rf {} +
+    #   args:
+    #     executable: /bin/bash
+
+    # # STEP 4: Move and rename chunk01.webm → chunk.webm in data_warehouse
+    # - name: Move and rename chunk01.webm to chunk.webm
+    #   ansible.builtin.shell: |
+    #     mv /home/sj99/360Torrent/tests/data_warehouse/video0/chunk01.webm /home/sj99/360Torrent/tests/data_warehouse/chunk.webm
+    #   args:
+    #     executable: /bin/bash
+
+  
 
     # - name: Remove ~/app
     #   ansible.builtin.file:
