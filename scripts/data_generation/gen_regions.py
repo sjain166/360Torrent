@@ -28,6 +28,8 @@ def define_regional_userbase_and_delay(regions, N_CLIENTS, net, NET_FILE, CODE_F
                 "{regions[2][0]}": get_VMs_by_id({regions[2][2]}),
                 "{regions[3][0]}": get_VMs_by_id({regions[3][2]}) }}
 
+    local_delay = 10 # Define delay within regions
+
     # Define delays between regions
     net = nx.Graph(data=True)
     net.add_edge("W","N", weight={ net.get_edge_data('W','N')['weight'] })

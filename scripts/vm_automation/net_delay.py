@@ -1,12 +1,14 @@
 import os
+import networkx as nx
 
 USER = os.environ["UI_USER"]
 PASS = os.environ["UI_PASS"]
 
-def create_network_delay(TARGET_VMs, net, regions):
+def create_network_delay(TARGET_VMs, net, local_net, regions):
 
     BASE_TC_BANDS = 3
-    N_TC_BANDS = len(net.edges()) + BASE_TC_BANDS
+    LOCAL_DELAY_TC_BANDS = 1
+    N_TC_BANDS = len(net.edges()) + BASE_TC_BANDS + LOCAL_DELAY_TC_BANDS
     # Each pair of regions, maps to its own network band
 
     for vm in TARGET_VMs:
@@ -14,9 +16,13 @@ def create_network_delay(TARGET_VMs, net, regions):
         print(vm)
         c.sudo(f"tc qdisc replace dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
 
+    # Initialize by putting all VMs at a local delay w.r.t to each other
+    
+    # I think this actually worked but it stacked it twice, one from each.
+    # so currently is 20
 
     # Need to make sure this doesn't run the delay command bidirectional
-    for delay_id, (src, dst, delay) in enumerate(net.edges(data=True), start = BASE_TC_BANDS+1):
+    for delay_id, (src, dst, delay) in enumerate(net.edges(data=True), start = BASE_TC_BANDS+LOCAL_DELAY_TC_BANDS+1):
         for vm1 in regions[src]:
             c = vm1["connection"]
             # Set up the traffic band that corresponds to this delay
