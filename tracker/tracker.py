@@ -5,8 +5,6 @@ from scripts.utils import get_private_ip, OBSERVE_INTERVAL, HOT_THRESHOLD
 import aiohttp
 from collections import defaultdict
 import asyncio
-import datetime
-import numpy as np
 
 
 # Rich Print
