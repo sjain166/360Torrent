@@ -172,6 +172,7 @@ if __name__ == "__main__":
     # so N_TC_BANDS is interpreted in decimal,
     # but the actual band is interpreted in hex
     # so if I want 10 hex (16 decimal) to be a valid band, I need to create 17 bands?
+    # WHY ON EARTH WOULD YOU MAKE THE NUMBER OF BANDS BE INTERPRETED AS INT, BUT THE BAND INDICES HEX
 
     handle = 5
 

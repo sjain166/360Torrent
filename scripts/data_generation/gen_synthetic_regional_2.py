@@ -27,8 +27,17 @@ args = parser.parse_args()
 exp = SimpleNamespace() # Track constants used to generate this trace
 exp.trace_name = args.trace_name
 
+print(exp.trace_name)
+
+
+# NOTE: This path is from where your current path is in shell! not from where the file is.
 DATA_DIR = f"../../data/final/{args.trace_name}_workload/"
-os.makedirs(DATA_DIR, exist_ok=True)
+try:
+    print(f"{os.path.abspath(DATA_DIR)=}")
+    os.makedirs(DATA_DIR, exist_ok=True)
+except OSError as e:
+    print(e)
+
 NET_FILE = DATA_DIR + "synthetic_regional_delay.csv"
 CODE_FILE = DATA_DIR + "paste_delay.txt"
 EVENT_FILE = DATA_DIR + "events.json"
@@ -81,11 +90,14 @@ define_regional_userbase_and_delay(regions, N_CLIENTS+1, net, NET_FILE, CODE_FIL
 exp.tracker_id = tracker["id"]
 exp.tracker_region = tracker["region"]
 
-# Write user regions to file
-with open(USER_FILE, 'w') as fs:
-    for user in users:
-        fs.write(f"{user['id']}, {user['region']}\n")
-
+try:
+    # Write user regions to file
+    with open(USER_FILE, 'w') as fs:
+        for user in users:
+            fs.write(f"{user['id']}, {user['region']}\n")
+except Exception as e:
+    print(f"Failed to write file: {e}")
+    
 
 users.pop(0) # Remove tracker after you're done writing user files and regional delay files
 
@@ -95,7 +107,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 # All timing units in ms
 
 minute = 60000
-EXPERIMENT_T = 25 * minute
+EXPERIMENT_T = 5 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
@@ -104,16 +116,16 @@ N_files_generated = 0
 
 # - Generate client sessions from a Pareto distribution
 
-MIN_STAY_TIME = 3 * minute
-MEAN_STAY_TIME = 5 * minute
+MIN_STAY_TIME = 6 * minute
+MEAN_STAY_TIME = 6 * minute
 MAX_STAY_TIME = EXPERIMENT_T
 MEAN_LEAVE_TIME = 2 * minute
 STD_LEAVE_TIME = 0.5 * minute
 
-exp.min_stay_t = MIN_STAY_TIME
-exp.mean_stay_t = MEAN_STAY_TIME
-exp.mean_leave_t = MEAN_LEAVE_TIME
-exp.std_leave_t = STD_LEAVE_TIME
+exp.min_stay_t = MIN_STAY_TIME / minute
+exp.mean_stay_t = MEAN_STAY_TIME / minute
+exp.mean_leave_t = MEAN_LEAVE_TIME / minute
+exp.std_leave_t = STD_LEAVE_TIME / minute
 
 #PARETO_ALPHA = 2.5 # 2.5 is very heavy tailed, i.e. a lot of sessions will fall far less than the mean
 PARETO_ALPHA = 5
@@ -123,9 +135,11 @@ PARETO_K = MEAN_STAY_TIME * (PARETO_ALPHA - 1) / PARETO_ALPHA
 exp.pareto_alpha = PARETO_ALPHA
 exp.pareto_k = PARETO_K
 
+JOIN_T_LIM = EXPERIMENT_T/4
+exp.initial_join_t_max = JOIN_T_LIM
 
 # Assume all 20 clients join, in the first 4th of the experiment
-INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/2, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
+INITIAL_JOIN_TIMES = np.random.uniform(0, JOIN_T_LIM, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
 
 for i, user in enumerate(users):
     if len(user["join_times"]) == 0: user["join_times"].append(INITIAL_JOIN_TIMES[i])
@@ -332,8 +346,11 @@ class NumpyEncoder(json.JSONEncoder):
         elif isinstance(obj, np.ndarray):  # Handles numpy arrays
             return obj.tolist()
         return super().default(obj)
-with open(EVENT_FILE, "w") as fs:
-    json.dump(global_events, fs, indent=1, cls=NumpyEncoder)
+try:
+    with open(EVENT_FILE, "w") as fs:
+        json.dump(global_events, fs, indent=1, cls=NumpyEncoder)
+except Exception as e:
+    print(f"Failed to write file: {e}")
 
 # Testing churn. Verify that no user requests or downloads content outside of when they are "in" the system
 if args.dbg_print:

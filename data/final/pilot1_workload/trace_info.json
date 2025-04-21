@@ -1,0 +1,21 @@
+{
+ "trace_name": "pilot1",
+ "n_clients": 19,
+ "tracker_id": 1,
+ "tracker_region": "W",
+ "experiment_t_min": 5.0,
+ "churn": true,
+ "min_stay_t": 6.0,
+ "mean_stay_t": 6.0,
+ "mean_leave_t": 2.0,
+ "std_leave_t": 0.5,
+ "pareto_alpha": 5,
+ "pareto_k": 288000.0,
+ "initial_join_t_max": 75000.0,
+ "upload_intensity_per_min": 0.5,
+ "request_intensity_per_min": 2.5,
+ "n_files": 29,
+ "zipf_a": 1.01,
+ "zipf_size": 1,
+ "zipf_n": 10000
+}
