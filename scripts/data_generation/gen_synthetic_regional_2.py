@@ -95,42 +95,37 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 # All timing units in ms
 
 minute = 60000
-EXPERIMENT_T = 15 * minute
+EXPERIMENT_T = 25 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
 
 N_files_generated = 0
 
-# - Generate client arrival/ times from a poisson distribution
+# - Generate client sessions from a Pareto distribution
 
-# These variables roughly correspond to "churn rate"
-# STAY_VS_LEAVE_RATIO = 1.5 / 1 # clients spend a bit more time in the system than outside of it.
-STAY_VS_LEAVE_RATIO = 5.0 / 1
-# INTERVAL_T = 4 * minute
-INTERVAL_T = EXPERIMENT_T # Want nodes to stay in for well over the duration of the experiment.
-exp.stay_v_leave_ratio = STAY_VS_LEAVE_RATIO
-exp.interval_t = INTERVAL_T / minute
-
-
-
-
-MIN_STAY_TIME = 1 * minute
-MEAN_STAY_TIME = EXPERIMENT_T/3
+MIN_STAY_TIME = 3 * minute
+MEAN_STAY_TIME = 5 * minute
 MAX_STAY_TIME = EXPERIMENT_T
-MEAN_LEAVE_TIME = MEAN_STAY_TIME / STAY_VS_LEAVE_RATIO
+MEAN_LEAVE_TIME = 2 * minute
+STD_LEAVE_TIME = 0.5 * minute
 
-# PARETO_ALPHA = MEAN_STAY_TIME / (MEAN_STAY_TIME - MIN_STAY_TIME)
-# PARETO_K = MIN_STAY_TIME # min inter-arrival time
+exp.min_stay_t = MIN_STAY_TIME
+exp.mean_stay_t = MEAN_STAY_TIME
+exp.mean_leave_t = MEAN_LEAVE_TIME
+exp.std_leave_t = STD_LEAVE_TIME
 
 #PARETO_ALPHA = 2.5 # 2.5 is very heavy tailed, i.e. a lot of sessions will fall far less than the mean
 PARETO_ALPHA = 5
 # PARETO_ALPHA = 50 # 50 is very tight, most sessions will fall at the mean
 PARETO_K = MEAN_STAY_TIME * (PARETO_ALPHA - 1) / PARETO_ALPHA
 
+exp.pareto_alpha = PARETO_ALPHA
+exp.pareto_k = PARETO_K
+
 
 # Assume all 20 clients join, in the first 4th of the experiment
-INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/1.25, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
+INITIAL_JOIN_TIMES = np.random.uniform(0, EXPERIMENT_T/2, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
 
 for i, user in enumerate(users):
     if len(user["join_times"]) == 0: user["join_times"].append(INITIAL_JOIN_TIMES[i])
@@ -140,19 +135,13 @@ for i, user in enumerate(users):
 
         if len(user["join_times"]) > len(user["leave_times"]): # Currently "haven't left"
             current_join_time = user["join_times"][-1]
-            # mean_stay_time = STAY_VS_LEAVE_RATIO * INTERVAL_T
-            # next_leave_time = current_join_time + np.random.normal(mean_stay_time, INTERVAL_T/4, 1)[0]
-            # # Determine how long we stay "in" from a gaussian
-
-            # This makes file uploads not happen :o
             next_leave_time = current_join_time + np.clip((np.random.pareto(PARETO_ALPHA)+1) * PARETO_K, MIN_STAY_TIME, MAX_STAY_TIME)
             # Determine how long we stay "in" from a pareto distribution
             user["leave_times"].append(next_leave_time)
 
         elif len(user["join_times"]) == len(user["leave_times"]): # Currently "left" the system
             current_leave_time = user["leave_times"][-1]
-            mean_leave_time = INTERVAL_T
-            next_join_time = current_leave_time + np.random.normal(mean_leave_time, INTERVAL_T/4, 1)[0]
+            next_join_time = current_leave_time + np.random.normal(MEAN_LEAVE_TIME, STD_LEAVE_TIME, 1)[0]
             # Determine how long we stay "out" from a gaussian
             user["join_times"].append(next_join_time)
 
@@ -206,13 +195,20 @@ for user in users:
 
     for t_join, t_leave in zip(user["join_times"], user["leave_times"]):
 
+        # print(f" Interval {(t_join, t_leave)=} T={t_leave-t_join}")
+
         total_uploads = UPLOAD_INTENSITY * (t_leave - t_join)
-        uploads_in_interval = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(total_uploads)))
-        user["upload_times"] += list(uploads_in_interval[ (t_join < uploads_in_interval) & (uploads_in_interval < t_leave)])
+        uploads_in_interval = np.cumsum(np.random.exponential(1/UPLOAD_INTENSITY, int(total_uploads))) + t_join
+
+        added_uploads = list(uploads_in_interval[ (t_join < uploads_in_interval) & (uploads_in_interval < t_leave)])
+        # print(f" {added_uploads=}")
+        user["upload_times"] += added_uploads
 
         total_requests = REQUEST_INTENSITY * (t_leave - t_join)
-        requests_in_interval = np.cumsum(np.random.exponential(1/REQUEST_INTENSITY, int(total_requests)))
-        user["request_times"] += list(requests_in_interval[ (t_join < requests_in_interval) & (requests_in_interval < t_leave)])
+        requests_in_interval = np.cumsum(np.random.exponential(1/REQUEST_INTENSITY, int(total_requests))) + t_join
+        added_requests = list(requests_in_interval[ (t_join < requests_in_interval) & (requests_in_interval < t_leave)])
+        # print(f" {added_requests=}")
+        user["request_times"] += added_requests
 
     ALL_UPLOAD_TIMES += user["upload_times"] # Build this array so that you can easily define an interval between arrival i and arrival i+1
 
