@@ -25,7 +25,7 @@ TARGET_VMS = [
             connect_kwargs={"password": PASS},
         ),
     }
-    for i in range(15, 21)
+    for i in range(2, 21)
 ]
 
 from worker import run_simple_task

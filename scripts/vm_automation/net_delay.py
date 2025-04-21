@@ -11,10 +11,10 @@ def create_network_delay(TARGET_VMs, net, local_net, regions):
     N_TC_BANDS = len(net.edges()) + BASE_TC_BANDS + LOCAL_DELAY_TC_BANDS
     # Each pair of regions, maps to its own network band
 
-    for vm in TARGET_VMs:
-        c = vm["connection"]
-        print(vm)
-        c.sudo(f"tc qdisc replace dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
+    # for vm in TARGET_VMs:
+    #     c = vm["connection"]
+    #     print(vm)
+    #     c.sudo(f"tc qdisc replace dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
 
     # Initialize by putting all VMs at a local delay w.r.t to each other
     

@@ -41,7 +41,7 @@ TARGET_VMS = [
             connect_kwargs={"password": PASS},
         ),
     }
-    for i in range(15, 21)
+    for i in range(2, 21) # was this 1 or 21?
 ]
 
 
@@ -112,14 +112,16 @@ if __name__ == "__main__":
     # # Map VMs to their region
 
 
-    regions = { 
-                "N": get_VMs_by_id([15]),
-                "C": get_VMs_by_id([16, 17]),
-                "F": get_VMs_by_id([18, 19]) }
-    
-    
+    regions = { "W": get_VMs_by_id([0, 1, 2, 3, 4]),
+                "N": get_VMs_by_id([5, 6, 7, 8, 9]),
+                "C": get_VMs_by_id([10, 11, 12, 13, 14]),
+                "F": get_VMs_by_id([15, 16, 17, 18, 19]) }
+
     # Define delays between regions
     net = nx.Graph(data=True)
+    net.add_edge("W","N", weight=65)
+    net.add_edge("W","C", weight=31)
+    net.add_edge("W","F", weight=79)
     net.add_edge("N","C", weight=62)
     net.add_edge("N","F", weight=34)
     net.add_edge("C","F", weight=63)
@@ -140,23 +142,31 @@ if __name__ == "__main__":
     for vm in TARGET_VMS:
         c = vm["connection"]
         print(vm)
-        c.sudo(f"tc qdisc replace dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
+        c.sudo(f"tc qdisc add dev ens33 root handle 1: prio bands {N_TC_BANDS}", password=PASS)
 
-    handle_idx = 5
+    handle_idx = 50
 
+    create_network_delay(TARGET_VMS, net, local_net, regions)
 
     for delay_id, (src, dst, delay) in enumerate(net.edges(data=True), start = BASE_TC_BANDS+LOCAL_DELAY_TC_BANDS+1):
         for vm1 in regions[src]:
             c = vm1["connection"]
             # Set up the traffic band that corresponds to this delay
             print(vm1)
-            print(f"tc qdisc add dev ens33 parent 1:{delay_id} handle {handle_idx}: netem delay {delay["weight"]}ms")
-            c.sudo(f"tc qdisc replace dev ens33 parent 1:{delay_id} handle {handle_idx}: netem delay {delay["weight"]}ms", password=PASS)
+
+            # Changed between handle_idx and 2+delay_id
+            # so the problem happens when we jump from delay_id 0 to delay_id 10
+            str = f"tc qdisc add dev ens33 parent 1:{delay_id} handle {handle_idx}: netem delay {delay['weight']}ms"
+            print(str)
+            c.sudo(str, password=PASS)
             handle_idx += 1
             # Map all VMs in the dst_region to this traffic band
             for vm2 in regions[dst]:
-                c.sudo(f"tc filter replace dev ens33 parent 1:0  prio 1 u32 match ip dst {vm2["ip"]} flowid 1:{delay_id}", password=PASS)
+                str= f"tc filter add dev ens33 parent 1:0  prio 1 u32 match ip dst {vm2['ip']} flowid 1:{delay_id}"
+                print(str)
+                c.sudo(str, password=PASS)
 
+    # Apparently tc handles are interpreted as hex
     
     # When you have two filters for the same ip, the lower handle one wins.
     # So we need to set the regional delays at a lower handle (higher priority)
@@ -167,9 +177,11 @@ if __name__ == "__main__":
         delay_id = BASE_TC_BANDS+LOCAL_DELAY_TC_BANDS
 
         print(vm1)
-        print(f"tc qdisc add dev ens33 parent 1:{delay_id} handle {handle_idx}: netem delay {local_delay}ms")
-        c.sudo(f"tc qdisc replace dev ens33 parent 1:{delay_id} handle {handle_idx}: netem delay {local_delay}ms", password=PASS)
-        print(f"tc filter add dev ens33 parent 1:0  prio 1 u32 match ip dst {vm2["ip"]} flowid 1:{delay_id}")
-        c.sudo(f"tc filter add dev ens33 parent 1:0  prio 1 u32 match ip dst {vm2["ip"]} flowid 1:{delay_id}", password=PASS)
+        str = f"tc qdisc add dev ens33 parent 1:{delay_id} handle {handle_idx}: netem delay {local_delay}ms"
+        print(str)
+        c.sudo(str, password=PASS)
+        str = f"tc filter add dev ens33 parent 1:0  prio 1 u32 match ip dst {vm2['ip']} flowid 1:{delay_id}"
+        print(str)
+        c.sudo(str, password=PASS)
 
         handle_idx +=1
