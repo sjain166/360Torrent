@@ -126,7 +126,7 @@ def start_peer_on_vm(host, i, total):
 
 # ---- MAIN SIMULATION DRIVER ----
 def run_event_schedule():
-    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/final/pilot1_workload/events.json"
+    EVENT_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/final/check1_workload/events.json"
     with open(EVENT_FILE) as f:
         events = json.load(f)
 

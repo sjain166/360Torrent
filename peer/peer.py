@@ -95,6 +95,7 @@ async def handle_user_upload(folder_name):
             newChunk = Chunk(chunk_name, chunk_size, download_status=False)
             newFile.add_chunk(newChunk)
         PEER_FILE_REGISTRY.append(newFile)
+        print(f"[INFO] Copied '{folder_name}' from warehouse to data folder.")
         await register_peer(VM_NAME, IP, PORT, PEER_FILE_REGISTRY)
         
     except Exception as e:
