@@ -294,7 +294,7 @@ async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
         print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))
-        append_file_download_summary_to_json(metadata, total_time)
+        append_file_download_summary_to_json(metadata, total_time, start_time)
 
     except Exception as e:
         print(f"[ERROR] Peer Execution Failed: {e}")

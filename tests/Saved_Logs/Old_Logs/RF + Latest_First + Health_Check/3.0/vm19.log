@@ -1,2145 +1,0 @@
-[INFO] Max threads available for downloading: 1
-<class 'str'>
-[INFO] Registration Response: {'status': 'registered', 'peers': {'vm03': {'id': 
-'vm03', 'ip': '172.22.155.28', 'port': 6881, 'region': 'WA'}, 'vm02': {'id': 
-'vm02', 'ip': '172.22.153.48', 'port': 6881, 'region': 'WA'}, 'vm04': {'id': 
-'vm04', 'ip': '172.22.151.8', 'port': 6881, 'region': 'WA'}, 'vm06': {'id': 
-'vm06', 'ip': '172.22.155.29', 'port': 6881, 'region': 'NY'}, 'vm05': {'id': 
-'vm05', 'ip': '172.22.153.49', 'port': 6881, 'region': 'WA'}, 'vm08': {'id': 
-'vm08', 'ip': '172.22.153.50', 'port': 6881, 'region': 'NY'}, 'vm07': {'id': 
-'vm07', 'ip': '172.22.151.9', 'port': 6881, 'region': 'NY'}, 'vm09': {'id': 
-'vm09', 'ip': '172.22.155.30', 'port': 6881, 'region': 'NY'}, 'vm10': {'id': 
-'vm10', 'ip': '172.22.151.10', 'port': 6881, 'region': 'NY'}, 'vm11': {'id': 
-'vm11', 'ip': '172.22.153.51', 'port': 6881, 'region': 'CA'}, 'vm12': {'id': 
-'vm12', 'ip': '172.22.155.31', 'port': 6881, 'region': 'CA'}, 'vm14': {'id': 
-'vm14', 'ip': '172.22.153.52', 'port': 6881, 'region': 'CA'}, 'vm13': {'id': 
-'vm13', 'ip': '172.22.151.11', 'port': 6881, 'region': 'CA'}, 'vm15': {'id': 
-'vm15', 'ip': '172.22.155.32', 'port': 6881, 'region': 'CA'}, 'vm16': {'id': 
-'vm16', 'ip': '172.22.151.12', 'port': 6881, 'region': 'FL'}, 'vm17': {'id': 
-'vm17', 'ip': '172.22.153.53', 'port': 6881, 'region': 'FL'}, 'vm18': {'id': 
-'vm18', 'ip': '172.22.155.33', 'port': 6881, 'region': 'FL'}, 'vm19': {'id': 
-'vm19', 'ip': '172.22.151.13', 'port': 6881, 'region': 'FL'}}}
-[INFO] File Server Started on 172.22.151.13:6881
-
-[OPTIONS] Select an action:
-1. Get available files
-2. Download a file
-3. Exit
->> Enter file name: >> [INFO] You selected to download: Pacific_Rim
-[INFO] Preparing to download file: Pacific_Rim
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-| File Name   | File Size (Bytes)   | Chunk Name   |   Chunk Size (Bytes) | 
-Download Status   |
-+=============+=====================+==============+======================+=====
-==============+
-| Pacific_Rim | 1363089768          | chunk02.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk05.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk11.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk12.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk03.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk04.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk06.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk08.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk01.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk07.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk09.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk10.webm |            113590814 | 
-Pending           |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.20s.
-RESPONSIVE
-
-Chunk: chunk05.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A
-Chunk: chunk05.webm:   0%|          | 43.0k/114M [00:00<08:39, 219kB/s][A
-Chunk: chunk05.webm:   0%|          | 74.9k/114M [00:00<07:15, 260kB/s][A
-Chunk: chunk05.webm:   0%|          | 166k/114M [00:00<03:45, 503kB/s] [A
-Chunk: chunk05.webm:   0%|          | 349k/114M [00:00<01:57, 963kB/s][A
-Chunk: chunk05.webm:   1%|          | 713k/114M [00:00<01:00, 1.85MB/s][A
-Chunk: chunk05.webm:   1%|          | 1.25M/114M [00:00<00:37, 2.98MB/s][A
-Chunk: chunk05.webm:   2%|▏         | 2.52M/114M [00:00<00:18, 6.03MB/s][A
-Chunk: chunk05.webm:   4%|▎         | 4.14M/114M [00:00<00:11, 9.18MB/s][A
-Chunk: chunk05.webm:   7%|▋         | 7.83M/114M [00:00<00:05, 17.7MB/s][A
-Chunk: chunk05.webm:  10%|█         | 11.5M/114M [00:01<00:04, 23.3MB/s][A
-Chunk: chunk05.webm:  13%|█▎        | 14.5M/114M [00:01<00:03, 25.6MB/s][A
-Chunk: chunk05.webm:  15%|█▌        | 17.5M/114M [00:01<00:03, 26.9MB/s][A
-Chunk: chunk05.webm:  18%|█▊        | 20.8M/114M [00:01<00:03, 28.4MB/s][A
-Chunk: chunk05.webm:  22%|██▏       | 24.6M/114M [00:01<00:02, 30.8MB/s][A
-Chunk: chunk05.webm:  25%|██▍       | 27.9M/114M [00:01<00:02, 31.5MB/s][A
-Chunk: chunk05.webm:  28%|██▊       | 31.6M/114M [00:01<00:02, 32.8MB/s][A
-Chunk: chunk05.webm:  31%|███       | 35.3M/114M [00:01<00:02, 34.2MB/s][A
-Chunk: chunk05.webm:  34%|███▍      | 38.7M/114M [00:01<00:02, 34.1MB/s][A
-Chunk: chunk05.webm:  37%|███▋      | 42.3M/114M [00:02<00:02, 34.6MB/s][A
-Chunk: chunk05.webm:  40%|████      | 45.9M/114M [00:02<00:01, 34.9MB/s][A
-Chunk: chunk05.webm:  43%|████▎     | 49.4M/114M [00:02<00:01, 34.7MB/s][A
-Chunk: chunk05.webm:  47%|████▋     | 53.0M/114M [00:02<00:01, 35.2MB/s][A
-Chunk: chunk05.webm:  50%|████▉     | 56.5M/114M [00:02<00:01, 34.7MB/s][A
-Chunk: chunk05.webm:  53%|█████▎    | 60.0M/114M [00:02<00:01, 34.6MB/s][A
-Chunk: chunk05.webm:  56%|█████▌    | 63.5M/114M [00:02<00:01, 34.4MB/s][A
-Chunk: chunk05.webm:  59%|█████▉    | 66.9M/114M [00:02<00:01, 34.2MB/s][A
-Chunk: chunk05.webm:  62%|██████▏   | 70.4M/114M [00:03<00:03, 10.8MB/s][A
-Chunk: chunk05.webm:  64%|██████▍   | 72.9M/114M [00:03<00:03, 12.5MB/s][A
-Chunk: chunk05.webm:  67%|██████▋   | 75.9M/114M [00:03<00:02, 14.9MB/s][A
-Chunk: chunk05.webm:  69%|██████▉   | 78.7M/114M [00:03<00:02, 17.2MB/s][A
-Chunk: chunk05.webm:  72%|███████▏  | 81.7M/114M [00:03<00:01, 19.6MB/s][A
-Chunk: chunk05.webm:  75%|███████▍  | 84.7M/114M [00:04<00:01, 21.9MB/s][A
-Chunk: chunk05.webm:  77%|███████▋  | 87.5M/114M [00:04<00:01, 23.4MB/s][A
-Chunk: chunk05.webm:  80%|███████▉  | 90.7M/114M [00:04<00:00, 25.5MB/s][A
-Chunk: chunk05.webm:  82%|████████▏ | 93.7M/114M [00:04<00:00, 26.6MB/s][A
-Chunk: chunk05.webm:  85%|████████▌ | 96.8M/114M [00:04<00:00, 27.7MB/s][A
-Chunk: chunk05.webm:  88%|████████▊ | 100M/114M [00:04<00:00, 28.9MB/s] [A
-Chunk: chunk05.webm:  91%|█████████ | 103M/114M [00:04<00:00, 29.3MB/s][A
-Chunk: chunk05.webm:  93%|█████████▎| 106M/114M [00:04<00:00, 29.3MB/s][A
-Chunk: chunk05.webm:  96%|█████████▌| 109M/114M [00:04<00:00, 29.6MB/s][A
-Chunk: chunk05.webm:  99%|█████████▉| 112M/114M [00:04<00:00, 29.7MB/s][AChunk: chunk05.webm: 100%|██████████| 114M/114M [00:04<00:00, 22.8MB/s]
-[INFO] Downloaded chunk05.webm from 172.22.151.11
-[INFO] Tracker updated with new host for chunk05.webm
-[INFO] Tracker updated with new host for chunk05.webm
-[ERROR] Failed to download chunk: chunk05.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 1.81s.
-BUSY
-[INFO] ℹ️ Peer is busy, trying next: {'ip': '172.22.155.29', 'port': 6881}
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.00s.
-RESPONSIVE
-Chunk: chunk02.webm:   0%|          | 0.00/114M [00:00<?, ?B/s]Chunk: chunk02.webm:  15%|█▍        | 16.6M/114M [00:00<00:00, 166MB/s]Chunk: chunk02.webm:  30%|██▉       | 33.7M/114M [00:00<00:00, 169MB/s]Chunk: chunk02.webm:  45%|████▌     | 51.5M/114M [00:00<00:00, 173MB/s]Chunk: chunk02.webm:  61%|██████    | 68.8M/114M [00:00<00:00, 173MB/s]Chunk: chunk02.webm:  76%|███████▌  | 86.5M/114M [00:00<00:00, 174MB/s]Chunk: chunk02.webm:  92%|█████████▏| 104M/114M [00:00<00:00, 176MB/s] Chunk: chunk02.webm: 100%|██████████| 114M/114M [00:00<00:00, 173MB/s]
-[INFO] Downloaded chunk02.webm from 172.22.153.53
-[INFO] Tracker updated with new host for chunk02.webm
-[INFO] Tracker updated with new host for chunk02.webm
-[ERROR] Failed to download chunk: chunk02.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.14s.
-RESPONSIVE
-
-
-
-Chunk: chunk12.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A
-
-
-Chunk: chunk12.webm:   0%|          | 83.6k/114M [00:00<02:22, 797kB/s][A[A[A
-
-
-Chunk: chunk12.webm:   1%|          | 773k/114M [00:00<00:27, 4.17MB/s][A[A[A
-
-
-Chunk: chunk12.webm:   5%|▍         | 5.56M/114M [00:00<00:04, 22.9MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  11%|█         | 12.4M/114M [00:00<00:02, 39.6MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  18%|█▊        | 20.0M/114M [00:00<00:01, 51.2MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  25%|██▌       | 28.4M/114M [00:00<00:01, 60.7MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  33%|███▎      | 37.0M/114M [00:00<00:01, 67.3MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  40%|████      | 45.7M/114M [00:00<00:00, 71.7MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  48%|████▊     | 54.3M/114M [00:00<00:00, 74.9MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  55%|█████▌    | 63.0M/114M [00:01<00:00, 77.1MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  63%|██████▎   | 71.7M/114M [00:01<00:00, 78.4MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  71%|███████   | 80.3M/114M [00:01<00:00, 79.5MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  78%|███████▊  | 89.0M/114M [00:01<00:00, 80.2MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  86%|████████▌ | 97.6M/114M [00:01<00:00, 80.4MB/s][A[A[A
-
-
-Chunk: chunk12.webm:  94%|█████████▎| 106M/114M [00:01<00:00, 80.9MB/s] [A[A[AChunk: chunk12.webm: 100%|██████████| 114M/114M [00:01<00:00, 67.7MB/s]
-[INFO] Downloaded chunk12.webm from 172.22.155.30
-[INFO] Tracker updated with new host for chunk12.webm
-[INFO] Tracker updated with new host for chunk12.webm
-[ERROR] Failed to download chunk: chunk12.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.32s.
-RESPONSIVE
-
-
-Chunk: chunk11.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A
-
-Chunk: chunk11.webm:   0%|          | 101k/114M [00:00<01:57, 963kB/s][A[A
-
-Chunk: chunk11.webm:   1%|          | 861k/114M [00:00<00:24, 4.63MB/s][A[A
-
-Chunk: chunk11.webm:   5%|▌         | 5.86M/114M [00:00<00:04, 24.2MB/s][A[A
-
-Chunk: chunk11.webm:  11%|█▏        | 12.8M/114M [00:00<00:02, 40.6MB/s][A[A
-
-Chunk: chunk11.webm:  18%|█▊        | 20.5M/114M [00:00<00:01, 52.0MB/s][A[A
-
-Chunk: chunk11.webm:  25%|██▌       | 28.6M/114M [00:00<00:01, 60.5MB/s][A[A
-
-Chunk: chunk11.webm:  33%|███▎      | 37.0M/114M [00:00<00:01, 66.6MB/s][A[A
-
-Chunk: chunk11.webm:  40%|████      | 45.7M/114M [00:00<00:00, 71.5MB/s][A[A
-
-Chunk: chunk11.webm:  48%|████▊     | 54.3M/114M [00:00<00:00, 74.7MB/s][A[A
-
-Chunk: chunk11.webm:  55%|█████▌    | 63.0M/114M [00:01<00:00, 77.1MB/s][A[A
-
-Chunk: chunk11.webm:  63%|██████▎   | 71.7M/114M [00:01<00:00, 78.7MB/s][A[A
-
-Chunk: chunk11.webm:  71%|███████   | 80.3M/114M [00:01<00:00, 79.3MB/s][A[A
-
-Chunk: chunk11.webm:  78%|███████▊  | 89.0M/114M [00:01<00:00, 80.1MB/s][A[A
-
-Chunk: chunk11.webm:  86%|████████▌ | 97.7M/114M [00:01<00:00, 80.7MB/s][A[A
-
-Chunk: chunk11.webm:  94%|█████████▎| 106M/114M [00:01<00:00, 81.0MB/s] [A[AChunk: chunk11.webm: 100%|██████████| 114M/114M [00:01<00:00, 67.6MB/s]
-[INFO] Downloaded chunk11.webm from 172.22.153.50
-[INFO] Tracker updated with new host for chunk11.webm
-[INFO] Tracker updated with new host for chunk11.webm
-[ERROR] Failed to download chunk: chunk11.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 2.17s.
-BUSY
-[INFO] ℹ️ Peer is busy, trying next: {'ip': '172.22.151.9', 'port': 6881}
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.20s.
-RESPONSIVE
-
-
-
-
-Chunk: chunk03.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   0%|          | 43.0k/114M [00:00<08:47, 215kB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   0%|          | 83.6k/114M [00:00<06:25, 294kB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   0%|          | 182k/114M [00:00<03:25, 551kB/s] [A[A[A[A
-
-
-
-Chunk: chunk03.webm:   0%|          | 379k/114M [00:00<01:48, 1.04MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   1%|          | 773k/114M [00:00<00:56, 2.00MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   1%|▏         | 1.56M/114M [00:00<00:28, 3.89MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   3%|▎         | 3.14M/114M [00:00<00:14, 7.61MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   5%|▍         | 5.57M/114M [00:00<00:08, 12.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   7%|▋         | 7.67M/114M [00:01<00:06, 15.3MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:   9%|▉         | 10.1M/114M [00:01<00:05, 18.0MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  11%|█         | 12.4M/114M [00:01<00:05, 19.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  13%|█▎        | 14.9M/114M [00:01<00:04, 21.2MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  15%|█▌        | 17.4M/114M [00:01<00:04, 22.2MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  17%|█▋        | 19.8M/114M [00:01<00:04, 22.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  20%|█▉        | 22.3M/114M [00:01<00:03, 23.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  22%|██▏       | 25.1M/114M [00:01<00:03, 24.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  24%|██▍       | 27.7M/114M [00:01<00:03, 25.2MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  27%|██▋       | 30.5M/114M [00:01<00:03, 26.1MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  29%|██▉       | 33.3M/114M [00:02<00:03, 26.5MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  32%|███▏      | 36.2M/114M [00:02<00:02, 27.2MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  34%|███▍      | 39.1M/114M [00:02<00:02, 27.7MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  37%|███▋      | 42.0M/114M [00:02<00:02, 28.0MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  40%|███▉      | 44.9M/114M [00:02<00:02, 28.3MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  42%|████▏     | 47.7M/114M [00:02<00:02, 28.2MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  44%|████▍     | 50.5M/114M [00:02<00:02, 28.2MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  47%|████▋     | 53.4M/114M [00:02<00:02, 28.3MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  50%|████▉     | 56.3M/114M [00:02<00:02, 28.5MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  52%|█████▏    | 59.2M/114M [00:02<00:01, 28.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  55%|█████▍    | 62.1M/114M [00:03<00:01, 28.7MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  57%|█████▋    | 65.0M/114M [00:03<00:01, 28.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  60%|█████▉    | 67.9M/114M [00:03<00:01, 28.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  62%|██████▏   | 70.8M/114M [00:03<00:01, 28.7MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  65%|██████▍   | 73.7M/114M [00:03<00:01, 28.7MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  67%|██████▋   | 76.6M/114M [00:03<00:01, 28.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  70%|██████▉   | 79.5M/114M [00:03<00:01, 28.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  73%|███████▎  | 82.4M/114M [00:03<00:01, 28.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  75%|███████▌  | 85.3M/114M [00:03<00:00, 28.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  78%|███████▊  | 88.2M/114M [00:03<00:00, 28.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  80%|████████  | 91.0M/114M [00:04<00:00, 28.8MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  83%|████████▎ | 93.9M/114M [00:04<00:00, 28.7MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  85%|████████▌ | 96.8M/114M [00:04<00:00, 28.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  88%|████████▊ | 99.6M/114M [00:04<00:00, 28.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  90%|█████████ | 103M/114M [00:04<00:00, 28.6MB/s] [A[A[A[A
-
-
-
-Chunk: chunk03.webm:  93%|█████████▎| 105M/114M [00:04<00:00, 28.6MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  95%|█████████▌| 108M/114M [00:04<00:00, 28.5MB/s][A[A[A[A
-
-
-
-Chunk: chunk03.webm:  98%|█████████▊| 111M/114M [00:04<00:00, 28.5MB/s][A[A[A[AChunk: chunk03.webm: 100%|██████████| 114M/114M [00:04<00:00, 24.0MB/s]
-[INFO] Downloaded chunk03.webm from 172.22.155.31
-[INFO] Requested chunk: tests/data/Pacific_Rim/chunk02.webm
-[INFO] Serving chunk: tests/data/Pacific_Rim/chunk02.webm
-[INFO] Tracker updated with new host for chunk03.webm
-[INFO] Tracker updated with new host for chunk03.webm
-[ERROR] Failed to download chunk: chunk03.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.08s.
-RESPONSIVE
-
-
-
-
-
-
-Chunk: chunk06.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:   0%|          | 83.6k/114M [00:00<02:22, 795kB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:   1%|          | 773k/114M [00:00<00:27, 4.18MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:   5%|▍         | 5.59M/114M [00:00<00:04, 23.1MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  11%|█         | 12.6M/114M [00:00<00:02, 40.2MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  18%|█▊        | 20.4M/114M [00:00<00:01, 52.2MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  25%|██▌       | 28.8M/114M [00:00<00:01, 61.5MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  33%|███▎      | 37.3M/114M [00:00<00:01, 67.7MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  40%|████      | 45.9M/114M [00:00<00:00, 71.7MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  48%|████▊     | 54.5M/114M [00:00<00:00, 74.4MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  56%|█████▌    | 63.2M/114M [00:01<00:00, 76.6MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  63%|██████▎   | 71.9M/114M [00:01<00:00, 78.1MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  71%|███████   | 80.6M/114M [00:01<00:00, 79.3MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  78%|███████▊  | 89.1M/114M [00:01<00:00, 79.7MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  86%|████████▌ | 97.8M/114M [00:01<00:00, 80.2MB/s][A[A[A[A[A[A
-
-
-
-
-
-Chunk: chunk06.webm:  94%|█████████▎| 106M/114M [00:01<00:00, 80.6MB/s] [A[A[A[A[A[AChunk: chunk06.webm: 100%|██████████| 114M/114M [00:01<00:00, 67.9MB/s]
-[INFO] Downloaded chunk06.webm from 172.22.151.9
-[INFO] Tracker updated with new host for chunk06.webm
-[INFO] Tracker updated with new host for chunk06.webm
-[ERROR] Failed to download chunk: chunk06.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.21s.
-RESPONSIVE
-
-
-
-
-
-
-
-Chunk: chunk08.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   0%|          | 43.0k/114M [00:00<08:45, 216kB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   0%|          | 83.6k/114M [00:00<06:24, 295kB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   0%|          | 182k/114M [00:00<03:25, 552kB/s] [A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   0%|          | 379k/114M [00:00<01:48, 1.04MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   1%|          | 773k/114M [00:00<00:56, 2.00MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   1%|▏         | 1.56M/114M [00:00<00:28, 3.88MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   3%|▎         | 3.17M/114M [00:00<00:14, 7.71MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   5%|▌         | 5.73M/114M [00:00<00:08, 13.2MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   7%|▋         | 7.94M/114M [00:01<00:06, 15.9MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:   9%|▉         | 10.4M/114M [00:01<00:05, 18.7MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  11%|█▏        | 12.9M/114M [00:01<00:04, 20.5MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  14%|█▎        | 15.5M/114M [00:01<00:04, 22.2MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  16%|█▌        | 18.2M/114M [00:01<00:04, 23.6MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  18%|█▊        | 21.0M/114M [00:01<00:03, 24.9MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  21%|██        | 23.9M/114M [00:01<00:03, 26.0MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  24%|██▎       | 26.8M/114M [00:01<00:03, 26.9MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  26%|██▌       | 29.6M/114M [00:01<00:03, 27.4MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  29%|██▊       | 32.5M/114M [00:01<00:02, 27.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  31%|███       | 35.4M/114M [00:02<00:02, 28.1MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  34%|███▎      | 38.3M/114M [00:02<00:02, 28.4MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  36%|███▋      | 41.2M/114M [00:02<00:02, 28.5MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  39%|███▉      | 44.1M/114M [00:02<00:02, 28.5MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  41%|████▏     | 46.9M/114M [00:02<00:02, 28.3MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  44%|████▍     | 49.8M/114M [00:02<00:02, 28.5MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  46%|████▋     | 52.7M/114M [00:02<00:02, 28.5MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  49%|████▉     | 55.6M/114M [00:02<00:02, 28.6MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  52%|█████▏    | 58.5M/114M [00:02<00:01, 28.7MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  54%|█████▍    | 61.4M/114M [00:02<00:01, 28.7MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  57%|█████▋    | 64.3M/114M [00:03<00:01, 28.7MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  59%|█████▉    | 67.2M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  62%|██████▏   | 70.1M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  64%|██████▍   | 73.0M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  67%|██████▋   | 75.9M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  69%|██████▉   | 78.8M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  72%|███████▏  | 81.7M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  74%|███████▍  | 84.5M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  77%|███████▋  | 87.4M/114M [00:03<00:00, 28.7MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  79%|███████▉  | 90.3M/114M [00:03<00:00, 28.7MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  82%|████████▏ | 93.2M/114M [00:04<00:00, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  85%|████████▍ | 96.1M/114M [00:04<00:00, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  87%|████████▋ | 99.0M/114M [00:04<00:00, 28.8MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  90%|████████▉ | 102M/114M [00:04<00:00, 28.8MB/s] [A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  92%|█████████▏| 105M/114M [00:04<00:00, 28.9MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  95%|█████████▍| 108M/114M [00:04<00:00, 28.9MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm:  97%|█████████▋| 111M/114M [00:04<00:00, 28.9MB/s][A[A[A[A[A[A[A
-
-
-
-
-
-
-Chunk: chunk08.webm: 100%|█████████▉| 113M/114M [00:04<00:00, 28.9MB/s][A[A[A[A[A[A[AChunk: chunk08.webm: 100%|██████████| 114M/114M [00:04<00:00, 24.1MB/s]
-[INFO] Downloaded chunk08.webm from 172.22.151.11
-[INFO] Tracker updated with new host for chunk08.webm
-[INFO] Tracker updated with new host for chunk08.webm
-[ERROR] Failed to download chunk: chunk08.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.20s.
-RESPONSIVE
-[INFO] Requested chunk: tests/data/Pacific_Rim/chunk02.webm
-[INFO] Serving chunk: tests/data/Pacific_Rim/chunk02.webm
-
-
-
-
-
-Chunk: chunk04.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   0%|          | 43.0k/114M [00:00<08:46, 216kB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   0%|          | 83.6k/114M [00:00<06:25, 295kB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   0%|          | 182k/114M [00:00<03:25, 552kB/s] [A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   0%|          | 379k/114M [00:00<01:48, 1.04MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   1%|          | 767k/114M [00:00<00:56, 1.98MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   1%|          | 1.19M/114M [00:00<00:41, 2.71MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   2%|▏         | 2.40M/114M [00:00<00:19, 5.65MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   4%|▍         | 4.65M/114M [00:00<00:10, 10.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   6%|▌         | 6.88M/114M [00:01<00:07, 14.4MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:   8%|▊         | 9.27M/114M [00:01<00:06, 17.2MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  10%|█         | 11.6M/114M [00:01<00:05, 19.0MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  12%|█▏        | 14.1M/114M [00:01<00:04, 20.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  15%|█▍        | 16.5M/114M [00:01<00:04, 21.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  17%|█▋        | 19.2M/114M [00:01<00:04, 23.3MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  19%|█▉        | 21.8M/114M [00:01<00:03, 24.2MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  22%|██▏       | 24.6M/114M [00:01<00:03, 25.3MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  24%|██▍       | 27.3M/114M [00:01<00:03, 25.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  27%|██▋       | 30.1M/114M [00:01<00:03, 26.6MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  29%|██▉       | 33.0M/114M [00:02<00:02, 27.0MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  32%|███▏      | 35.9M/114M [00:02<00:02, 27.6MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  34%|███▍      | 38.8M/114M [00:02<00:02, 27.9MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  37%|███▋      | 41.7M/114M [00:02<00:02, 28.2MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  39%|███▉      | 44.5M/114M [00:02<00:02, 28.4MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  42%|████▏     | 47.4M/114M [00:02<00:02, 28.5MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  44%|████▍     | 50.3M/114M [00:02<00:02, 28.6MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  47%|████▋     | 53.2M/114M [00:02<00:02, 28.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  49%|████▉     | 56.1M/114M [00:02<00:01, 28.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  52%|█████▏    | 59.0M/114M [00:02<00:01, 28.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  55%|█████▍    | 61.9M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  57%|█████▋    | 64.8M/114M [00:03<00:01, 28.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  60%|█████▉    | 67.7M/114M [00:03<00:01, 28.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  62%|██████▏   | 70.6M/114M [00:03<00:01, 28.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  65%|██████▍   | 73.4M/114M [00:03<00:01, 28.6MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  67%|██████▋   | 76.3M/114M [00:03<00:01, 28.5MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  70%|██████▉   | 79.2M/114M [00:03<00:01, 28.5MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  72%|███████▏  | 82.1M/114M [00:03<00:01, 28.6MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  75%|███████▍  | 85.0M/114M [00:03<00:00, 28.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  77%|███████▋  | 87.8M/114M [00:03<00:00, 28.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  80%|███████▉  | 90.7M/114M [00:04<00:00, 28.7MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  82%|████████▏ | 93.6M/114M [00:04<00:00, 28.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  85%|████████▍ | 96.5M/114M [00:04<00:00, 28.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  88%|████████▊ | 99.4M/114M [00:04<00:00, 28.8MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  90%|█████████ | 102M/114M [00:04<00:00, 28.8MB/s] [A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  93%|█████████▎| 105M/114M [00:04<00:00, 28.9MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  95%|█████████▌| 108M/114M [00:04<00:00, 28.9MB/s][A[A[A[A[A
-
-
-
-
-Chunk: chunk04.webm:  98%|█████████▊| 111M/114M [00:04<00:00, 28.9MB/s][A[A[A[A[AChunk: chunk04.webm: 100%|██████████| 114M/114M [00:04<00:00, 24.0MB/s]
-[INFO] Downloaded chunk04.webm from 172.22.155.31
-[INFO] Tracker updated with new host for chunk04.webm
-[INFO] Tracker updated with new host for chunk04.webm
-[ERROR] Failed to download chunk: chunk04.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.08s.
-RESPONSIVE
-
-
-
-
-
-
-
-
-Chunk: chunk01.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:   0%|          | 83.6k/114M [00:00<02:22, 794kB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:   1%|          | 767k/114M [00:00<00:27, 4.13MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:   5%|▍         | 5.58M/114M [00:00<00:04, 23.0MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  11%|█         | 12.4M/114M [00:00<00:02, 39.2MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  17%|█▋        | 19.7M/114M [00:00<00:01, 50.0MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  24%|██▍       | 27.5M/114M [00:00<00:01, 58.1MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  31%|███▏      | 35.8M/114M [00:00<00:01, 64.6MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  39%|███▉      | 44.4M/114M [00:00<00:00, 70.1MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  47%|████▋     | 53.0M/114M [00:00<00:00, 73.4MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  54%|█████▍    | 61.7M/114M [00:01<00:00, 76.1MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  62%|██████▏   | 70.3M/114M [00:01<00:00, 77.9MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  70%|██████▉   | 79.0M/114M [00:01<00:00, 79.1MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  77%|███████▋  | 87.3M/114M [00:01<00:00, 77.5MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  84%|████████▍ | 95.9M/114M [00:01<00:00, 78.5MB/s][A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  92%|█████████▏| 105M/114M [00:01<00:00, 78.8MB/s] [A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-Chunk: chunk01.webm:  99%|█████████▉| 113M/114M [00:01<00:00, 79.5MB/s][A[A[A[A[A[A[A[AChunk: chunk01.webm: 100%|██████████| 114M/114M [00:01<00:00, 66.2MB/s]
-[INFO] Downloaded chunk01.webm from 172.22.155.30
-[INFO] Tracker updated with new host for chunk01.webm
-[INFO] Tracker updated with new host for chunk01.webm
-[ERROR] Failed to download chunk: chunk01.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.24s.
-RESPONSIVE
-
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   0%|          | 14.1k/114M [00:00<16:07, 117kB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   0%|          | 43.0k/114M [00:00<09:57, 190kB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   0%|          | 74.9k/114M [00:00<08:26, 224kB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   0%|          | 166k/114M [00:00<04:20, 435kB/s] [A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   0%|          | 349k/114M [00:00<02:17, 825kB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   1%|          | 713k/114M [00:00<01:11, 1.58MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   1%|▏         | 1.44M/114M [00:00<00:36, 3.05MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   3%|▎         | 2.90M/114M [00:00<00:18, 5.94MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   5%|▌         | 5.77M/114M [00:01<00:09, 11.5MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:   8%|▊         | 8.65M/114M [00:01<00:06, 15.4MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  10%|▉         | 11.2M/114M [00:01<00:06, 17.1MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  12%|█▏        | 13.8M/114M [00:01<00:05, 18.6MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  15%|█▍        | 16.6M/114M [00:01<00:04, 20.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  17%|█▋        | 19.4M/114M [00:01<00:04, 21.1MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  20%|█▉        | 22.2M/114M [00:01<00:04, 21.8MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  22%|██▏       | 25.1M/114M [00:01<00:03, 22.4MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  25%|██▍       | 28.0M/114M [00:02<00:03, 22.9MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  27%|██▋       | 30.9M/114M [00:02<00:03, 23.2MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  30%|██▉       | 33.7M/114M [00:02<00:03, 23.4MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  32%|███▏      | 36.6M/114M [00:02<00:03, 23.6MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  35%|███▍      | 39.5M/114M [00:02<00:03, 23.7MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  37%|███▋      | 42.3M/114M [00:02<00:03, 23.5MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  40%|███▉      | 45.2M/114M [00:02<00:02, 23.7MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  42%|████▏     | 48.0M/114M [00:02<00:02, 23.7MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  45%|████▍     | 50.9M/114M [00:03<00:02, 23.8MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  47%|████▋     | 53.8M/114M [00:03<00:02, 23.8MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  50%|████▉     | 56.7M/114M [00:03<00:02, 23.9MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  52%|█████▏    | 59.6M/114M [00:03<00:02, 23.9MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  55%|█████▌    | 62.5M/114M [00:03<00:02, 23.9MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  58%|█████▊    | 65.4M/114M [00:03<00:02, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  60%|██████    | 68.3M/114M [00:03<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  63%|██████▎   | 71.2M/114M [00:03<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  65%|██████▌   | 74.1M/114M [00:03<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  68%|██████▊   | 77.0M/114M [00:04<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  70%|███████   | 79.9M/114M [00:04<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  73%|███████▎  | 82.8M/114M [00:04<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  75%|███████▌  | 85.7M/114M [00:04<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  78%|███████▊  | 88.5M/114M [00:04<00:01, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  80%|████████  | 91.4M/114M [00:04<00:00, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  83%|████████▎ | 94.3M/114M [00:04<00:00, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  86%|████████▌ | 97.2M/114M [00:04<00:00, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  88%|████████▊ | 100M/114M [00:05<00:00, 24.0MB/s] [A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  91%|█████████ | 103M/114M [00:05<00:00, 24.0MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  93%|█████████▎| 106M/114M [00:05<00:00, 24.1MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  96%|█████████▌| 109M/114M [00:05<00:00, 24.1MB/s][A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-Chunk: chunk07.webm:  98%|█████████▊| 112M/114M [00:05<00:00, 24.1MB/s][A[A[A[A[A[A[A[A[AChunk: chunk07.webm: 100%|██████████| 114M/114M [00:05<00:00, 20.4MB/s]
-[INFO] Downloaded chunk07.webm from 172.22.151.8
-[INFO] Tracker updated with new host for chunk07.webm
-[INFO] Tracker updated with new host for chunk07.webm
-[ERROR] Failed to download chunk: chunk07.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.07s.
-RESPONSIVE
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:   0%|          | 101k/114M [00:00<01:57, 962kB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:   1%|          | 912k/114M [00:00<00:22, 4.91MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:   5%|▌         | 6.11M/114M [00:00<00:04, 25.0MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  11%|█▏        | 13.0M/114M [00:00<00:02, 40.6MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  18%|█▊        | 20.3M/114M [00:00<00:01, 50.5MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  24%|██▍       | 27.6M/114M [00:00<00:01, 56.7MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  31%|███       | 35.3M/114M [00:00<00:01, 61.9MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  38%|███▊      | 43.4M/114M [00:00<00:01, 66.4MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  46%|████▌     | 51.9M/114M [00:00<00:00, 70.7MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  53%|█████▎    | 60.4M/114M [00:01<00:00, 73.6MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  61%|██████    | 69.1M/114M [00:01<00:00, 75.9MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  68%|██████▊   | 77.7M/114M [00:01<00:00, 77.6MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  76%|███████▌  | 86.3M/114M [00:01<00:00, 78.7MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  84%|████████▎ | 94.9M/114M [00:01<00:00, 79.3MB/s][A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  91%|█████████ | 104M/114M [00:01<00:00, 79.9MB/s] [A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-Chunk: chunk09.webm:  99%|█████████▉| 112M/114M [00:01<00:00, 80.4MB/s][A[A[A[A[A[A[A[A[A[AChunk: chunk09.webm: 100%|██████████| 114M/114M [00:01<00:00, 66.4MB/s]
-[INFO] Downloaded chunk09.webm from 172.22.153.50
-[INFO] Tracker updated with new host for chunk09.webm
-[INFO] Tracker updated with new host for chunk09.webm
-[ERROR] Failed to download chunk: chunk09.webm
-✅ Server is reachable at network level.
-Max response latency over 10 pings: 0.07s.
-RESPONSIVE
-
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:   0%|          | 0.00/114M [00:00<?, ?B/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:   0%|          | 83.6k/114M [00:00<02:22, 796kB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:   1%|          | 767k/114M [00:00<00:27, 4.14MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:   5%|▍         | 5.51M/114M [00:00<00:04, 22.8MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  11%|█         | 12.6M/114M [00:00<00:02, 40.1MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  18%|█▊        | 20.4M/114M [00:00<00:01, 52.4MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  25%|██▌       | 28.8M/114M [00:00<00:01, 61.6MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  33%|███▎      | 37.5M/114M [00:00<00:01, 68.4MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  40%|████      | 45.9M/114M [00:00<00:00, 71.9MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  48%|████▊     | 54.6M/114M [00:00<00:00, 74.9MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  56%|█████▌    | 63.3M/114M [00:01<00:00, 77.1MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  63%|██████▎   | 72.0M/114M [00:01<00:00, 78.7MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  71%|███████   | 80.6M/114M [00:01<00:00, 79.6MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  79%|███████▊  | 89.2M/114M [00:01<00:00, 80.2MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  86%|████████▌ | 97.9M/114M [00:01<00:00, 80.8MB/s][A[A[A[A[A[A[A[A[A[A[A
-
-
-
-
-
-
-
-
-
-
-Chunk: chunk10.webm:  94%|█████████▍| 107M/114M [00:01<00:00, 81.1MB/s] [A[A[A[A[A[A[A[A[A[A[AChunk: chunk10.webm: 100%|██████████| 114M/114M [00:01<00:00, 67.9MB/s]
-[INFO] Downloaded chunk10.webm from 172.22.151.10
-[INFO] Tracker updated with new host for chunk10.webm
-[INFO] Tracker updated with new host for chunk10.webm
-[ERROR] Failed to download chunk: chunk10.webm
-
-[INFO] Download Summary:
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-| File Name   | File Size (Bytes)   | Chunk Name   |   Chunk Size (Bytes) | 
-Download Status   |
-+=============+=====================+==============+======================+=====
-==============+
-| Pacific_Rim | 1363089768          | chunk02.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk05.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk11.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk12.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk03.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk04.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk06.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk08.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk01.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk07.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk09.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-|             |                     | chunk10.webm |            113590814 | 
-Downloaded        |
-+-------------+---------------------+--------------+----------------------+-----
---------------+
-
-🕒 [INFO] Total download time: 64.90 seconds
-
-[INFO] Dead Peer Map:
-  chunk05.webm: []
-  chunk02.webm: []
-  chunk12.webm: []
-  chunk11.webm: []
-  chunk03.webm: []
-  chunk06.webm: []
-  chunk08.webm: []
-  chunk04.webm: []
-  chunk01.webm: []
-  chunk07.webm: []
-  chunk09.webm: []
-  chunk10.webm: []
-
-[OPTIONS] Select an action:
-1. Get available files
-2. Download a file
-3. Exit
->> [INFO] Requested chunk: tests/data/Pacific_Rim/chunk05.webm
-[INFO] Serving chunk: tests/data/Pacific_Rim/chunk05.webm
