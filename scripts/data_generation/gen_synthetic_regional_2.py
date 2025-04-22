@@ -107,7 +107,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 # All timing units in ms
 
 minute = 60000
-EXPERIMENT_T = 5 * minute
+EXPERIMENT_T = 1 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
@@ -116,16 +116,16 @@ N_files_generated = 0
 
 # - Generate client sessions from a Pareto distribution
 
-MIN_STAY_TIME = 6 * minute
-MEAN_STAY_TIME = 6 * minute
+MIN_STAY_TIME = 1 * minute
+MEAN_STAY_TIME = 1 * minute
 MAX_STAY_TIME = EXPERIMENT_T
-MEAN_LEAVE_TIME = 2 * minute
-STD_LEAVE_TIME = 0.5 * minute
+MEAN_LEAVE_TIME = 1 * minute
+STD_LEAVE_TIME = 0 * minute
 
-exp.min_stay_t = MIN_STAY_TIME / minute
-exp.mean_stay_t = MEAN_STAY_TIME / minute
-exp.mean_leave_t = MEAN_LEAVE_TIME / minute
-exp.std_leave_t = STD_LEAVE_TIME / minute
+exp.min_stay_t_min = MIN_STAY_TIME / minute
+exp.mean_stay_t_min = MEAN_STAY_TIME / minute
+exp.mean_leave_t_min = MEAN_LEAVE_TIME / minute
+exp.std_leave_t_min = STD_LEAVE_TIME / minute
 
 #PARETO_ALPHA = 2.5 # 2.5 is very heavy tailed, i.e. a lot of sessions will fall far less than the mean
 PARETO_ALPHA = 5
@@ -135,7 +135,7 @@ PARETO_K = MEAN_STAY_TIME * (PARETO_ALPHA - 1) / PARETO_ALPHA
 exp.pareto_alpha = PARETO_ALPHA
 exp.pareto_k = PARETO_K
 
-JOIN_T_LIM = EXPERIMENT_T/4
+JOIN_T_LIM = EXPERIMENT_T/6
 exp.initial_join_t_max = JOIN_T_LIM
 
 # Assume all 20 clients join, in the first 4th of the experiment
@@ -198,8 +198,8 @@ if args.dbg_print:
 # Important NOTE: Here, I generate one Poisson process for reqests and one for uploads, 
 # for the duration of an interval where a client is IN the system
 
-UPLOAD_INTENSITY = 1/2 / minute
-REQUEST_INTENSITY = 2.5 / minute
+UPLOAD_INTENSITY = 1 / minute
+REQUEST_INTENSITY = 1 / minute
 exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
 exp.request_intensity_per_min = REQUEST_INTENSITY * minute
 
