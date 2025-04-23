@@ -6,9 +6,9 @@ from matplotlib.lines import Line2D
 import os
 import json
 
-DATA_DIR_BASELINE = "/Users/sidpro/Downloads/Tests/RF + SEQ (1.0)/json/"
-DATA_DIR_SOL = "/Users/sidpro/Downloads/Tests/GF + RND (1.0)/json/"
-EVENTS_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/light1_workload/events.json"
+DATA_DIR_BASELINE = "/Users/sidpro/Downloads/Final_Test/pilot1_baseline/LF + SEQ (1.0)/json/"
+DATA_DIR_SOL = "/Users/sidpro/Downloads/Final_Test/pilot1_sol/GF + RND (1.0)/json/"
+EVENTS_FILE = "/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/data/final/pilot1_workload/events.json"
 events_fs = open(EVENTS_FILE, 'r')
 events_data = json.load(events_fs)
 
@@ -20,7 +20,8 @@ events_data = json.load(events_fs)
 # events_data = json.load(events_fs)
 
 TRACE = "light1"
-OUT_DIR = f"C:\\Users\\soula\\OneDrive\\Desktop\\525_midterm_report_plots\\{TRACE}\\"
+#OUT_DIR = f"C:\\Users\\soula\\OneDrive\\Desktop\\525_midterm_report_plots\\{TRACE}\\"
+OUT_DIR = f"/Users/sidpro/Desktop/WorkPlace/UIUC/Spring-25/CS 525/Final Project/360Torrent/scripts/visualization"
 
 SUBPLOT_X_SPACE = 0.3
 B_NAME = "BitTorrent"
