@@ -1,0 +1,23 @@
+{
+ "trace_name": "check2",
+ "n_clients": 19,
+ "tracker_id": 1,
+ "tracker_region": "W",
+ "experiment_t_min": 30.0,
+ "churn": true,
+ "min_stay_t_min": 30.0,
+ "mean_stay_t_min": 30.0,
+ "mean_leave_t_min": 1.0,
+ "std_leave_t_min": 0.0,
+ "pareto_alpha": 5,
+ "pareto_k": 1440000.0,
+ "first_join_upper_limit_min": 5.0,
+ "upload_intensity_per_min": 0.25,
+ "request_intensity_per_min": 2.0,
+ "zipf_a": 1.01,
+ "zipf_size": 1,
+ "zipf_n": 10000,
+ "total_files_generated": 122,
+ "max_files_requested_to_a_client": 60,
+ "mean_files_requested_to_a_client": 57.63157894736842
+}

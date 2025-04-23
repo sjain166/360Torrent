@@ -107,7 +107,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 # All timing units in ms
 
 minute = 60000
-EXPERIMENT_T = 1 * minute
+EXPERIMENT_T = 30 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
@@ -116,8 +116,17 @@ N_files_generated = 0
 
 # - Generate client sessions from a Pareto distribution
 
-MIN_STAY_TIME = 1 * minute
-MEAN_STAY_TIME = 1 * minute
+# MIN_STAY_TIME = 1 * minute
+# MEAN_STAY_TIME = 1 * minute
+# MAX_STAY_TIME = EXPERIMENT_T
+# MEAN_LEAVE_TIME = 1 * minute
+# STD_LEAVE_TIME = 0 * minute
+
+
+### Churn params
+
+MIN_STAY_TIME = EXPERIMENT_T
+MEAN_STAY_TIME = EXPERIMENT_T
 MAX_STAY_TIME = EXPERIMENT_T
 MEAN_LEAVE_TIME = 1 * minute
 STD_LEAVE_TIME = 0 * minute
@@ -136,7 +145,23 @@ exp.pareto_alpha = PARETO_ALPHA
 exp.pareto_k = PARETO_K
 
 JOIN_T_LIM = EXPERIMENT_T/6
-exp.initial_join_t_max = JOIN_T_LIM
+exp.first_join_upper_limit_min = JOIN_T_LIM / minute
+
+
+### Upload & Download params
+
+UPLOAD_INTENSITY = 1/5 / minute
+REQUEST_INTENSITY = 1 / minute
+exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
+exp.request_intensity_per_min = REQUEST_INTENSITY * minute
+
+ZIPF_ALPHA = 1.01 # skewness param
+ZIPF_SIZE = 1 # draw one element from the distribution at any time
+ZIPF_N = 10**4 # Reasonable cap on zipf distribution draws for simulation experiments
+exp.zipf_a = ZIPF_ALPHA
+exp.zipf_size = ZIPF_SIZE
+exp.zipf_n = ZIPF_N
+
 
 # Assume all 20 clients join, in the first 4th of the experiment
 INITIAL_JOIN_TIMES = np.random.uniform(0, JOIN_T_LIM, N_CLIENTS) # Assume initial arrival times are drawn at random from uniform distribution
@@ -180,7 +205,7 @@ for i, user in enumerate(users):
         })
 
 
-if args.dbg_print:
+if args.dbg_print and False:
     print("\n Checking if Pareto session durations fall around the expected value ")
 
     for user in users:
@@ -192,16 +217,6 @@ if args.dbg_print:
 
         print(f" User {user["id"]}, mean session duration = {session_durations_sum/N_sessions_recorded/minute} | specified mean: {MEAN_STAY_TIME/minute}, min: {MIN_STAY_TIME/minute}")
 
-
-
-
-# Important NOTE: Here, I generate one Poisson process for reqests and one for uploads, 
-# for the duration of an interval where a client is IN the system
-
-UPLOAD_INTENSITY = 1 / minute
-REQUEST_INTENSITY = 1 / minute
-exp.upload_intensity_per_min = UPLOAD_INTENSITY * minute
-exp.request_intensity_per_min = REQUEST_INTENSITY * minute
 
 ALL_UPLOAD_TIMES = []
 
@@ -230,15 +245,10 @@ ALL_UPLOAD_TIMES = sorted(ALL_UPLOAD_TIMES) # Sort by ascending upload times
 ALL_UPLOAD_TIMES_idx = 0
 
 N_files_generated = len(ALL_UPLOAD_TIMES)
-exp.n_files = N_files_generated
-content_uploaded = []
+exp.total_files_generated = N_files_generated
 
-ZIPF_ALPHA = 1.01 # skewness param
-ZIPF_SIZE = 1 # draw one element from the distribution at any time
-ZIPF_N = 10**4 # Reasonable cap on zipf distribution draws for simulation experiments
-exp.zipf_a = ZIPF_ALPHA
-exp.zipf_size = ZIPF_SIZE
-exp.zipf_n = ZIPF_N
+
+content_uploaded = []
 
 
 for upload_time in ALL_UPLOAD_TIMES:
@@ -258,6 +268,7 @@ for upload_time in ALL_UPLOAD_TIMES:
     # popularity = np.clip(popularity, 1, ZIPF_N) # Clip rank to fit within a finite interval - this lets us recover probabilities
     new_content = {
         "id": file_num,
+        "t_upload": t_upload,
         "name": f"video{file_num}",
         "seeder": seeder_client_id,
         "seeder_region": seeder_client_region,
@@ -324,6 +335,19 @@ for upload_time in ALL_UPLOAD_TIMES:
                 r_user["last_request_index"] += 1 # step forward to the next request timestamp
 
 
+# Tracking number of files requested so trace doesn't go over VM storage limits
+max_files_req_at_some_client = 0
+mean_files_req_at_a_client = 0
+for user in users:
+    mean_files_req_at_a_client += len(user["request_times"])
+    if len(user["request_times"]) > max_files_req_at_some_client:
+        max_files_req_at_some_client = len(user["request_times"])
+mean_files_req_at_a_client /= len(users)
+
+exp.max_files_requested_to_a_client = max_files_req_at_some_client
+exp.mean_files_requested_to_a_client = mean_files_req_at_a_client
+
+
 global_events = []
 time_outlier_events = 0
 for user in users:
@@ -352,6 +376,7 @@ try:
 except Exception as e:
     print(f"Failed to write file: {e}")
 
+
 # Testing churn. Verify that no user requests or downloads content outside of when they are "in" the system
 if args.dbg_print:
     for user in users:
@@ -363,16 +388,32 @@ if args.dbg_print:
             if not correct_event: 
                 print(f" User {user["id"]}, {t_join=}, {t_leave=}, INCORRECT EVENT AT {event["time"]}")
 
+if args.dbg_print:
+    file_saturation_times = []
+
+    for file in content_uploaded:
+        t_upload = file["t_upload"]
+        t_last_request = t_upload
+
+        for e in global_events:
+            if e["event"]["type"] == 'request' or e["event"]["type"] == 'upload':
+                if e["event"]["content"]["name"] == file["name"]:
+                    t_last_request = e["event"]["time"]
+
+        file_saturation_times.append(t_last_request-t_upload)
+    
+    file_saturation_times = np.array(file_saturation_times)
+    print(f" Time before all peers download a file mean={np.mean(file_saturation_times)/minute}min, stdev={np.std(file_saturation_times)/minute}min")
 
 with open(TRACE_INFO_FILE, 'w') as fs:
     json.dump(vars(exp), fs, indent=1)
 
 # Plotting regional request patterns to verify users are requesting videos according to regional popularities
 
-test_files = ["video5", "video10"]
 
+if args.dbg_print and False:
+    test_files = ["video5", "video10"]
 
-if args.dbg_print:
     print("\n Eyeballing regional popularity trends... ")
     for file in test_files:
 

@@ -1,0 +1,17 @@
+
+    regions = { "W": get_VMs_by_id([0, 1, 2, 3, 4]),
+                "N": get_VMs_by_id([5, 6, 7, 8, 9]),
+                "C": get_VMs_by_id([10, 11, 12, 13, 14]),
+                "F": get_VMs_by_id([15, 16, 17, 18, 19]) }
+
+    local_delay = 10 # Define delay within regions
+
+    # Define delays between regions
+    net = nx.Graph(data=True)
+    net.add_edge("W","N", weight=65)
+    net.add_edge("W","C", weight=31)
+    net.add_edge("W","F", weight=79)
+    net.add_edge("N","C", weight=62)
+    net.add_edge("N","F", weight=34)
+    net.add_edge("C","F", weight=63)
+            
