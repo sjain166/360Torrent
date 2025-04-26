@@ -81,9 +81,12 @@ async def download_chunk(peer_ip, peer_id, file_name, chunk_name):
         async with aiohttp.ClientSession() as session:
             async with session.get(URL) as response:
                 if response.status == 200:
-                    with open(file_path, "wb") as f:
-                        async for chunk in response.content.iter_chunked(1024):
-                            f.write(chunk)
+                    # with open(file_path, "wb") as f:
+                    #     async for chunk in response.content.iter_chunked(1024):
+                    #         f.write(chunk)
+                    total_size = 0
+                    async for chunk in response.content.iter_chunked(1024):
+                        total_size += len(chunk)  # Simulate reading the data
                     return True
                 else:
                     print(
