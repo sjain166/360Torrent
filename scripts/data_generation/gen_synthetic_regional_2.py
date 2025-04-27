@@ -125,26 +125,27 @@ N_files_generated = 0
 
 ### Churn params
 
-MIN_STAY_TIME = EXPERIMENT_T
-MEAN_STAY_TIME = EXPERIMENT_T
+MIN_STAY_TIME = 5 * minute
+MEAN_STAY_TIME = 10 * minute
 MAX_STAY_TIME = EXPERIMENT_T
-MEAN_LEAVE_TIME = 1 * minute
-STD_LEAVE_TIME = 0 * minute
+MEAN_LEAVE_TIME = 5 * minute
+STD_LEAVE_TIME = 2 * minute
 
 exp.min_stay_t_min = MIN_STAY_TIME / minute
 exp.mean_stay_t_min = MEAN_STAY_TIME / minute
 exp.mean_leave_t_min = MEAN_LEAVE_TIME / minute
 exp.std_leave_t_min = STD_LEAVE_TIME / minute
 
-#PARETO_ALPHA = 2.5 # 2.5 is very heavy tailed, i.e. a lot of sessions will fall far less than the mean
-PARETO_ALPHA = 5
+# PARETO_ALPHA = 2.5 # 2.5 is very heavy tailed, i.e. a lot of sessions will fall far less than the mean - get overall very high variance, above and below mean
+PARETO_ALPHA = 3 # I think you should stick with 3 or above
+# PARETO_ALPHA = 5
 # PARETO_ALPHA = 50 # 50 is very tight, most sessions will fall at the mean
 PARETO_K = MEAN_STAY_TIME * (PARETO_ALPHA - 1) / PARETO_ALPHA
 
 exp.pareto_alpha = PARETO_ALPHA
 exp.pareto_k = PARETO_K
 
-JOIN_T_LIM = EXPERIMENT_T/6
+JOIN_T_LIM = EXPERIMENT_T/2
 exp.first_join_upper_limit_min = JOIN_T_LIM / minute
 
 
@@ -205,7 +206,7 @@ for i, user in enumerate(users):
         })
 
 
-if args.dbg_print and False:
+if args.dbg_print and True:
     print("\n Checking if Pareto session durations fall around the expected value ")
 
     for user in users:

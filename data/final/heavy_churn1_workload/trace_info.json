@@ -1,5 +1,5 @@
 {
- "trace_name": "check2",
+ "trace_name": "heavy_churn1",
  "n_clients": 19,
  "tracker_id": 1,
  "tracker_region": "W",
@@ -11,13 +11,13 @@
  "std_leave_t_min": 2.0,
  "pareto_alpha": 3,
  "pareto_k": 400000.0,
- "first_join_upper_limit_min": 5.0,
+ "first_join_upper_limit_min": 15.0,
  "upload_intensity_per_min": 0.2,
  "request_intensity_per_min": 1.0,
  "zipf_a": 1.01,
  "zipf_size": 1,
  "zipf_n": 10000,
- "total_files_generated": 68,
- "max_files_requested_to_a_client": 37,
- "mean_files_requested_to_a_client": 23.894736842105264
+ "total_files_generated": 46,
+ "max_files_requested_to_a_client": 29,
+ "mean_files_requested_to_a_client": 19.05263157894737
 }
