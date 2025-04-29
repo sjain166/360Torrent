@@ -17,20 +17,14 @@ DISPLAY_TRACE_NAMES = ["Light Traffic", "Medium Traffic", "Heavy Traffic", "Medi
 class Algorithm:
     latencies_per_region: dict
     avg_latency: np.array # average latencies over all video, on its nth regional re-download
-    std_latency: np.array
-    downloads_failed: int
+    stdev_latency: np.array
+    downloads_failed: list
 
 @dataclass
 class TraceData:
     name: str
-    baseline_latencies_per_region: dict #latencies per region
-    baseline_avg_latency: np.array # average latencies over all video, on its nth regional re-download
-    baseline_std_latency: np.array
-    baseline_download_failures: int
-    solution_latencies_per_region: dict
-    solution_avg_latency: np.array # average latencies over all video, on its nth regional re-download
-    solution_std_latency: np.array
-    solution_download_failures: int
+    baseline: Algorithm
+    solution: Algorithm
 
 
 DATA_DIR = "C:\\Users\\soula\\OneDrive\\Desktop\\Final"
@@ -66,8 +60,10 @@ all_data = []
 for trial_idx, trace_name in enumerate(TRACE_NAMES):
 
     data = TraceData(trace_name, 
-                     {"W": {}, "F": {}, "C":{}, "N":{}}, np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS),
-                     {"W": {}, "F": {}, "C":{}, "N":{}},   np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS))
+                     Algorithm({"W": {}, "F": {}, "C":{}, "N":{}}, np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), []),
+                     Algorithm({"W": {}, "F": {}, "C":{}, "N":{}},   np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), [])
+                     )
+    
     all_data.append(data)
 
     EVENTS_FILE = f"{EVENTS_DIR}\\{trace_name}_workload\\events.json"
@@ -76,16 +72,16 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
     BASE_VM_FILES = os.listdir(f"{DATA_DIR}\\{trace_name}\\{trace_name}_baseline\\LF + SEQ (1.0)\\json")
     SOL_VM_FILES = os.listdir(f"{DATA_DIR}\\{trace_name}\\{trace_name}_sol\\GF + RND (1.0)\\json")
 
-    for is_baseline, vm_files in [(True, BASE_VM_FILES), (False, SOL_VM_FILES)]:
+    for is_baseline, a, vm_files in [(True, data.baseline, BASE_VM_FILES), (False, data.solution, SOL_VM_FILES)]:
 
         # Set a reference to the current trace data
         vm_jsons = None
         latencies_per_region = None
         if is_baseline: 
-            latencies_per_region = data.baseline_latencies_per_region
+            latencies_per_region = a.latencies_per_region
             vm_jsons = [json.load(open(f"{DATA_DIR}\\{trace_name}\\{trace_name}_baseline\\LF + SEQ (1.0)\\json\\{vm_file}", 'r')) for vm_file in vm_files]
         else:
-            latencies_per_region = data.solution_latencies_per_region
+            latencies_per_region = a.latencies_per_region
             vm_jsons = [json.load(open(f"{DATA_DIR}\\{trace_name}\\{trace_name}_sol\\GF + RND (1.0)\\json\\{vm_file}", 'r')) for vm_file in vm_files]
 
         for vm_num, vm_data in enumerate(vm_jsons, start = 2):
@@ -96,9 +92,12 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
                 file_latencies_in_region = latencies_per_region[vm_to_region(vmname)] # Get  "W": {}
                 videoname = d["file_name"]
 
+                if d["total_download_time_sec"] == -1:
+                    a.downloads_failed.append(videoname)
+                    continue # Skip over failed downloads
+
                 if videoname in file_latencies_in_region: # if "W": {"video0":[(1,1)]}
                     # For each video downloaded in the region, store: when it was downloaded, for how long, and by whom
-
                     latencies_per_region[vm_to_region(vmname)][videoname].append(
                         (recover_timestamp(vmname,videoname, events_data), d["total_download_time_sec"], vmname)
                         )
@@ -116,16 +115,15 @@ for trial_idx, trace_data in enumerate(all_data):
 
     N_VIDEOS = int(json.load(open(f"{EVENTS_DIR}\\{trace_name}_workload\\trace_info.json", 'r'))["total_files_generated"])
 
-    for is_baseline, latencies_per_region, avg_latency, stdev_latency in [
-        (True, trace_data.baseline_latencies_per_region, trace_data.baseline_avg_latency, trace_data.baseline_std_latency),
-          (False, trace_data.solution_latencies_per_region, trace_data.solution_avg_latency, trace_data.solution_std_latency)
+    for is_baseline, a in [
+        (True, trace_data.baseline), (False, trace_data.solution) 
           ]:
     
         latencies_per_video = [] # will be jagged list, can't use np :(
 
         vid_idx = 0
         for region, _ in regions_to_vms.items():
-            for vid_name, vid_data in latencies_per_region[region].items():
+            for vid_name, vid_data in a.latencies_per_region[region].items():
                 download_latencies = []
                 for download_idx, (timestamp, latency, vm) in enumerate(vid_data):
                     # TODO: Put any filters here
@@ -148,10 +146,8 @@ for trial_idx, trace_data in enumerate(all_data):
             sum_unique_download_latencies.append(sum_latencies) 
             #TODO add failed download case (per discord messages)
 
-        # print(f"{trace_data=}")
         for i, (num, denom) in enumerate(zip (sum_unique_download_latencies, num_unique_downloads)):
-            avg_latency[i] = num/denom
-
+            a.avg_latency[i] = num/denom
 
         # Compute stdev per column
         stdev_numerator = 0
@@ -161,13 +157,13 @@ for trial_idx, trace_data in enumerate(all_data):
             for i in range(len(latencies_per_video)): # Go over every row
                 if n < len(latencies_per_video[i]): # Add values to the average for that column
                     nth_unique_redownloads +=1
-                    stdev_numerator += (latencies_per_video[i][n] - avg_latency[n]) ** 2
+                    stdev_numerator += (latencies_per_video[i][n] - a.avg_latency[n]) ** 2
 
-            stdev_latency[n] = np.sqrt(stdev_numerator/nth_unique_redownloads)
+            a.stdev_latency[n] = np.sqrt(stdev_numerator/nth_unique_redownloads)
+            
 
-
-    print(trace_data.baseline_avg_latency)
-    print(trace_data.baseline_std_latency)
+    print(trace_data.baseline.avg_latency)
+    print(trace_data.solution.avg_latency)
 
 
 # Plot of average re-download latencies, one line per trial we ran
@@ -185,11 +181,7 @@ for trial_idx, trace_data in enumerate(all_data):
 
     nth_download = [ i for i in range(0, N_DOWNLOADS)]
 
-    print(f"{trace_data.name=}")
-    print(f"{trace_data.solution_avg_latency=}")
-    print(f"{trace_data.baseline_avg_latency=}")
-
-    diffs = trace_data.baseline_avg_latency - trace_data.solution_avg_latency
+    diffs = trace_data.baseline.avg_latency - trace_data.solution.avg_latency
     
 
     ax1.plot(nth_download, diffs, color= colors[trial_idx], label = trace_data.name)
