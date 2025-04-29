@@ -19,6 +19,7 @@ class Algorithm:
     avg_latency: np.array # average latencies over all video, on its nth regional re-download
     stdev_latency: np.array
     downloads_failed: list
+    latency_matrix: list
 
 @dataclass
 class TraceData:
@@ -60,8 +61,8 @@ all_data = []
 for trial_idx, trace_name in enumerate(TRACE_NAMES):
 
     data = TraceData(trace_name, 
-                     Algorithm({"W": {}, "F": {}, "C":{}, "N":{}}, np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), []),
-                     Algorithm({"W": {}, "F": {}, "C":{}, "N":{}},   np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), [])
+                     Algorithm({"W": {}, "F": {}, "C":{}, "N":{}}, np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), [], []),
+                     Algorithm({"W": {}, "F": {}, "C":{}, "N":{}},   np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), [], [])
                      )
     
     all_data.append(data)
@@ -110,6 +111,12 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
             for vid, times in videos.items():
                 latencies_per_region[region][vid]  = sorted(latencies_per_region[region][vid], key=lambda x: x[0])
 
+import pprint
+pprint.pp(all_data[1].solution.latencies_per_region)
+
+# a = json.dumps(json.loads(latencies_per_region), indent=1)
+# print(f"{a=}")
+
 ### Compute Average over all videos ### 
 for trial_idx, trace_data in enumerate(all_data):
 
@@ -119,9 +126,10 @@ for trial_idx, trace_data in enumerate(all_data):
         (True, trace_data.baseline), (False, trace_data.solution) 
           ]:
     
-        latencies_per_video = [] # will be jagged list, can't use np :(
+        latencies_per_video = a.latency_matrix # will be jagged list, can't use np :(
 
         vid_idx = 0
+        number_of_downloads_nth_time = np.zeros(N_DOWNLOADS)
         for region, _ in regions_to_vms.items():
             for vid_name, vid_data in a.latencies_per_region[region].items():
                 download_latencies = []
@@ -129,8 +137,10 @@ for trial_idx, trace_data in enumerate(all_data):
                     # TODO: Put any filters here
                     #    if latency > 150: vid_outlier = True
                     # latencies_per_video[vid_idx, download_idx] = latency
+                    number_of_downloads_nth_time[download_idx] += 1
                     download_latencies.append(latency)
                 latencies_per_video.append(download_latencies) # video1 downloaded in C and video1 downloaded in F for the first time will get mapped into the same column of 'first download'
+        print(f"{number_of_downloads_nth_time=}")
 
         # Compute mean per column
         num_unique_downloads = [] # number of downloads that get downloaded for the nth time . the denominator for the average, per each redownload
@@ -165,6 +175,7 @@ for trial_idx, trace_data in enumerate(all_data):
     print(trace_data.baseline.avg_latency)
     print(trace_data.solution.avg_latency)
 
+all_data = [t for t in all_data if not t.name == "heavy1"] # Exclude heavy1
 
 # Plot of average re-download latencies, one line per trial we ran
 fig1, ax1 = plt.subplots(1,1, figsize = (10,8))
@@ -187,8 +198,28 @@ for trial_idx, trace_data in enumerate(all_data):
     ax1.plot(nth_download, diffs, color= colors[trial_idx], label = trace_data.name)
 
 ax1.legend( loc="upper left")
-plt.show()
 
+
+
+trace = [ t for t in all_data if t.name == "med1"][0]
+
+fig2, ax2 = plt.subplots(1,N_DOWNLOADS, figsize = (25, 5))
+for i in range(0, N_DOWNLOADS):
+    # where i is the download index
+    ax2[i].set_title(f"Histogram of {i}st regional download latency")
+    ax2[i].set_xlabel(f"Video Download Times (s)")
+    ax2[i].set_ylabel(f"Quantity")
+
+    download_times = []
+    lm = trace.solution.latency_matrix
+    for row in range(len(lm)):
+        if i < len(lm[row]):
+            download_times.append(lm[row][i])
+
+    # Plot histogram
+    ax2[i].hist(np.array(download_times), bins=100, color='skyblue', edgecolor='black')
+
+plt.show()
 
     
 # SUBPLOT_X_SPACE = 0.3
