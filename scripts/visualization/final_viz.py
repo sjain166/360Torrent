@@ -4,6 +4,8 @@ import matplotlib.ticker as ticker
 from matplotlib.lines import Line2D
 
 from dataclasses import dataclass
+from scipy.stats import norm
+from sklearn.mixture import GaussianMixture
 
 
 import os
@@ -52,9 +54,20 @@ def recover_timestamp(vmname, video, events_data):
             if not d["event"]["content"] == None:
                 if d["event"]["content"]["name"] == video:
                     return d["event"]["time"]
+                
+def recover_popularity_for_region(video, region, events_data):
+    # Recover the original popularity that a video was seeded at in its region
+
+    print(f" {video=} { region=}")
+    for d in events_data:
+        if d["event"]["type"] == "upload":
+            if str(d["event"]["content"]["name"]) == video:
+                return d["event"]["content"]["popularity"][region]
 
 
 N_DOWNLOADS = 5 # max number of downloads per region
+POPULARITY_FILTER = True
+POPULARITY_THRESHOLD = 5000
 
 ### Data Loader ###
 all_data = []
@@ -99,9 +112,12 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
 
                 if videoname in file_latencies_in_region: # if "W": {"video0":[(1,1)]}
                     # For each video downloaded in the region, store: when it was downloaded, for how long, and by whom
+
                     latencies_per_region[vm_to_region(vmname)][videoname].append(
                         (recover_timestamp(vmname,videoname, events_data), d["total_download_time_sec"], vmname)
                         )
+                    
+
                 else: # if "W": " video1: [...]", but no video0
                     latencies_per_region[vm_to_region(vmname)][videoname] = [(
                         (recover_timestamp(vmname,videoname, events_data), d["total_download_time_sec"], vmname) 
@@ -111,16 +127,17 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
             for vid, times in videos.items():
                 latencies_per_region[region][vid]  = sorted(latencies_per_region[region][vid], key=lambda x: x[0])
 
-import pprint
-pprint.pp(all_data[1].solution.latencies_per_region)
+# import pprint
+# pprint.pp(all_data[1].solution.latencies_per_region)
 
-# a = json.dumps(json.loads(latencies_per_region), indent=1)
-# print(f"{a=}")
 
 ### Compute Average over all videos ### 
 for trial_idx, trace_data in enumerate(all_data):
 
     N_VIDEOS = int(json.load(open(f"{EVENTS_DIR}\\{trace_name}_workload\\trace_info.json", 'r'))["total_files_generated"])
+
+    EVENTS_FILE = f"{EVENTS_DIR}\\{trace_data.name}_workload\\events.json"
+    events_data = json.load(open(EVENTS_FILE, 'r'))
 
     for is_baseline, a in [
         (True, trace_data.baseline), (False, trace_data.solution) 
@@ -134,11 +151,14 @@ for trial_idx, trace_data in enumerate(all_data):
             for vid_name, vid_data in a.latencies_per_region[region].items():
                 download_latencies = []
                 for download_idx, (timestamp, latency, vm) in enumerate(vid_data):
-                    # TODO: Put any filters here
-                    #    if latency > 150: vid_outlier = True
-                    # latencies_per_video[vid_idx, download_idx] = latency
+
+                    if POPULARITY_FILTER:
+                        if recover_popularity_for_region(vid_name, region, events_data) < POPULARITY_THRESHOLD:
+                            download_latencies.append(latency)
+                    else:
+                        download_latencies.append(latency)
+                    
                     number_of_downloads_nth_time[download_idx] += 1
-                    download_latencies.append(latency)
                 latencies_per_video.append(download_latencies) # video1 downloaded in C and video1 downloaded in F for the first time will get mapped into the same column of 'first download'
         print(f"{number_of_downloads_nth_time=}")
 
@@ -157,7 +177,8 @@ for trial_idx, trace_data in enumerate(all_data):
             #TODO add failed download case (per discord messages)
 
         for i, (num, denom) in enumerate(zip (sum_unique_download_latencies, num_unique_downloads)):
-            a.avg_latency[i] = num/denom
+            ep = 0.000001
+            a.avg_latency[i] = num/(denom + ep)
 
         # Compute stdev per column
         stdev_numerator = 0
@@ -189,151 +210,65 @@ colors = [cmap(i) for i in range(0, N_DOWNLOADS)]
 
 trace_data: TraceData # you can type annotate like this in an iterator
 for trial_idx, trace_data in enumerate(all_data):
-
     nth_download = [ i for i in range(0, N_DOWNLOADS)]
-
     diffs = trace_data.baseline.avg_latency - trace_data.solution.avg_latency
-    
-
     ax1.plot(nth_download, diffs, color= colors[trial_idx], label = trace_data.name)
 
 ax1.legend( loc="upper left")
 
 
 
-trace = [ t for t in all_data if t.name == "med1"][0]
+trace = [ t for t in all_data if t.name == "light1"][0]
 
 fig2, ax2 = plt.subplots(1,N_DOWNLOADS, figsize = (25, 5))
+fig3, ax3 = plt.subplots(1, N_DOWNLOADS, figsize = (25, 5))
+
 for i in range(0, N_DOWNLOADS):
     # where i is the download index
     ax2[i].set_title(f"Histogram of {i}st regional download latency")
     ax2[i].set_xlabel(f"Video Download Times (s)")
     ax2[i].set_ylabel(f"Quantity")
 
+    max_t_download = 200
+    ax2[i].set_xlim(0,max_t_download)
+
     download_times = []
     lm = trace.solution.latency_matrix
     for row in range(len(lm)):
         if i < len(lm[row]):
             download_times.append(lm[row][i])
-
+    
+    download_times = np.array(download_times)
     # Plot histogram
-    ax2[i].hist(np.array(download_times), bins=100, color='skyblue', edgecolor='black')
+    ax2[i].hist(download_times, bins=100, color='blue', label='360Torrent')
+
+    ts = np.linspace(0,max_t_download)
+    # baseline_gauss = norm.pdf(ts, loc=np.mean(download_times), scale = np.std(download_times))
+    if len(download_times) > 1:   
+        gauss_mix = GaussianMixture(n_components=2)
+        gauss_mix.fit(download_times.reshape(-1,1)) #How is it getting download_times of length 1?
+        bimodal_gauss_pdf = np.exp(gauss_mix.score_samples(ts.reshape(-1,1)))
+
+        ax3[i].plot(ts, bimodal_gauss_pdf, color='blue')
+
+
+
+    download_times = []
+    lm = trace.baseline.latency_matrix
+    for row in range(len(lm)):
+        if i < len(lm[row]):
+            download_times.append(lm[row][i])
+    # Plot histogram
+    download_times = np.array(download_times)
+    ax2[i].hist(download_times, bins=100, color='green', label='BitTorrent')
+
+    ts = np.linspace(0,max_t_download)
+
+    if len(download_times) > 1:   
+        # solution_gauss = norm.pdf(ts, loc=np.mean(download_times), scale = np.std(download_times))
+        gauss_mix = GaussianMixture(n_components=2)
+        gauss_mix.fit(download_times.reshape(-1,1))
+        bimodal_gauss_pdf = np.exp(gauss_mix.score_samples(ts.reshape(-1,1)))
+        ax3[i].plot(ts, bimodal_gauss_pdf, color='green')
 
 plt.show()
-
-    
-# SUBPLOT_X_SPACE = 0.3
-
-# # axes = []
-# fig, ax = plt.subplots(1,4, figsize=(25, 5))
-# plt.subplots_adjust(wspace=SUBPLOT_X_SPACE)
-
-# for i, (region, _ ) in enumerate(regions_to_vms.items()):
-#     # fig, ax = plt.subplots(1, 1)
-#     ax[i].set_title(f"Download of Each Video \n in Region {region} Over Time")
-#     ax[i].set_xlabel(f"Download Count in {region}")
-#     ax[i].set_ylabel("Download Latency (s)")
-#     ax[i].set_ylim(0,200)
-#     ax[i].xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-#     # axes.append(ax)
-
-
-
-# # Each video has its own color, assuming 20 videos is enough
-# cmap = plt.get_cmap('tab20')  # 'tab20' gives 20 distinct colors
-# colors = [cmap(i) for i in range(20)]
-
-# show_video_range = range(0,12)
-
-# diff_latencies_per_region = []
-
-# for system, dir, dirfiles in [(BASE_NAME, DATA_DIR_BASELINE, files), (SOL_NAME, DATA_DIR_SOL, files2)]:
-
-
-#     for ax_i, (region, _) in enumerate(regions_to_vms.items()):
-#         for name, vid_data in latencies_per_region[region].items():
-#             timestamps = []
-#             latencys = []
-#             nth_download = []
-#             vms = []
-#             # print(f" {len(vid_data)=} for region {name}")
-
-#             vid_outlier = False
-#             for i, (timestamp, latency, vm) in enumerate(vid_data):
-#                 if latency > 150: vid_outlier = True
-#                 timestamps.append(timestamp)
-#                 latencys.append(latency)
-#                 nth_download.append(i)
-#                 vms.append(vm)
-
-#             if not vid_outlier:
-#                 vidnum = int(name[5:])
-#                 if vidnum in show_video_range:
-#                     color = colors[vidnum]
-
-#                     if system == BASE_NAME:
-#                         ax[ax_i].scatter(nth_download, latencys, color=color)
-#                         ax[ax_i].plot(nth_download, latencys, color=color, linestyle="-", label=name)
-#                     else:
-#                         ax[ax_i].scatter(nth_download, latencys, color=color)
-#                         ax[ax_i].plot(nth_download, latencys, color=color, linestyle="--", label='__nolegend__')
-
-#     diff_latencies_per_region.append(latencies_per_region)
-
-# for i in range(len(ax)):
-#     handles, labels = ax[i].get_legend_handles_labels()
-#     # Sort legend items alphabetically (or however you like)
-#     sorted_items = sorted(zip(labels, handles), key=lambda x: int(x[0][5:]))  # sort by label
-#     labels, handles = zip(*sorted_items)
-    
-#     video_legend = ax[i].legend(handles, labels, loc="upper right", ncol=2)
-
-#     style_legend = [
-#         Line2D([0], [0], color='black', linestyle='-', label=BASE_NAME),
-#         Line2D([0], [0], color='black', linestyle='--', label=SOL_NAME)
-#     ]
-#     ax[i].legend(handles=style_legend, loc="upper left")
-#     ax[i].add_artist(video_legend)
-
-
-# fig.savefig(OUT_DIR+"video_download_latencies_over_time.png")
-
-
-
-# fig, ax = plt.subplots(1,4, figsize=(25, 5))
-# plt.subplots_adjust(wspace=SUBPLOT_X_SPACE)
-# for i, (region, _ ) in enumerate(regions_to_vms.items()):
-#     ax[i].set_title(f"Improvement over {BASE_NAME} \n in Region {region} Over Time")
-#     ax[i].set_xlabel(f"Download Count in {region}")
-#     ax[i].set_ylabel(f"Latency Improvement over {BASE_NAME} (s)")
-#     ax[i].set_ylim(-100,100)
-#     ax[i].xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-
-# show_video_range = range(0,12)
-# for ax_i, (region, _) in enumerate(regions_to_vms.items()):
-        
-#     for (bname, bvid_data), (sname, svid_data) in zip(diff_latencies_per_region[0][region].items(), diff_latencies_per_region[1][region].items()):
-
-#         vid_outlier = False
-
-#         nth_download = []
-#         diffs = []
-
-#         for (i, (_ , blatency, _)), (j, (_, slatency, _)) in zip(enumerate(bvid_data), enumerate(svid_data)):
-#             # if blatency or slatency > 150: vid_outlier = True
-#             diffs.append(blatency - slatency) # So more positive is better
-#             nth_download.append(i)
-
-#         print(diffs)
-#         # if not vid_outlier:
-#         vidnum = int(bname[5:])
-#         if vidnum in show_video_range:
-#             color = colors[vidnum]
-#             ax[ax_i].scatter(nth_download, diffs, color=color)
-#             ax[ax_i].plot(nth_download, diffs, color=color, linestyle="-", label=bname)
-
-#     ax[ax_i].legend(ncol=2)
-
-# fig.savefig(OUT_DIR+"improvement_over_baseline.png")
-
-# plt.show()
