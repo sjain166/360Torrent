@@ -26,6 +26,7 @@ class Algorithm:
 @dataclass
 class TraceData:
     name: str
+    display_name: str
     baseline: Algorithm
     solution: Algorithm
 
@@ -66,14 +67,14 @@ def recover_popularity_for_region(video, region, events_data):
 
 
 N_DOWNLOADS = 5 # max number of downloads per region
-POPULARITY_FILTER = True
+POPULARITY_FILTER = False
 POPULARITY_THRESHOLD = 5000
 
 ### Data Loader ###
 all_data = []
 for trial_idx, trace_name in enumerate(TRACE_NAMES):
 
-    data = TraceData(trace_name, 
+    data = TraceData(trace_name, DISPLAY_TRACE_NAMES[trial_idx],
                      Algorithm({"W": {}, "F": {}, "C":{}, "N":{}}, np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), [], []),
                      Algorithm({"W": {}, "F": {}, "C":{}, "N":{}},   np.zeros(N_DOWNLOADS),  np.zeros(N_DOWNLOADS), [], [])
                      )
@@ -103,7 +104,9 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
 
             for d in vm_data:
 
-                file_latencies_in_region = latencies_per_region[vm_to_region(vmname)] # Get  "W": {}
+                region = vm_to_region(vmname)
+
+                file_latencies_in_region = latencies_per_region[region] # Get  "W": {}
                 videoname = d["file_name"]
 
                 if d["total_download_time_sec"] == -1:
@@ -111,17 +114,19 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
                     continue # Skip over failed downloads
 
                 if videoname in file_latencies_in_region: # if "W": {"video0":[(1,1)]}
-                    # For each video downloaded in the region, store: when it was downloaded, for how long, and by whom
+                    # For each video downloaded in the region, store: 
+                    # (when it was downloaded, for how long, by whom, its popularity in this region, videoname)
 
-                    latencies_per_region[vm_to_region(vmname)][videoname].append(
-                        (recover_timestamp(vmname,videoname, events_data), d["total_download_time_sec"], vmname)
+                    latencies_per_region[region][videoname].append(
+                        (recover_timestamp(vmname,videoname, events_data), d["total_download_time_sec"], 
+                         vmname, recover_popularity_for_region(videoname, region, events_data), videoname)
                         )
                     
-
                 else: # if "W": " video1: [...]", but no video0
-                    latencies_per_region[vm_to_region(vmname)][videoname] = [(
-                        (recover_timestamp(vmname,videoname, events_data), d["total_download_time_sec"], vmname) 
-                        )]
+                    latencies_per_region[region][videoname] = [                    
+                        (recover_timestamp(vmname,videoname, events_data), d["total_download_time_sec"], 
+                         vmname, recover_popularity_for_region(videoname, region, events_data), videoname)
+                         ]
 
         for region, videos in latencies_per_region.items():
             for vid, times in videos.items():
@@ -150,10 +155,11 @@ for trial_idx, trace_data in enumerate(all_data):
         for region, _ in regions_to_vms.items():
             for vid_name, vid_data in a.latencies_per_region[region].items():
                 download_latencies = []
-                for download_idx, (timestamp, latency, vm) in enumerate(vid_data):
+                for download_idx, (timestamp, latency, vm, rpop, _) in enumerate(vid_data):
 
                     if POPULARITY_FILTER:
-                        if recover_popularity_for_region(vid_name, region, events_data) < POPULARITY_THRESHOLD:
+                        # if recover_popularity_for_region(vid_name, region, events_data) < POPULARITY_THRESHOLD:
+                        if rpop < POPULARITY_THRESHOLD:
                             download_latencies.append(latency)
                     else:
                         download_latencies.append(latency)
@@ -199,35 +205,48 @@ for trial_idx, trace_data in enumerate(all_data):
 all_data = [t for t in all_data if not t.name == "heavy1"] # Exclude heavy1
 
 # Plot of average re-download latencies, one line per trial we ran
-fig1, ax1 = plt.subplots(1,1, figsize = (10,8))
-ax1.set_title(f"Average Download Latencys per Trial Over Multiple Downloads")
-ax1.set_xlabel(f"Download Count")
-ax1.set_ylabel("Average Improvement in Download Latency (Over All Videos) s")
+# fig1, ax1 = plt.subplots(1,1, figsize = (10,8))
+fig1, ax1 = plt.subplots(1,1)
+ax1.set_title(f"Average Improvement of 360Torrent over BitTorrent")
+ax1.set_xlabel(f"Nth Regional Download")
+ax1.set_ylabel("Average Improvement in Video Download Time (s)")
 
 
 cmap = plt.get_cmap('tab20')  # 'tab20' gives 20 distinct colors
 colors = [cmap(i) for i in range(0, N_DOWNLOADS)]
 
+nth_download = [ i for i in range(0, N_DOWNLOADS)]
 trace_data: TraceData # you can type annotate like this in an iterator
 for trial_idx, trace_data in enumerate(all_data):
-    nth_download = [ i for i in range(0, N_DOWNLOADS)]
     diffs = trace_data.baseline.avg_latency - trace_data.solution.avg_latency
-    ax1.plot(nth_download, diffs, color= colors[trial_idx], label = trace_data.name)
+    ax1.set_xticks(range(0, N_DOWNLOADS))
+    ax1.plot(nth_download, diffs, color= colors[trial_idx], label = trace_data.display_name)
+    ax1.grid(True)
+
+ax1.axhline(y=0, color = 'grey')
 
 ax1.legend( loc="upper left")
 
 
 
-trace = [ t for t in all_data if t.name == "light1"][0]
+FOCUS_TRACE, FOCUS_TRACE_NAME = "med1", "Medium"
+trace = [ t for t in all_data if t.name == FOCUS_TRACE][0]
 
 fig2, ax2 = plt.subplots(1,N_DOWNLOADS, figsize = (25, 5))
 fig3, ax3 = plt.subplots(1, N_DOWNLOADS, figsize = (25, 5))
+fig3.suptitle(f"Distribution of Download Durations (s) Over Successive Regional Downloads (Trace: {FOCUS_TRACE_NAME})")
 
 for i in range(0, N_DOWNLOADS):
     # where i is the download index
     ax2[i].set_title(f"Histogram of {i}st regional download latency")
     ax2[i].set_xlabel(f"Video Download Times (s)")
     ax2[i].set_ylabel(f"Quantity")
+
+    ax3[i].set_ylim((0,0.075))
+    ax3[i].set_xlim((0,200))
+    ax3[i].set_xlabel(f"Video Download Times (s)")
+    ax3[i].set_title(f"Distribution of Download Times (s)\n for Download #{i+1}")
+    ax3[i].grid(True)
 
     max_t_download = 200
     ax2[i].set_xlim(0,max_t_download)
@@ -249,9 +268,7 @@ for i in range(0, N_DOWNLOADS):
         gauss_mix.fit(download_times.reshape(-1,1)) #How is it getting download_times of length 1?
         bimodal_gauss_pdf = np.exp(gauss_mix.score_samples(ts.reshape(-1,1)))
 
-        ax3[i].plot(ts, bimodal_gauss_pdf, color='blue')
-
-
+        ax3[i].plot(ts, bimodal_gauss_pdf, color='blue', label='360Torrent')
 
     download_times = []
     lm = trace.baseline.latency_matrix
@@ -269,6 +286,73 @@ for i in range(0, N_DOWNLOADS):
         gauss_mix = GaussianMixture(n_components=2)
         gauss_mix.fit(download_times.reshape(-1,1))
         bimodal_gauss_pdf = np.exp(gauss_mix.score_samples(ts.reshape(-1,1)))
-        ax3[i].plot(ts, bimodal_gauss_pdf, color='green')
+        ax3[i].plot(ts, bimodal_gauss_pdf, color='green', label='BitTorrent')
+    
+    ax3[i].legend(loc = 'upper right')
+
+fig4, ax4 = plt.subplots(1, len(regions_to_vms.items()), figsize = (25,5))
+
+def print_reg(region):
+    for vidname, records in region:
+        print(vidname)
+        print(records)
+
+for i, (region, _) in enumerate(regions_to_vms.items(), start=0):
+
+    for is_baseline, arr in [(True, trace.solution.latencies_per_region[region].items()), 
+                             (False, trace.baseline.latencies_per_region[region].items())]:
+
+        # Am I tagging them with popularity properly? Yes, I think so.
+        # Am I sorting properly?
+            # Maybe you could add an extra sorting rule? If popularities are identical sort by X
+
+        # print(arr)
+        #TODO: Many places you could be going wrong with these tuple accesses
+        data = sorted(arr, key=lambda x: (x[1][0][3], x[1][0][1])) # Sort a region's videos first by popularity, then by download time
+        
+        print(f"\nvideos sorted by popularity")
+        print_reg(data)
+        # For each video, sort its downloads chronologically (currently sorted by latency), and pick the last element from that.
+        data = [ (vname, sorted(dlowds, key=lambda x:x[0])) for vname, dlowds in data] # Look at the last download that occured
+        print(f"\nvideos sorted by popularity and downloads sorted chronologically")
+        print_reg(data)
+
+        # Yeah looking at the data, there really is no clear lowering of latency for the last download.
+        # How about when we average over all downloads, then will we see a clearer trend w.r.t popularity?
+
+        # data = [ (vname, dlowds) for vname, dlowds in data]
+
+
+        labels = []
+        latencys = []
+
+        z = 0
+        for name, records in data:
+
+            n=len(records)
+            sum = 0
+            for record in records:
+                sum += record[1]
+
+            labels.append(record[3])
+            latencys.append(sum/n) # Average latency over all downloads in this region
+            z+=1
+
+        c = 'blue'
+        if is_baseline: c= 'green'
+        ax4[i].plot(labels, latencys, color=c) 
+        arr = trace.baseline.latencies_per_region[region].items()
+
+
+    ax4[i].set_title(f"Average Download of Each Video in Region {region}")
+    ax4[i].set_ylabel("Latency (s)")
+    ax4[i].set_xlabel("Popularity Ranking (Lower is Better)")
+
+    # Yeah it doesn't seem like latency is notably lower for popular videos... at all.
+    # We'll see what this is like compared to a baseline.
+
+    # ax4[i].set_xscale('log')
+    ax4[i].set_ylim((0, 100))
+
 
 plt.show()
