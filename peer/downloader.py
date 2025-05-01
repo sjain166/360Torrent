@@ -6,13 +6,13 @@ import random
 import time
 import sys
 
-from scripts.class_object import FileMetadata
+from scripts.class_object import FileMetadata, File, Chunk
 from scripts.utils import get_private_ip, get_max_threads, check_server_status, append_file_download_summary_to_json
 from scripts.utils import TRACKER_URL, FILE_PATH
 from scripts.prints import print_file_metadata
 
 
-
+PEER_FILE_REGISTRY = []
 MAX_PARALLEL_DOWNLOADS = get_max_threads()
 RESULTS_JSON_PATH = "download_results.json"
 
@@ -130,6 +130,13 @@ async def update_tracker_chunk_host(
         except Exception as e:
             print(f"[ERROR] Tracker update exception: {e}")
 
+def has_chunk(file_name, chunk_name):
+    for file in PEER_FILE_REGISTRY:
+        if file.file_name == file_name:
+            for chunk in file.chunks:
+                if chunk.chunk_name == chunk_name:
+                    return True
+    return False
 
 async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_port, PEER_SELECTION_METHOD):
     chunk_name = chunk.chunk_name
@@ -152,7 +159,7 @@ async def download_chunk_with_retry(chunk, metadata, semaphore, self_ip, self_po
     folder_path = os.path.join(FILE_PATH, metadata.file_name)
     file_path = os.path.join(folder_path, chunk_name)
     
-    if os.path.exists(file_path):
+    if has_chunk(metadata.file_name, chunk_name):
         print(f"[WARN] Chunk already downloaded: {chunk_name}")
         chunk.download_status = True
         chunk.peers_tried.append("SELF")
@@ -293,10 +300,23 @@ async def main(metadata: FileMetadata, PEER_SELECTION_METHOD):
         else:
             end_time = time.time()
             total_time = end_time - start_time
+            existing_file = next((f for f in PEER_FILE_REGISTRY if f.file_name == metadata.file_name), None)
+
+            if not existing_file:
+                new_file = File(metadata.file_name, metadata.file_size)
+                for chunk in metadata.chunks:
+                    if chunk.download_status:
+                        new_file.chunks.append(Chunk(chunk.chunk_name, chunk.chunk_size))
+                PEER_FILE_REGISTRY.append(new_file)
+            else:
+                for chunk in metadata.chunks:
+                    if chunk.download_status and not any(c.chunk_name == chunk.chunk_name for c in existing_file.chunks):
+                        existing_file.chunks.append(Chunk(chunk.chunk_name, chunk.chunk_size))
         
         print("\n[INFO] Download Summary:")
         print_file_metadata(metadata)
         print("\n🕒 [INFO] Total download time: {:.2f} seconds".format(total_time))
+        print("\n PEER FILE REGISTRY : " , PEER_FILE_REGISTRY)
         append_file_download_summary_to_json(metadata, total_time, start_time)
 
     except Exception as e:
