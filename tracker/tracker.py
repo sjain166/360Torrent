@@ -321,15 +321,17 @@ async def command_peer_to_prefetch(peer: Peer, file_obj: File, num_chunks: int):
 
 
 def get_request_derivative(requests):
-    if len(requests) < 3 :
+    if len(requests) == 0 :
         return False
     
-    for i in range(1, len(requests)):
-        derivative = requests[i] - requests[i - 1]
-        if derivative <= 0:
-            return False
-        
-    return True
+    # for i in range(1, len(requests)):
+    #     derivative = requests[i] - requests[i - 1]
+    #     if derivative <= 0:
+    #         return False
+
+    if requests[-1] >= 2 :
+        return True
+    return False
 
 
 async def observe_timer():
