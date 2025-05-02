@@ -29,7 +29,7 @@ import networkx as nx
 
 TRACKER_URL = "http://sp25-cs525-1201.cs.illinois.edu:8080"  # Replace with actual tracker IP
 #TRACKER_URL = "http://10.0.0.130:8080"  # Replace with actual tracker IP
-OBSERVE_INTERVAL = 5
+OBSERVE_INTERVAL = 60
 HOT_THRESHOLD = 1 # To be decided by the user
 
 
