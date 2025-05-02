@@ -229,7 +229,7 @@ ax1.legend( loc="upper left")
 
 
 
-FOCUS_TRACE, FOCUS_TRACE_NAME = "med1", "Medium"
+FOCUS_TRACE, FOCUS_TRACE_NAME = "light_churn1", "Light Churn"
 trace = [ t for t in all_data if t.name == FOCUS_TRACE][0]
 
 fig2, ax2 = plt.subplots(1,N_DOWNLOADS, figsize = (25, 5))

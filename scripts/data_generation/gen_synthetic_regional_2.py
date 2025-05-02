@@ -107,7 +107,7 @@ users.pop(0) # Remove tracker after you're done writing user files and regional 
 # All timing units in ms
 
 minute = 60000
-EXPERIMENT_T = 30 * minute
+EXPERIMENT_T = 5 * minute
 exp.experiment_t_min = EXPERIMENT_T / minute
 CHURN = True
 exp.churn = CHURN
@@ -125,11 +125,11 @@ N_files_generated = 0
 
 ### Churn params
 
-MIN_STAY_TIME = 5 * minute
-MEAN_STAY_TIME = 10 * minute
+MIN_STAY_TIME = EXPERIMENT_T
+MEAN_STAY_TIME = EXPERIMENT_T
 MAX_STAY_TIME = EXPERIMENT_T
-MEAN_LEAVE_TIME = 5 * minute
-STD_LEAVE_TIME = 2 * minute
+MEAN_LEAVE_TIME = 0 * minute
+STD_LEAVE_TIME = 0 * minute
 
 exp.min_stay_t_min = MIN_STAY_TIME / minute
 exp.mean_stay_t_min = MEAN_STAY_TIME / minute
