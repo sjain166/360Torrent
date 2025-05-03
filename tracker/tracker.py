@@ -333,31 +333,33 @@ def get_request_derivative(requests):
         return True
     return False
 
-
 async def observe_timer():
-    """
-    Background task that logs time every 10 seconds.
-    """
     while True:
-        for region, files in FILE_REQUEST_PER_REGION.items():
-            for file_name, requests in files.items():
-                print (f"[INFO] {region} -> {file_name} <- {requests}")
+        # Shallow copy of the keys to avoid size change during iteration
+        regions = list(FILE_REQUEST_PER_REGION.keys())
+        for region in regions:
+            files = FILE_REQUEST_PER_REGION.get(region, {})
+            file_names = list(files.keys())
+            for file_name in file_names:
+                requests = FILE_REQUEST_PER_REGION[region][file_name]
+                print(f"[INFO] {region} -> {file_name} <- {requests}")
                 hot = get_request_derivative(requests)
                 if hot:
                     print(f"[INFO] Hot file detected: {file_name} in region {region}")
                     for peer in REGION_PEER_MAP.get(region, []):
                         file_obj = next((f for f in TRACKER_FILE_REGISTRY if f.file_name == file_name), None)
                         if file_obj:
-                            # Send prefetch command to the peer
                             await command_peer_to_prefetch(peer, file_obj, len(file_obj.chunks) // 3)
-                        else :
+                        else:
                             print(f"[ERROR] File {file_name} not found in registry.")
-        
-        for region, files in FILE_REQUEST_PER_REGION.items():
-            for file_name in files:
+
+        # Now safely update counters (again using shallow copy)
+        for region in list(FILE_REQUEST_PER_REGION.keys()):
+            for file_name in list(FILE_REQUEST_PER_REGION[region].keys()):
                 FILE_REQUEST_PER_REGION[region][file_name].append(0)
-            if len(FILE_REQUEST_PER_REGION[region][file_name]) == 4:
-                FILE_REQUEST_PER_REGION[region][file_name].pop(0)
+                if len(FILE_REQUEST_PER_REGION[region][file_name]) == 4:
+                    FILE_REQUEST_PER_REGION[region][file_name].pop(0)
+
         await asyncio.sleep(OBSERVE_INTERVAL)
 
 app = web.Application()
