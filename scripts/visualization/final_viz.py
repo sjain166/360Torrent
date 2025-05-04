@@ -11,9 +11,11 @@ from sklearn.mixture import GaussianMixture
 import os
 import json
 
+# TRACE_NAMES = ['light1', 'med1', 'med2', 'heavy1', 'light_churn1', 'heavy_churn1']
+# DISPLAY_TRACE_NAMES = ["Light Traffic", "Medium Traffic", "Medium Traffic Rechunk", "Heavy Traffic", "Medium Traffic, Light Churn", "Medium Traffic, Heavy Churn"]
+
 TRACE_NAMES = ['light1', 'med1', 'heavy1', 'light_churn1', 'heavy_churn1']
 DISPLAY_TRACE_NAMES = ["Light Traffic", "Medium Traffic", "Heavy Traffic", "Medium Traffic, Light Churn", "Medium Traffic, Heavy Churn"]
-
 
 @dataclass
 class Algorithm:
@@ -31,7 +33,9 @@ class TraceData:
     solution: Algorithm
 
 
-DATA_DIR = "C:\\Users\\soula\\OneDrive\\Desktop\\Final"
+# DATA_DIR = "C:\\Users\\soula\\OneDrive\\Desktop\\Final"
+DATA_DIR = "C:\\Users\\soula\\OneDrive\\Desktop\\Rechunking_Tests"
+RECHUNK_TESTS = True
 EVENTS_DIR = "C:\\Users\\soula\\OneDrive\\Desktop\\Programming\\CS525\\360Torrent\\data\\final"
 
 BASE_NAME = "BitTorrent"
@@ -82,10 +86,19 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
     all_data.append(data)
 
     EVENTS_FILE = f"{EVENTS_DIR}\\{trace_name}_workload\\events.json"
+    if trace_name == "med2": EVENTS_FILE = f"{EVENTS_DIR}\\med1_workload\\events.json"
     events_data = json.load(open(EVENTS_FILE, 'r'))
 
-    BASE_VM_FILES = os.listdir(f"{DATA_DIR}\\{trace_name}\\{trace_name}_baseline\\LF + SEQ (1.0)\\json")
-    SOL_VM_FILES = os.listdir(f"{DATA_DIR}\\{trace_name}\\{trace_name}_sol\\GF + RND (1.0)\\json")
+
+    if RECHUNK_TESTS:
+        BASE_PATH = f"{DATA_DIR}\\{trace_name}\\{trace_name}_baseline\\json\\"
+        SOL_PATH = f"{DATA_DIR}\\{trace_name}\\{trace_name}_sol\\json\\"  
+    else:
+        BASE_PATH = f"{DATA_DIR}\\{trace_name}\\{trace_name}_baseline\\LF + SEQ (1.0)\\json\\"
+        SOL_PATH = f"{DATA_DIR}\\{trace_name}\\{trace_name}_sol\\GF + RND (1.0)\\json\\"       
+
+    BASE_VM_FILES = os.listdir(BASE_PATH)
+    SOL_VM_FILES = os.listdir(SOL_PATH)
 
     for is_baseline, a, vm_files in [(True, data.baseline, BASE_VM_FILES), (False, data.solution, SOL_VM_FILES)]:
 
@@ -94,10 +107,10 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
         latencies_per_region = None
         if is_baseline: 
             latencies_per_region = a.latencies_per_region
-            vm_jsons = [json.load(open(f"{DATA_DIR}\\{trace_name}\\{trace_name}_baseline\\LF + SEQ (1.0)\\json\\{vm_file}", 'r')) for vm_file in vm_files]
+            vm_jsons = [json.load(open(BASE_PATH+vm_file, 'r')) for vm_file in vm_files]
         else:
             latencies_per_region = a.latencies_per_region
-            vm_jsons = [json.load(open(f"{DATA_DIR}\\{trace_name}\\{trace_name}_sol\\GF + RND (1.0)\\json\\{vm_file}", 'r')) for vm_file in vm_files]
+            vm_jsons = [json.load(open(SOL_PATH+vm_file, 'r')) for vm_file in vm_files]
 
         for vm_num, vm_data in enumerate(vm_jsons, start = 2):
             vmname = f"vm{vm_num:02}"
@@ -112,6 +125,8 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
                 if d["total_download_time_sec"] == -1:
                     a.downloads_failed.append(videoname)
                     continue # Skip over failed downloads
+
+                if len(d["chunks"]) == 4: continue
 
                 if videoname in file_latencies_in_region: # if "W": {"video0":[(1,1)]}
                     # For each video downloaded in the region, store: 
@@ -128,8 +143,10 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
                          vmname, recover_popularity_for_region(videoname, region, events_data), videoname)
                          ]
 
+
         for region, videos in latencies_per_region.items():
             for vid, times in videos.items():
+                print(latencies_per_region[region][vid])
                 latencies_per_region[region][vid]  = sorted(latencies_per_region[region][vid], key=lambda x: x[0])
 
 # import pprint
@@ -140,8 +157,10 @@ for trial_idx, trace_name in enumerate(TRACE_NAMES):
 for trial_idx, trace_data in enumerate(all_data):
 
     N_VIDEOS = int(json.load(open(f"{EVENTS_DIR}\\{trace_name}_workload\\trace_info.json", 'r'))["total_files_generated"])
+    if trace_name == "med2": N_VIDEOS = int(json.load(open(f"{EVENTS_DIR}\\med1_workload\\trace_info.json", 'r'))["total_files_generated"])
 
-    EVENTS_FILE = f"{EVENTS_DIR}\\{trace_data.name}_workload\\events.json"
+    EVENTS_FILE = f"{EVENTS_DIR}\\{trace_name}_workload\\events.json"
+    if trace_name == "med2": EVENTS_FILE = f"{EVENTS_DIR}\\med1_workload\\events.json"
     events_data = json.load(open(EVENTS_FILE, 'r'))
 
     for is_baseline, a in [
@@ -202,7 +221,7 @@ for trial_idx, trace_data in enumerate(all_data):
     print(trace_data.baseline.avg_latency)
     print(trace_data.solution.avg_latency)
 
-all_data = [t for t in all_data if not t.name == "heavy1"] # Exclude heavy1
+# all_data = [t for t in all_data if not t.name == "heavy1"] # Exclude heavy1
 
 # Plot of average re-download latencies, one line per trial we ran
 # fig1, ax1 = plt.subplots(1,1, figsize = (10,8))
@@ -229,7 +248,8 @@ ax1.legend( loc="upper left")
 
 
 
-FOCUS_TRACE, FOCUS_TRACE_NAME = "light_churn1", "Light Churn"
+# FOCUS_TRACE, FOCUS_TRACE_NAME = "light_churn1", "Light Churn"
+FOCUS_TRACE, FOCUS_TRACE_NAME = "light1", "Light"
 trace = [ t for t in all_data if t.name == FOCUS_TRACE][0]
 
 fig2, ax2 = plt.subplots(1,N_DOWNLOADS, figsize = (25, 5))
